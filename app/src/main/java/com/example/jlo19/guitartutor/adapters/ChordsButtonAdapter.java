@@ -1,41 +1,38 @@
-package com.example.jlo19.guitartutor.adapter;
+package com.example.jlo19.guitartutor.adapters;
 
 import android.content.Context;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.GridView;
-import android.widget.LinearLayout;
 
-import com.example.jlo19.guitartutor.R;
+import com.example.jlo19.guitartutor.models.Chord;
+
+import java.util.List;
 
 /**
  * Organising displaying all chords in button form
  */
-
 public class ChordsButtonAdapter extends BaseAdapter {
 
+    private List<Chord> chords;
     private View.OnClickListener listener;
     private Context context;
-    private String[] items;
 
-    public ChordsButtonAdapter(Context context, String[] items, View.OnClickListener listener) {
+    public ChordsButtonAdapter(Context context, List<Chord> chords, View.OnClickListener listener) {
         this.context = context;
-        this.items = items;
+        this.chords = chords;
         this.listener = listener;
     }
 
     @Override
     public int getCount() {
-        return items.length;
+        return chords.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return items[position];
+        return chords.get(position);
     }
 
     @Override
@@ -43,7 +40,6 @@ public class ChordsButtonAdapter extends BaseAdapter {
         return position;
     }
 
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Button button;
         if (convertView == null) {
@@ -53,8 +49,8 @@ public class ChordsButtonAdapter extends BaseAdapter {
             button = (Button) convertView;
         }
         button.setOnClickListener(listener);
-        button.setText(items[position]);
-        button.setId(position+1);
+        button.setText(chords.get(position).toString());
+        button.setId(position);
 
         return button;
     }
