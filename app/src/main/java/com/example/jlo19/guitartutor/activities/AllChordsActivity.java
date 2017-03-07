@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -33,9 +34,7 @@ public class AllChordsActivity extends AppCompatActivity implements AllChordsVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_chords);
         // allows injection of presenter
-        ((App) getApplication())
-                .getComponent()
-                .inject(this);
+        App.getComponent().inject(this);
     }
 
     @Inject
@@ -72,11 +71,16 @@ public class AllChordsActivity extends AppCompatActivity implements AllChordsVie
     }
 
     public void setToolbarTitleText() {
-        TextView toolbarText = (TextView) findViewById(R.id.toolbar_title);
+        TextView toolbarText = (TextView) findViewById(R.id.toolbarTitle);
         toolbarText.setText(R.string.all_chords_name);
     }
 
     public void hideProgressBar(){
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

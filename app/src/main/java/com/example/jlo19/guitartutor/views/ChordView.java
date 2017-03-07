@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.models.Chord;
 
+import java.net.URL;
+
 /**
  * View interface for ChordsActivity
  */
@@ -15,4 +17,5 @@ public interface ChordView {
     void showError();
     void hideProgressBar();
     void setImage(Bitmap bitmap);
+    void playVideo(URL url);
 }

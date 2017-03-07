@@ -3,6 +3,7 @@ package com.example.jlo19.guitartutor.components;
 import com.example.jlo19.guitartutor.activities.AllChordsActivity;
 import com.example.jlo19.guitartutor.activities.ChordActivity;
 import com.example.jlo19.guitartutor.modules.AppModule;
+import com.example.jlo19.guitartutor.presenters.ChordPresenter;
 
 import javax.inject.Singleton;
 
@@ -17,4 +18,5 @@ import dagger.Component;
 public interface AppComponent {
     void inject(AllChordsActivity activity);
     void inject(ChordActivity activity);
+    void inject(ChordPresenter presenter);
 }

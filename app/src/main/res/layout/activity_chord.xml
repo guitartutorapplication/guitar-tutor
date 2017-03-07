@@ -14,11 +14,13 @@
         layout="@layout/toolbar"/>
 
     <LinearLayout
+        android:id="@+id/imageLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/buttonLayout"
         android:weightSum="1">
 
         <ImageView
@@ -32,6 +34,26 @@
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="30dp"
             android:adjustViewBounds="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/buttonLayout"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <Button
+            android:text="@string/watch_button_text"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnWatch"
+            android:layout_gravity="center"
+            android:layout_width="400dp"
+            android:theme="@style/AppTheme.InstructionButton"/>
     </LinearLayout>
 
 </RelativeLayout>

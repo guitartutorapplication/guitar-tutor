@@ -6,4 +6,6 @@
     <string name="loading_chord_message">Loading chord…</string>
     <string name="loading_chord_message_failure">Failed to load chord</string>
     <string name="loading_chord_image_message_failure">Failed to load chord diagram</string>
+    <string name="loading_video_message">Loading video…</string>
+    <string name="watch_button_text">Watch demonstration</string>
 </resources>

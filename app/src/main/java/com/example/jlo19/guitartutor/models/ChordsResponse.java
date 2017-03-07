@@ -13,6 +13,11 @@ public class ChordsResponse {
     @SerializedName("chords")
     private List<Chord> chords;
 
+    public ChordsResponse(boolean error, List<Chord> chords) {
+        this.error = error;
+        this.chords = chords;
+    }
+
     public List<Chord> getChords() {
         return chords;
     }

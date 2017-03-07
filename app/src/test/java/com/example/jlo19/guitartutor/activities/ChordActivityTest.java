@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor;
+package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -7,9 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.widget.Button;
 import android.widget.ImageView;
 
-import com.example.jlo19.guitartutor.activities.ChordActivity;
+import com.example.jlo19.guitartutor.BuildConfig;
+import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.Chord;
@@ -20,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -27,7 +30,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
 
-import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
@@ -49,23 +51,23 @@ public class ChordActivityTest {
     public void setUp()
     {
         // stops real injection of presenter
-        getApp().setComponent(Mockito.mock(AppComponent.class));
+        getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
         // giving activity a selected chord
-        selectedChord = new Chord(1, "A", "MAJOR", "A.png");
+        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4");
         Intent intent = new Intent();
         intent.putExtra("CHORD", selectedChord);
 
         activity = Robolectric.buildActivity(ChordActivity.class, intent)
                 .create().get();
-        presenter = Mockito.mock(ChordPresenter.class);
+        presenter = PowerMockito.mock(ChordPresenter.class);
         activity.setPresenter(presenter);
     }
 
     @Test
     public void setPresenter_SetsActivityAsViewInPresenter() {
         // assert
-        verify(presenter).setView(activity);
+        Mockito.verify(presenter).setView(activity);
     }
 
     @Test
@@ -132,6 +134,16 @@ public class ChordActivityTest {
         ImageView view = (ImageView) activity.findViewById(R.id.imageView);
         Drawable actual = view.getDrawable();
         Assert.assertEquals(new BitmapDrawable(getApp().getResources(),expected), actual);
+    }
+
+    @Test
+    public void watchButtonClicked_CallsGetVideoOnPresenter() {
+        // act
+        Button button = (Button) activity.findViewById(R.id.btnWatch);
+        button.performClick();
+
+        // assert
+        Mockito.verify(presenter).getVideo();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor;
+package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,8 +7,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.example.jlo19.guitartutor.activities.AllChordsActivity;
-import com.example.jlo19.guitartutor.activities.ChordActivity;
+import com.example.jlo19.guitartutor.BuildConfig;
+import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.Chord;
@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -30,7 +31,6 @@ import org.robolectric.shadows.ShadowToast;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
@@ -51,26 +51,26 @@ public class AllChordsActivityTest {
     public void setUp()
     {
         // stops real injection of presenter
-        getApp().setComponent(Mockito.mock(AppComponent.class));
+        getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
         activity = Robolectric.buildActivity(AllChordsActivity.class)
                 .create().get();
-        presenter = Mockito.mock(AllChordsPresenter.class);
+        presenter = PowerMockito.mock(AllChordsPresenter.class);
         activity.setPresenter(presenter);
     }
 
     @Test
     public void setPresenter_SetsActivityAsViewInPresenter() {
         // assert
-        verify(presenter).setView(activity);
+        Mockito.verify(presenter).setView(activity);
     }
 
     @Test
     public void setChords_SetsGridViewWithChordItems() {
         // arrange
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png"),
-                new Chord(2, "B", "MAJOR", "B.png"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
 
         // act
         activity.setChords(chords);
@@ -85,8 +85,8 @@ public class AllChordsActivityTest {
     public void setChords_WhenChordButtonClicked_ChordsActivityIsStartedWithSelectedChord() {
         // arrange
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png"),
-                new Chord(2, "B", "MAJOR", "B.png"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
         activity.setChords(chords);
 
         // act
@@ -120,7 +120,7 @@ public class AllChordsActivityTest {
         activity.setToolbarTitleText();
 
         // assert
-        TextView view = (TextView) activity.findViewById(R.id.toolbar_title);
+        TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.all_chords_name),
                 view.getText());
     }
