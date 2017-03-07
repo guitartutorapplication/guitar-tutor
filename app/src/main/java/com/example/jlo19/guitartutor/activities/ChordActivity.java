@@ -48,6 +48,14 @@ public class ChordActivity extends AppCompatActivity implements ChordView {
                 presenter.getVideo();
             }
         });
+        Button btnHelp = (Button) findViewById(R.id.btnHelp);
+        btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), DiagramHelpActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Inject

@@ -48,6 +48,13 @@
         android:layout_marginRight="20dp">
 
         <Button
+            android:text="@string/diagram_help_button_text"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnHelp"
+            android:layout_width="400dp" />
+
+        <Button
             android:text="@string/watch_button_text"
             android:layout_height="wrap_content"
             android:id="@+id/btnWatch"

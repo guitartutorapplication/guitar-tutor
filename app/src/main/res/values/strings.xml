@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Guitar Tutor</string>
     <string name="all_chords_name">Chords</string>
+    <string name="diagram_help_name">How to read a chord diagram</string>
     <string name="loading_chords_message">Loading chords…</string>
     <string name="loading_chords_message_failure">Failed to load chords</string>
     <string name="loading_chord_message">Loading chord…</string>
@@ -8,4 +9,5 @@
     <string name="loading_chord_image_message_failure">Failed to load chord diagram</string>
     <string name="loading_video_message">Loading video…</string>
     <string name="watch_button_text">Watch demonstration</string>
+    <string name="diagram_help_button_text">Chord diagram help</string>
 </resources>
