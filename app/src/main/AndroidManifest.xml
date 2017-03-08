@@ -14,17 +14,13 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.AllChordsActivity"
-            android:configChanges="orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.HomeActivity" />
         <activity
             android:name=".activities.ChordActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.AllChordsActivity" />
+            android:parentActivityName=".activities.AllChordsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.VideoActivity"
             android:configChanges="orientation|screenSize"
@@ -33,6 +29,18 @@
             android:name=".activities.DiagramHelpActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.ChordActivity" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.PractiseActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.HomeActivity" />
     </application>
 
 </manifest>

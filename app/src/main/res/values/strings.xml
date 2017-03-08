@@ -1,13 +1,19 @@
 <resources>
     <string name="app_name">Guitar Tutor</string>
     <string name="all_chords_name">Chords</string>
-    <string name="diagram_help_name">How to read a chord diagram</string>
+    <string name="diagram_help_name">Reading a chord diagram</string>
     <string name="loading_chords_message">Loading chords…</string>
     <string name="loading_chords_message_failure">Failed to load chords</string>
     <string name="loading_chord_message">Loading chord…</string>
     <string name="loading_chord_message_failure">Failed to load chord</string>
     <string name="loading_chord_image_message_failure">Failed to load chord diagram</string>
     <string name="loading_video_message">Loading video…</string>
-    <string name="watch_button_text">Watch demonstration</string>
-    <string name="diagram_help_button_text">Chord diagram help</string>
+    <string name="watch_button_text">Watch demo</string>
+    <string name="diagram_help_button_text">Diagram help</string>
+    <string name="practising_chords_name">Practising chords</string>
+    <string name="learn_chords_button_text">Learn chords</string>
+    <string name="practise_chords_button_text">Practise chords</string>
+    <string name="practise_instruction">Play the metronome sound and try to make your strums and chord changes in time</string>
+    <string name="stop_button_text">Stop</string>
+    <string name="start_button_text">Start</string>
 </resources>
