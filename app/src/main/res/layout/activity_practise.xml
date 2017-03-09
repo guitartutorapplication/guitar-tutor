@@ -17,12 +17,12 @@
         android:text="@string/practise_instruction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnStart"
-        android:id="@+id/textView"
-        android:textSize="45sp"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/txtInstruction"
+        android:textSize="40sp"
         android:textColor="@color/colorText"
-        android:textStyle="italic"
-        android:gravity="center" />
+        android:gravity="center"
+        android:textStyle="italic" />
 
     <Button
         android:text="@string/start_button_text"
@@ -30,11 +30,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnStart"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
         android:textSize="50sp"
         android:drawableTop="@drawable/play_icon"
         android:width="200dp"
-        android:height="150dp" />
+        android:height="150dp"
+        android:layout_marginBottom="20dp" />
 
     <Button
         android:text="@string/stop_button_text"
@@ -42,11 +43,22 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnStop"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
         android:textSize="50sp"
         android:drawableTop="@drawable/stop_icon"
         android:width="200dp"
         android:height="150dp"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/txtChord"
+        android:textStyle="bold"
+        android:textSize="340sp"
+        android:textColor="@color/colorText" />
 
 </RelativeLayout>
