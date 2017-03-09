@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
         btnPractise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
+                Intent intent = new Intent(getBaseContext(), PractiseSetupActivity.class);
                 startActivity(intent);
             }
         });

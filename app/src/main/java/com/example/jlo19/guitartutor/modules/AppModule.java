@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.modules;
 
-import com.example.jlo19.guitartutor.presenters.AllChordsPresenter;
+import com.example.jlo19.guitartutor.presenters.GetAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.ChordPresenter;
 import com.example.jlo19.guitartutor.services.AmazonS3Service;
 
@@ -17,8 +17,8 @@ import dagger.Provides;
 public class AppModule {
     @Provides
     @Singleton
-    AllChordsPresenter provideAllChordsPresenter() {
-        return new AllChordsPresenter();
+    GetAllChordsPresenter provideAllChordsPresenter() {
+        return new GetAllChordsPresenter();
     }
 
     @Provides

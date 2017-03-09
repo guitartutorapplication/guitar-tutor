@@ -16,4 +16,10 @@
     <string name="practise_instruction">Play the metronome sound and try to make your strums and chord changes in time</string>
     <string name="stop_button_text">Stop</string>
     <string name="start_button_text">Start</string>
+    <string name="practise_setup_name">Practise setup</string>
+    <string name="practise_setup_instruction">Please select between 2 and 4 chords to practise</string>
+    <string name="select_chord_instruction">Please select a chord…</string>
+    <string name="less_than_two_selected_chords_error">Please select 2 or more chords to practise</string>
+    <string name="same_chord_selected_error">Please do not select the same chord multiple times</string>
+    <string name="practise_button_text">Practise!</string>
 </resources>

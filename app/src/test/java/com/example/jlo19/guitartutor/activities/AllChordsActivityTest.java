@@ -12,7 +12,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.Chord;
-import com.example.jlo19.guitartutor.presenters.AllChordsPresenter;
+import com.example.jlo19.guitartutor.presenters.GetAllChordsPresenter;
 
 import junit.framework.Assert;
 
@@ -41,7 +41,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class AllChordsActivityTest {
 
     private AllChordsActivity activity;
-    private AllChordsPresenter presenter;
+    private GetAllChordsPresenter presenter;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -55,7 +55,7 @@ public class AllChordsActivityTest {
 
         activity = Robolectric.buildActivity(AllChordsActivity.class)
                 .create().get();
-        presenter = PowerMockito.mock(AllChordsPresenter.class);
+        presenter = PowerMockito.mock(GetAllChordsPresenter.class);
         activity.setPresenter(presenter);
     }
 

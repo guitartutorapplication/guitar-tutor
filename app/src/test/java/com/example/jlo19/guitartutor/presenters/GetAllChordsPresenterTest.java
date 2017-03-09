@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.services.DatabaseApi;
 import com.example.jlo19.guitartutor.services.DatabaseService;
-import com.example.jlo19.guitartutor.views.AllChordsView;
+import com.example.jlo19.guitartutor.views.GetAllChordsView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,15 +18,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Testing AllChordsPresenter
+ * Testing GetAllChordsPresenter
  */
 @PowerMockIgnore("javax.net.ssl.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DatabaseService.class)
-public class AllChordsPresenterTest {
+public class GetAllChordsPresenterTest {
 
-    private AllChordsPresenter presenter;
-    private AllChordsView view;
+    private GetAllChordsPresenter presenter;
+    private GetAllChordsView view;
 
     @Before
     public void setUp() {
@@ -43,9 +43,9 @@ public class AllChordsPresenterTest {
         // mocking api and view
         PowerMockito.mockStatic(DatabaseService.class);
         PowerMockito.when(DatabaseService.getApi()).thenReturn(api);
-        view = Mockito.mock(AllChordsView.class);
+        view = Mockito.mock(GetAllChordsView.class);
 
-        presenter = new AllChordsPresenter();
+        presenter = new GetAllChordsPresenter();
     }
 
     @Test

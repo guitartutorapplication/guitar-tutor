@@ -38,9 +38,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.PractiseActivity"
+        <activity
+            android:name=".activities.PractiseActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.HomeActivity" />
+            android:parentActivityName=".activities.PractiseSetupActivity" />
+        <activity android:name=".activities.PractiseSetupActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.HomeActivity"/>
     </application>
 
 </manifest>

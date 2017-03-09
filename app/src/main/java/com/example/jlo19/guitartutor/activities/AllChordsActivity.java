@@ -14,8 +14,8 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.Chord;
-import com.example.jlo19.guitartutor.presenters.AllChordsPresenter;
-import com.example.jlo19.guitartutor.views.AllChordsView;
+import com.example.jlo19.guitartutor.presenters.GetAllChordsPresenter;
+import com.example.jlo19.guitartutor.views.GetAllChordsView;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import javax.inject.Inject;
 /**
  * Activity that shows all the chords on the screen
  */
-public class AllChordsActivity extends AppCompatActivity implements AllChordsView {
+public class AllChordsActivity extends AppCompatActivity implements GetAllChordsView {
 
     private ProgressDialog progressDialog;
 
@@ -38,7 +38,7 @@ public class AllChordsActivity extends AppCompatActivity implements AllChordsVie
     }
 
     @Inject
-    public void setPresenter(AllChordsPresenter presenter) {
+    public void setPresenter(GetAllChordsPresenter presenter) {
         presenter.setView(this);
     }
 

@@ -5,9 +5,9 @@ import com.example.jlo19.guitartutor.models.Chord;
 import java.util.List;
 
 /**
- * View interface for AllChordActivity
+ * View interface for activities that get all chords from DB
  */
-public interface AllChordsView {
+public interface GetAllChordsView {
     void setToolbarTitleText();
     void showProgressBar();
     void hideProgressBar();

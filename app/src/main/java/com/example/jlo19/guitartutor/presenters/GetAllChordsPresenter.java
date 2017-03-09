@@ -4,7 +4,7 @@ import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.models.ChordsResponse;
 import com.example.jlo19.guitartutor.services.DatabaseApi;
 import com.example.jlo19.guitartutor.services.DatabaseService;
-import com.example.jlo19.guitartutor.views.AllChordsView;
+import com.example.jlo19.guitartutor.views.GetAllChordsView;
 
 import java.util.List;
 
@@ -13,18 +13,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Presenter which provides the AllChordActivity with data from the database API
+ * Presenter which provides the activities with all chords from the database API
  */
-public class AllChordsPresenter {
+public class GetAllChordsPresenter {
 
-    private AllChordsView view;
+    private GetAllChordsView view;
     private DatabaseApi api;
 
-    public AllChordsPresenter() {
+    public GetAllChordsPresenter() {
         api = DatabaseService.getApi();
     }
 
-    public void setView(AllChordsView view) {
+    public void setView(GetAllChordsView view) {
         this.view = view;
         view.setToolbarTitleText();
         view.showProgressBar();
