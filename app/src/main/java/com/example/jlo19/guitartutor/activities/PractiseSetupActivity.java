@@ -3,8 +3,8 @@ package com.example.jlo19.guitartutor.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,24 +14,23 @@ import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.Chord;
-import com.example.jlo19.guitartutor.presenters.GetAllChordsPresenter;
-import com.example.jlo19.guitartutor.views.GetAllChordsView;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
+import com.example.jlo19.guitartutor.views.PractiseSetupView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.inject.Inject;
 
-public class PractiseSetupActivity extends AppCompatActivity implements GetAllChordsView {
+public class PractiseSetupActivity extends AppCompatActivity implements PractiseSetupView {
 
     private ProgressDialog progressDialog;
     private String defaultSpinnerOption;
     private List<Spinner> spnChords;
+    private IPractiseSetupPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +52,7 @@ public class PractiseSetupActivity extends AppCompatActivity implements GetAllCh
         btnPractise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // retrieving selected chords (non default option)
                 ArrayList<String> selectedChords = new ArrayList<>();
                 for(int i = 0; i < spnChords.size(); i++) {
                     String selectedChord = spnChords.get(i).getSelectedItem().toString();
@@ -61,30 +61,14 @@ public class PractiseSetupActivity extends AppCompatActivity implements GetAllCh
                     }
                 }
 
-                Set<String> uniqueChords = new HashSet<>(selectedChords);
-
-                // if the user has selected less than two chords
-                if (selectedChords.size() < 2) {
-                    Toast.makeText(getApplicationContext(),
-                            R.string.less_than_two_selected_chords_error, Toast.LENGTH_SHORT).show();
-                }
-                // if the user has selected the same chord twice
-                else if (uniqueChords.size() < selectedChords.size()) {
-                    Toast.makeText(getApplicationContext(),
-                            R.string.same_chord_selected_error, Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    // passing through selected chords to new activity
-                    Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
-                    intent.putExtra("CHORDS", selectedChords);
-                    startActivity(intent);
-                }
+                presenter.viewOnChordsSelected(selectedChords);
             }
         });
     }
 
     @Inject
-    public void setPresenter(GetAllChordsPresenter presenter) {
+    public void setPresenter(IPractiseSetupPresenter presenter) {
+        this.presenter = presenter;
         presenter.setView(this);
     }
 
@@ -130,9 +114,28 @@ public class PractiseSetupActivity extends AppCompatActivity implements GetAllCh
     }
 
     @Override
-    public void showError() {
-        // error pop up message
+    public void showLoadChordsError() {
         Toast.makeText(getApplicationContext(),
                 R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showLessThanTwoChordsSelectedError() {
+        Toast.makeText(getApplicationContext(),
+                R.string.less_than_two_selected_chords_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSameSelectedChordError() {
+        Toast.makeText(getApplicationContext(),
+                R.string.same_chord_selected_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void startPractiseActivity(ArrayList<String> selectedChords) {
+        // passing through selected chords to new activity
+        Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
+        intent.putExtra("CHORDS", selectedChords);
+        startActivity(intent);
     }
 }

@@ -69,8 +69,8 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/btnPractise"
         android:height="150dp"
-        android:width="300dp"
-        android:textSize="50sp"
+        android:width="320dp"
+        android:textSize="43sp"
         android:drawableStart="@drawable/quaver_music_icon"
         android:layout_marginTop="10dp" />
 

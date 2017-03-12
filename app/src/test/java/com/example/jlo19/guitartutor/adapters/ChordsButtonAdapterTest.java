@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.jlo19.guitartutor.BuildConfig;
-import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import junit.framework.Assert;
 
@@ -45,10 +45,10 @@ public class ChordsButtonAdapterTest {
     @Test
     public void getCount_ReturnsNumberOfChords() {
         // act
-        int actual = adapter.getCount();
+        int actualCount = adapter.getCount();
 
         // assert
-        Assert.assertEquals(chords.size(), actual);
+        Assert.assertEquals(chords.size(), actualCount);
     }
 
     @Test
@@ -56,10 +56,10 @@ public class ChordsButtonAdapterTest {
         int position = 0;
 
         // act
-        Chord actual = (Chord) adapter.getItem(position);
+        Chord actualChord = (Chord) adapter.getItem(position);
 
         // assert
-        Assert.assertEquals(chords.get(position), actual);
+        Assert.assertEquals(chords.get(position), actualChord);
     }
 
     @Test
@@ -67,10 +67,10 @@ public class ChordsButtonAdapterTest {
         int position = 0;
 
         // act
-        int actual = (int) adapter.getItemId(position);
+        int actualId = (int) adapter.getItemId(position);
 
         // assert
-        Assert.assertEquals(position, actual);
+        Assert.assertEquals(position, actualId);
     }
 
     @Test

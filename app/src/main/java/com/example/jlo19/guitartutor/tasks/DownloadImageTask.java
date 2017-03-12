@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.example.jlo19.guitartutor.listeners.DownloadImageTaskListener;
@@ -16,13 +16,19 @@ import java.io.IOException;
  */
 public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-    private AmazonS3Client client;
+    private AmazonS3 client;
     private String filename;
     private DownloadImageTaskListener listener;
 
-    public DownloadImageTask(AmazonS3Client client, String filename, DownloadImageTaskListener listener) {
+    public void setClient(AmazonS3 client) {
         this.client = client;
+    }
+
+    public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public void setListener(DownloadImageTaskListener listener) {
         this.listener = listener;
     }
 

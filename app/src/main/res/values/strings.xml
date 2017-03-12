@@ -24,4 +24,5 @@
     <string name="less_than_two_selected_chords_error">Please select 2 or more chords to practise</string>
     <string name="same_chord_selected_error">Please do not select the same chord multiple times</string>
     <string name="practise_button_text">Practise!</string>
+    <string name="practise_error_occurred_message">An error has occurred in the practise activity</string>
 </resources>

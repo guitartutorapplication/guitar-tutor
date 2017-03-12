@@ -7,24 +7,49 @@ import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.jlo19.guitartutor.R;
+import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceListener;
-import com.example.jlo19.guitartutor.listeners.DownloadImageTaskListener;
-import com.example.jlo19.guitartutor.listeners.DownloadVideoTaskListener;
+import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.tasks.DownloadImageTask;
 import com.example.jlo19.guitartutor.tasks.DownloadVideoTask;
 
-import java.net.URL;
+import javax.inject.Inject;
 
 /**
  * Manages calls to Amazon S3 storage
  */
-public class AmazonS3Service implements DownloadImageTaskListener, DownloadVideoTaskListener{
+public class AmazonS3Service implements IAmazonS3Service {
 
-    private AmazonS3Client client;
+    AmazonS3Client client;
     private AmazonS3ServiceListener listener;
+    CognitoCachingCredentialsProvider credentialsProvider;
+    private DownloadImageTask downloadImageTask;
+    private DownloadVideoTask downloadVideoTask;
+
+    public AmazonS3Service() {
+        App.getComponent().inject(this);
+    }
+
+    @Inject
+    void setDownloadImageTask(DownloadImageTask task) {
+        this.downloadImageTask = task;
+        downloadImageTask.setListener(this);
+    }
+
+    @Inject
+    void setDownloadVideoTask(DownloadVideoTask task) {
+        this.downloadVideoTask = task;
+        downloadVideoTask.setListener(this);
+    }
 
     public void getImage(String filename) {
-        new DownloadImageTask(client, filename, this).execute();
+        downloadImageTask.setFilename(filename);
+        downloadImageTask.execute();
+    }
+
+    public void getVideo(String filename) {
+        downloadVideoTask.setFilename(filename);
+        downloadVideoTask.execute();
     }
 
     @Override
@@ -34,7 +59,7 @@ public class AmazonS3Service implements DownloadImageTaskListener, DownloadVideo
     }
 
     @Override
-    public void onDownloadSuccess(URL url) {
+    public void onDownloadSuccess(String url) {
         // if task successfully retrieves URL, send back URL
         listener.onDownloadSuccess(url);
     }
@@ -51,17 +76,14 @@ public class AmazonS3Service implements DownloadImageTaskListener, DownloadVideo
 
     public void setClient(Context context) {
         // setting up S3 client
-        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+        credentialsProvider = new CognitoCachingCredentialsProvider(
                 context,
                 context.getResources().getString(R.string.identity_pool_id),
                 Regions.EU_WEST_1
         );
-
         client = new AmazonS3Client(credentialsProvider);
         client.setRegion(com.amazonaws.regions.Region.getRegion(Regions.EU_WEST_1));
-    }
-
-    public void getVideo(String filename) {
-        new DownloadVideoTask(client, filename, this).execute();
+        downloadImageTask.setClient(client);
+        downloadVideoTask.setClient(client);
     }
 }

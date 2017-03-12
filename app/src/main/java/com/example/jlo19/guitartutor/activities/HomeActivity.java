@@ -24,7 +24,7 @@ public class HomeActivity extends AppCompatActivity {
         btnLearn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), AllChordsActivity.class);
+                Intent intent = new Intent(getBaseContext(), LearnViewAllChordsActivity.class);
                 startActivity(intent);
             }
         });

@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
-import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import java.util.List;
 
