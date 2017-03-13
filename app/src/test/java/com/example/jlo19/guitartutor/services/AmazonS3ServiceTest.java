@@ -79,32 +79,41 @@ public class AmazonS3ServiceTest {
     }
 
     @Test
-    public void onDownloadFailed_CallsOnDownloadFailedOnListener() {
+    public void onImageDownloadFailed_CallsOnImageDownloadFailedOnListener() {
         // act
-        service.onDownloadFailed();
+        service.onImageDownloadFailed();
 
         // assert
-        Mockito.verify(listener).onDownloadFailed();
+        Mockito.verify(listener).onImageDownloadFailed();
     }
 
     @Test
-    public void onDownloadSuccessUrl_CallsOnDownloadSuccessUrlOnListener() {
+    public void onVideoDownloadSuccess_CallsOnVideoDownloadSuccessOnListener() {
         // act
         String expectedUrl = "url";
-        service.onDownloadSuccess(expectedUrl);
+        service.onVideoDownloadSuccess(expectedUrl);
 
         // assert
-        Mockito.verify(listener).onDownloadSuccess(expectedUrl);
+        Mockito.verify(listener).onVideoDownloadSuccess(expectedUrl);
     }
 
     @Test
-    public void onDownloadSuccessBitmap_CallsOnDownloadSuccessBitmapOnListener() {
+    public void onVideoDownloadFailed_CallsOnVideoDownloadFailedOnListener() {
         // act
-        Bitmap expectedImage = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888);
-        service.onDownloadSuccess(expectedImage);
+        service.onVideoDownloadFailed();
 
         // assert
-        Mockito.verify(listener).onDownloadSuccess(expectedImage);
+        Mockito.verify(listener).onVideoDownloadFailed();
+    }
+
+    @Test
+    public void onImageDownloadSuccessBitmap_CallsOnImageDownloadSuccessOnListener() {
+        // act
+        Bitmap expectedImage = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888);
+        service.onImageDownloadSuccess(expectedImage);
+
+        // assert
+        Mockito.verify(listener).onImageDownloadSuccess(expectedImage);
     }
 
     @Test

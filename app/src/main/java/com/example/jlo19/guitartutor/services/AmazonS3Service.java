@@ -30,21 +30,27 @@ public class AmazonS3Service implements IAmazonS3Service {
     }
 
     @Override
-    public void onDownloadFailed() {
+    public void onImageDownloadFailed() {
         // if task fails to retrieve image, report failure
-        listener.onDownloadFailed();
+        listener.onImageDownloadFailed();
     }
 
     @Override
-    public void onDownloadSuccess(String url) {
+    public void onVideoDownloadSuccess(String url) {
         // if task successfully retrieves URL, send back URL
-        listener.onDownloadSuccess(url);
+        listener.onVideoDownloadSuccess(url);
     }
 
     @Override
-    public void onDownloadSuccess(Bitmap bitmap) {
+    public void onVideoDownloadFailed() {
+        // if task fails to retrieve image, report failure
+        listener.onVideoDownloadFailed();
+    }
+
+    @Override
+    public void onImageDownloadSuccess(Bitmap bitmap) {
         // if task successfully retrieves image, send back image
-        listener.onDownloadSuccess(bitmap);
+        listener.onImageDownloadSuccess(bitmap);
     }
 
     public void setListener(AmazonS3ServiceListener listener) {

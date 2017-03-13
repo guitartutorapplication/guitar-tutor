@@ -84,49 +84,76 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void modelOnDownloadFailed_CallsShowErrorOnView() {
+    public void viewOnVideoRequested_ShowsProgressBarOnView() {
         // act
-        presenter.modelOnDownloadFailed();
+        presenter.viewOnVideoRequested();
 
-        // assert
-        Mockito.verify(view).showError();
+        // assert (once for image load and once for video load)
+        Mockito.verify(view, Mockito.times(2)).showProgressBar();
     }
 
     @Test
-    public void modelOnDownloadSuccessBitmap_CallsHideProgressBarOnView() {
+    public void modelOnImageDownloadFailed_CallsShowErrorOnView() {
         // act
-        presenter.modelOnDownloadSuccess(Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888));
+        presenter.modelOnImageDownloadFailed();
+
+        // assert
+        Mockito.verify(view).showImageLoadError();
+    }
+
+    @Test
+    public void modelOnImageDownloadSuccess_CallsHideProgressBarOnView() {
+        // act
+        presenter.modelOnImageDownloadSuccess(Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888));
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnDownloadSuccessBitmap_CallsSetImageOnView() {
+    public void modelOnImageDownloadSuccessBitmap_CallsSetImageOnView() {
         // act
         Bitmap expectedImage = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888);
-        presenter.modelOnDownloadSuccess(expectedImage);
+        presenter.modelOnImageDownloadSuccess(expectedImage);
 
         // assert
         Mockito.verify(view).setImage(expectedImage);
     }
 
     @Test
-    public void modelOnDownloadSuccessUrl_CallsHideProgressBarOnView() {
+    public void modelOnVideoDownloadSuccess_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnDownloadSuccess("url");
+        presenter.modelOnVideoDownloadSuccess("url");
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnDownloadSuccessUrl_CallsPlayVideoOnView() {
+    public void modelOnVideoDownloadSuccess_CallsPlayVideoOnView() {
         // act
         String expectedUrl = "url";
-        presenter.modelOnDownloadSuccess(expectedUrl);
+        presenter.modelOnVideoDownloadSuccess(expectedUrl);
 
         // assert
         Mockito.verify(view).playVideo(expectedUrl);
+    }
+
+    @Test
+    public void modelOnVideoDownloadFailed_HidesProgressBarOnView() {
+        // act
+        presenter.modelOnVideoDownloadFailed();
+
+        // assert
+        Mockito.verify(view).hideProgressBar();
+    }
+
+    @Test
+    public void modelOnVideoDownloadFailed_ShowVideoLoadErrorOnView() {
+        // act
+        presenter.modelOnVideoDownloadFailed();
+
+        // assert
+        Mockito.verify(view).showVideoLoadError();
     }
 }

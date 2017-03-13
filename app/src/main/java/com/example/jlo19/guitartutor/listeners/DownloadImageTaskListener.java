@@ -7,6 +7,6 @@ import android.graphics.Bitmap;
  */
 
 public interface DownloadImageTaskListener {
-    void onDownloadFailed();
-    void onDownloadSuccess(Bitmap bitmap);
+    void onImageDownloadFailed();
+    void onImageDownloadSuccess(Bitmap bitmap);
 }

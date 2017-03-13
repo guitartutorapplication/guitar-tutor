@@ -2,9 +2,12 @@ package com.example.jlo19.guitartutor.tasks;
 
 import android.os.AsyncTask;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.jlo19.guitartutor.listeners.DownloadVideoTaskListener;
+
+import java.net.URL;
 
 /**
  * Asynchronous task to retrieve video from Amazon S3
@@ -25,16 +28,27 @@ public class DownloadVideoTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
-        // retrieves URL from S3
-        request = new GeneratePresignedUrlRequest("guitar.tutor.data",
-                filename);
+        try {
+            // retrieves URL from S3
+            request = new GeneratePresignedUrlRequest("guitar.tutor.data",
+                    filename);
+            URL url = client.generatePresignedUrl(request);
 
-        return client.generatePresignedUrl(request).toString();
+            return url.toString();
+        }
+        catch (AmazonClientException ex) {
+            return null;
+        }
     }
 
     @Override
     protected void onPostExecute(String url) {
-        listener.onDownloadSuccess(url);
+        if (url != null) {
+            listener.onVideoDownloadSuccess(url);
+        }
+        else {
+            listener.onVideoDownloadFailed();
+        }
     }
 
 }

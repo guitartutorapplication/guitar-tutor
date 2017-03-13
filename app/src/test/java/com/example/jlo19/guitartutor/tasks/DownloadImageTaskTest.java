@@ -80,12 +80,20 @@ public class DownloadImageTaskTest {
     @Test
     public void onPostExecute_CallsOnDownloadSuccessOnListener() throws IOException {
         // act
-        Bitmap expectedBitmap = BitmapFactory.decodeByteArray(IOUtils.toByteArray(input), 0,
-                IOUtils.toByteArray(input).length);
+        Bitmap expectedBitmap = Mockito.mock(Bitmap.class);
         task.onPostExecute(expectedBitmap);
 
         // assert
-        Mockito.verify(listener).onDownloadSuccess(expectedBitmap);
+        Mockito.verify(listener).onImageDownloadSuccess(expectedBitmap);
+    }
+
+    @Test
+    public void onPostExecuteWithNull_CallsOnDownloadFailedOnListener() {
+        // act
+        task.onPostExecute(null);
+
+        // assert
+        Mockito.verify(listener).onImageDownloadFailed();
     }
 
     @Test
@@ -94,6 +102,6 @@ public class DownloadImageTaskTest {
         task.onCancelled();
 
         // assert
-        Mockito.verify(listener).onDownloadFailed();
+        Mockito.verify(listener).onImageDownloadFailed();
     }
 }

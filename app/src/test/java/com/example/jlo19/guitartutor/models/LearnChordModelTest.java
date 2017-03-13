@@ -44,32 +44,41 @@ public class LearnChordModelTest {
     }
 
     @Test
-    public void onDownloadFailed_CallsOnDownloadFailedOnPresenter() {
+    public void onImageDownloadFailed_CallsOnDownloadFailedOnPresenter() {
         // act
-        model.onDownloadFailed();
+        model.onImageDownloadFailed();
 
         // assert
-        Mockito.verify(presenter).modelOnDownloadFailed();
+        Mockito.verify(presenter).modelOnImageDownloadFailed();
     }
 
     @Test
-    public void onDownloadSuccessBitmap_CallsOnDownloadSuccessWithBitmapOnPresenter() {
+    public void onVideoDownloadFailed_CallsOnDownloadFailedOnPresenter() {
+        // act
+        model.onVideoDownloadFailed();
+
+        // assert
+        Mockito.verify(presenter).modelOnVideoDownloadFailed();
+    }
+
+    @Test
+    public void onImageDownloadSuccess_CallsOnDownloadSuccessWithBitmapOnPresenter() {
         // act
         Bitmap expectedBitmap = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888);
-        model.onDownloadSuccess(expectedBitmap);
+        model.onImageDownloadSuccess(expectedBitmap);
 
         // assert
-        Mockito.verify(presenter).modelOnDownloadSuccess(expectedBitmap);
+        Mockito.verify(presenter).modelOnImageDownloadSuccess(expectedBitmap);
     }
 
     @Test
-    public void onDownloadSuccessUrl_CallsOnDownloadSuccessWithUrlOnPresenter() {
+    public void onVideoDownloadSuccess_CallsOnDownloadSuccessWithUrlOnPresenter() {
         // act
         String expectedUrl = "url";
-        model.onDownloadSuccess(expectedUrl);
+        model.onVideoDownloadSuccess(expectedUrl);
 
         // assert
-        Mockito.verify(presenter).modelOnDownloadSuccess(expectedUrl);
+        Mockito.verify(presenter).modelOnVideoDownloadSuccess(expectedUrl);
     }
 
     @Test

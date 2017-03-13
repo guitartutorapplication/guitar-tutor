@@ -59,11 +59,20 @@ public class DownloadVideoTaskTest {
     }
 
     @Test
-    public void onPostExecute_CallsDownloadSuccessOnUrl() {
+    public void onPostExecute_CallsDownloadSuccessOnListener() {
         // act
         task.onPostExecute(url.toString());
 
         // assert
-        Mockito.verify(listener).onDownloadSuccess(url.toString());
+        Mockito.verify(listener).onVideoDownloadSuccess(url.toString());
+    }
+
+    @Test
+    public void onPostExecuteWithNull_CallsDownloadFailedOnListener() {
+        // act
+        task.onPostExecute(null);
+
+        // assert
+        Mockito.verify(listener).onVideoDownloadFailed();
     }
 }

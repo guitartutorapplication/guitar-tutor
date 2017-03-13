@@ -7,7 +7,8 @@ import android.graphics.Bitmap;
  */
 public interface ILearnChordPresenter extends IPresenter {
     void viewOnVideoRequested();
-    void modelOnDownloadFailed();
-    void modelOnDownloadSuccess(Bitmap bitmap);
-    void modelOnDownloadSuccess(String url);
+    void modelOnImageDownloadFailed();
+    void modelOnImageDownloadSuccess(Bitmap bitmap);
+    void modelOnVideoDownloadSuccess(String url);
+    void modelOnVideoDownloadFailed();
 }

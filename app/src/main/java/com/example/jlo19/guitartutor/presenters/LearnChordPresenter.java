@@ -36,23 +36,31 @@ public class LearnChordPresenter implements ILearnChordPresenter {
 
     @Override
     public void viewOnVideoRequested() {
+        view.showProgressBar();
         model.getVideo(view.getChord().getVideoFilename());
     }
 
     @Override
-    public void modelOnDownloadFailed() {
-        view.showError();
+    public void modelOnImageDownloadFailed() {
+        view.hideProgressBar();
+        view.showImageLoadError();
     }
 
     @Override
-    public void modelOnDownloadSuccess(Bitmap bitmap) {
+    public void modelOnImageDownloadSuccess(Bitmap bitmap) {
         view.hideProgressBar();
         view.setImage(bitmap);
     }
 
     @Override
-    public void modelOnDownloadSuccess(String url) {
+    public void modelOnVideoDownloadSuccess(String url) {
         view.hideProgressBar();
         view.playVideo(url);
+    }
+
+    @Override
+    public void modelOnVideoDownloadFailed() {
+        view.hideProgressBar();
+        view.showVideoLoadError();
     }
 }

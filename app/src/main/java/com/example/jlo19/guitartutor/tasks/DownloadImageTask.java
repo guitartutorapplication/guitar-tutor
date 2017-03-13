@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
@@ -28,28 +29,38 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(Void... params) {
-        S3ObjectInputStream content = client.getObject("guitar.tutor.data", filename)
-                .getObjectContent();
-
-        // retrieves bitmap from input stream
-        byte[] bytes = new byte[0];
         try {
-            bytes = IOUtils.toByteArray(content);
-        } catch (IOException e) {
-            // if exception is found, cancel task
-            cancel(true);
+            S3ObjectInputStream content = client.getObject("guitar.tutor.data", filename)
+                    .getObjectContent();
+
+            // retrieves bitmap from input stream
+            byte[] bytes = new byte[0];
+            try {
+                bytes = IOUtils.toByteArray(content);
+            } catch (IOException e) {
+                // if exception is found, cancel task
+                cancel(true);
+            }
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        catch (AmazonClientException ex) {
+            return null;
+        }
     }
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        listener.onDownloadSuccess(bitmap);
+        if (bitmap != null) {
+            listener.onImageDownloadSuccess(bitmap);
+        }
+        else {
+            listener.onImageDownloadFailed();
+        }
     }
 
     @Override
     protected void onCancelled() {
-        listener.onDownloadFailed();
+        listener.onImageDownloadFailed();
     }
 
 }

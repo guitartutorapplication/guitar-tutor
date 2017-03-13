@@ -5,5 +5,6 @@ package com.example.jlo19.guitartutor.listeners;
  */
 
 public interface DownloadVideoTaskListener {
-    void onDownloadSuccess(String url);
+    void onVideoDownloadSuccess(String url);
+    void onVideoDownloadFailed();
 }

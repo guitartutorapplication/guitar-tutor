@@ -29,18 +29,23 @@ public class LearnChordModel implements ILearnChordModel {
     }
 
     @Override
-    public void onDownloadFailed() {
-        presenter.modelOnDownloadFailed();
+    public void onImageDownloadFailed() {
+        presenter.modelOnImageDownloadFailed();
     }
 
     @Override
-    public void onDownloadSuccess(Bitmap bitmap) {
-        presenter.modelOnDownloadSuccess(bitmap);
+    public void onImageDownloadSuccess(Bitmap bitmap) {
+        presenter.modelOnImageDownloadSuccess(bitmap);
     }
 
     @Override
-    public void onDownloadSuccess(String url) {
-        presenter.modelOnDownloadSuccess(url);
+    public void onVideoDownloadSuccess(String url) {
+        presenter.modelOnVideoDownloadSuccess(url);
+    }
+
+    @Override
+    public void onVideoDownloadFailed() {
+        presenter.modelOnVideoDownloadFailed();
     }
 
     @Override

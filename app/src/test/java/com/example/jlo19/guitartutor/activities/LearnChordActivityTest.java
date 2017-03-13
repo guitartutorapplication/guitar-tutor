@@ -114,13 +114,24 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showImageLoadError_MakesToastWithErrorMessage() {
         // act
-        activity.showError();
+        activity.showImageLoadError();
 
         // assert
         junit.framework.Assert.assertEquals(getApp().getResources()
-                .getString(R.string.loading_chord_image_message_failure),
+                        .getString(R.string.loading_chord_image_message_failure),
+                ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showVideoLoadError_MakesToastWithErrorMessage() {
+        // act
+        activity.showVideoLoadError();
+
+        // assert
+        junit.framework.Assert.assertEquals(getApp().getResources()
+                        .getString(R.string.loading_chord_video_message_failure),
                 ShadowToast.getTextOfLatestToast());
     }
 

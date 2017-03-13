@@ -12,8 +12,9 @@ public interface LearnChordView extends IView{
     void showProgressBar();
     Chord getChord();
     Context getContext();
-    void showError();
+    void showImageLoadError();
     void hideProgressBar();
     void setImage(Bitmap bitmap);
     void playVideo(String url);
+    void showVideoLoadError();
 }

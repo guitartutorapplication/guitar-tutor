@@ -80,7 +80,7 @@ public class LearnChordActivity extends AppCompatActivity implements LearnChordV
     }
 
     @Override
-    public void showError() {
+    public void showImageLoadError() {
         Toast.makeText(getApplicationContext(),
                 R.string.loading_chord_image_message_failure, Toast.LENGTH_SHORT).show();
     }
@@ -103,6 +103,12 @@ public class LearnChordActivity extends AppCompatActivity implements LearnChordV
         Intent intent = new Intent(getBaseContext(), LearnChordVideoActivity.class);
         intent.putExtra("URL", url);
         startActivity(intent);
+    }
+
+    @Override
+    public void showVideoLoadError() {
+        Toast.makeText(getApplicationContext(),
+                R.string.loading_chord_video_message_failure, Toast.LENGTH_SHORT).show();
     }
 
     @Override
