@@ -1,6 +1,6 @@
-package com.example.jlo19.guitartutor.services;
+package com.example.jlo19.guitartutor.services.interfaces;
 
-import com.example.jlo19.guitartutor.models.ChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

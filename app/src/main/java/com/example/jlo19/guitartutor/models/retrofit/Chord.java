@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models;
+package com.example.jlo19.guitartutor.models.retrofit;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,12 +17,15 @@ public class Chord implements Parcelable {
     private String name;
     @SerializedName("type")
     private String type;
+    @SerializedName("video_filename")
+    private String videoFilename;
 
-    public Chord(int id, String name, String type, String diagramFilename) {
+    public Chord(int id, String name, String type, String diagramFilename, String videoFilename) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.diagramFilename = diagramFilename;
+        this.videoFilename = videoFilename;
     }
 
     private Chord(Parcel in) {
@@ -30,6 +33,7 @@ public class Chord implements Parcelable {
         id = in.readInt();
         name = in.readString();
         type = in.readString();
+        videoFilename = in.readString();
     }
 
     public String getDiagramFilename() { return diagramFilename; }
@@ -73,6 +77,7 @@ public class Chord implements Parcelable {
         dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(type);
+        dest.writeString(videoFilename);
     }
 
     public static final Creator<Chord> CREATOR = new Creator<Chord>() {
@@ -86,4 +91,8 @@ public class Chord implements Parcelable {
             return new Chord[size];
         }
     };
+
+    public String getVideoFilename() {
+        return videoFilename;
+    }
 }

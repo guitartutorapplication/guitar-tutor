@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor;
+package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,12 +7,12 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.example.jlo19.guitartutor.activities.AllChordsActivity;
-import com.example.jlo19.guitartutor.activities.ChordActivity;
+import com.example.jlo19.guitartutor.BuildConfig;
+import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.Chord;
-import com.example.jlo19.guitartutor.presenters.AllChordsPresenter;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.presenters.interfaces.IPresenter;
 
 import junit.framework.Assert;
 
@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -30,18 +31,17 @@ import org.robolectric.shadows.ShadowToast;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
- * Testing AllChordsActivity
+ * Testing LearnViewAllChordsActivity
  */
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 @RunWith(RobolectricTestRunner.class)
-public class AllChordsActivityTest {
+public class LearnViewAllChordsActivityTest {
 
-    private AllChordsActivity activity;
-    private AllChordsPresenter presenter;
+    private LearnViewAllChordsActivity activity;
+    private IPresenter presenter;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -51,57 +51,57 @@ public class AllChordsActivityTest {
     public void setUp()
     {
         // stops real injection of presenter
-        getApp().setComponent(Mockito.mock(AppComponent.class));
+        getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        activity = Robolectric.buildActivity(AllChordsActivity.class)
+        activity = Robolectric.buildActivity(LearnViewAllChordsActivity.class)
                 .create().get();
-        presenter = Mockito.mock(AllChordsPresenter.class);
+        presenter = PowerMockito.mock(IPresenter.class);
         activity.setPresenter(presenter);
     }
 
     @Test
     public void setPresenter_SetsActivityAsViewInPresenter() {
         // assert
-        verify(presenter).setView(activity);
+        Mockito.verify(presenter).setView(activity);
     }
 
     @Test
     public void setChords_SetsGridViewWithChordItems() {
         // arrange
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png"),
-                new Chord(2, "B", "MAJOR", "B.png"));
+        List<Chord> expectedChords = Arrays.asList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
 
         // act
-        activity.setChords(chords);
+        activity.setChords(expectedChords);
 
         // assert
         GridView gridView = (GridView) activity.findViewById(R.id.gridView);
-        Assert.assertEquals(chords.get(0), gridView.getAdapter().getItem(0));
-        Assert.assertEquals(chords.get(1), gridView.getAdapter().getItem(1));
+        Assert.assertEquals(expectedChords.get(0), gridView.getAdapter().getItem(0));
+        Assert.assertEquals(expectedChords.get(1), gridView.getAdapter().getItem(1));
     }
 
     @Test
     public void setChords_WhenChordButtonClicked_ChordsActivityIsStartedWithSelectedChord() {
         // arrange
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png"),
-                new Chord(2, "B", "MAJOR", "B.png"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
         activity.setChords(chords);
 
         // act
         GridView gridView = (GridView) activity.findViewById(R.id.gridView);
 
-        int selectedChord = 0;
-        Button button = (Button) gridView.getAdapter().getView(selectedChord, null, gridView);
+        int expectedSelectedChord = 0;
+        Button button = (Button) gridView.getAdapter().getView(expectedSelectedChord, null, gridView);
         button.performClick();
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
-        Assert.assertEquals(ChordActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertEquals(LearnChordActivity.class.getName(), intent.getComponent().getClassName());
         // checks correct chord is passed through
-        Assert.assertEquals(intent.getParcelableExtra("CHORD"), chords.get(selectedChord));
+        Assert.assertEquals(chords.get(expectedSelectedChord), intent.getParcelableExtra("CHORD"));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class AllChordsActivityTest {
         activity.setToolbarTitleText();
 
         // assert
-        TextView view = (TextView) activity.findViewById(R.id.toolbar_title);
+        TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.all_chords_name),
                 view.getText());
     }

@@ -1,13 +1,13 @@
 package com.example.jlo19.guitartutor.views;
 
-import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import java.util.List;
 
 /**
- * View interface for AllChordActivity
+ * View interface for activities that get all chords from DB
  */
-public interface AllChordsView {
+public interface LearnViewAllChordsView extends IView {
     void setToolbarTitleText();
     void showProgressBar();
     void hideProgressBar();

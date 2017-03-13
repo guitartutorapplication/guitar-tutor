@@ -13,7 +13,7 @@ import com.example.jlo19.guitartutor.modules.AppModule;
 
 public class App extends Application {
 
-    private AppComponent component;
+    private static AppComponent component;
 
     @Override public void onCreate() {
         super.onCreate();
@@ -22,12 +22,12 @@ public class App extends Application {
                 .build();
     }
 
-    public AppComponent getComponent() {
+    public static AppComponent getComponent() {
         return component;
     }
 
     @VisibleForTesting
     public void setComponent(AppComponent component) {
-        this.component = component;
+        App.component = component;
     }
 }

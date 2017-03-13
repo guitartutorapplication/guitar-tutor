@@ -6,13 +6,32 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".application.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".application.App">
-        <activity android:name=".activities.AllChordsActivity">
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activities.LearnViewAllChordsActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.HomeActivity" />
+        <activity
+            android:name=".activities.LearnChordActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.LearnViewAllChordsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.LearnChordVideoActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.LearnChordActivity" />
+        <activity
+            android:name=".activities.LearnDiagramHelpActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.LearnChordActivity" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,8 +39,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ChordActivity"
-            android:parentActivityName=".activities.AllChordsActivity" />
+            android:name=".activities.PractiseActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.PractiseSetupActivity" />
+        <activity android:name=".activities.PractiseSetupActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.HomeActivity"/>
     </application>
 
 </manifest>

@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.services;
 
+import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
