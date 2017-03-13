@@ -8,7 +8,7 @@ import java.util.List;
  * Response object from GET chords request
  */
 public class ChordsResponse {
-    @SerializedName("modelOnLoadChordsError")
+    @SerializedName("error")
     private boolean error;
     @SerializedName("chords")
     private List<Chord> chords;

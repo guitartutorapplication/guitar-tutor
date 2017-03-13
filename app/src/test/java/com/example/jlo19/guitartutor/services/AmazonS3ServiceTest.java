@@ -46,48 +46,18 @@ public class AmazonS3ServiceTest {
         // stops real injection of tasks
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        service = new AmazonS3Service();
+        service = Mockito.spy(new AmazonS3Service());
 
         listener = Mockito.mock(AmazonS3ServiceListener.class);
         service.setListener(listener);
 
         downloadImageTask = Mockito.mock(DownloadImageTask.class);
-        ((AmazonS3Service) service).setDownloadImageTask(downloadImageTask);
+        Mockito.when(((AmazonS3Service) service).getDownloadImageTask("filename")).thenReturn(
+                downloadImageTask);
 
         downloadVideoTask = Mockito.mock(DownloadVideoTask.class);
-        ((AmazonS3Service) service).setDownloadVideoTask(downloadVideoTask);
-    }
-
-    @Test
-    public void setDownloadImageTask_SetsListenerOnDownloadImageTask() {
-        // assert
-        Mockito.verify(downloadImageTask).setListener(service);
-    }
-
-    @Test
-    public void setDownloadVideoTask_SetsListenerOnDownloadVideoTask() {
-        // assert
-        Mockito.verify(downloadVideoTask).setListener(service);
-    }
-
-    @Test
-    public void getImage_SetsFilenameOnDownloadImageTask() {
-        // act
-        String expectedFilename = "filename";
-        service.getImage(expectedFilename);
-
-        // assert
-        Mockito.verify(downloadImageTask).setFilename(expectedFilename);
-    }
-
-    @Test
-    public void getVideo_SetsFilenameOnDownloadVideoTask() {
-        // act
-        String expectedFilename = "filename";
-        service.getVideo(expectedFilename);
-
-        // assert
-        Mockito.verify(downloadVideoTask).setFilename(expectedFilename);
+        Mockito.when(((AmazonS3Service) service).getDownloadVideoTask("filename")).thenReturn(
+                downloadVideoTask);
     }
 
     @Test
@@ -155,23 +125,5 @@ public class AmazonS3ServiceTest {
          // assert
         Assert.assertEquals(Region.getRegion(Regions.EU_WEST_1),
                 (((AmazonS3Service) service).client.getRegion()).toAWSRegion());
-    }
-
-    @Test
-    public void setClient_SetsClientOnDownloadImageTask() {
-        // act
-        service.setClient(getApp().getApplicationContext());
-
-        // assert
-        Mockito.verify(downloadImageTask).setClient(((AmazonS3Service) service).client);
-    }
-
-    @Test
-    public void setClient_SetsClientOnDownloadVideoTask() {
-        // act
-        service.setClient(getApp().getApplicationContext());
-
-        // assert
-        Mockito.verify(downloadVideoTask).setClient(((AmazonS3Service) service).client);
     }
 }

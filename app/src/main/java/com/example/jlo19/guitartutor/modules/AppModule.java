@@ -8,8 +8,8 @@ import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.presenters.LearnViewAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.LearnChordPresenter;
+import com.example.jlo19.guitartutor.presenters.LearnViewAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.PractisePresenter;
 import com.example.jlo19.guitartutor.presenters.PractiseSetupPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
@@ -17,11 +17,9 @@ import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPresenter;
 import com.example.jlo19.guitartutor.services.AmazonS3Service;
-import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.DatabaseService;
+import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
-import com.example.jlo19.guitartutor.tasks.DownloadImageTask;
-import com.example.jlo19.guitartutor.tasks.DownloadVideoTask;
 
 import javax.inject.Singleton;
 
@@ -77,12 +75,4 @@ public class AppModule {
     @Provides
     @Singleton
     ILearnViewAllChordsModel provideLearnViewAllChordsModel() {return new LearnViewAllChordsModel();}
-
-    @Provides
-    @Singleton
-    DownloadImageTask provideDownloadImageTask() {return new DownloadImageTask();}
-
-    @Provides
-    @Singleton
-    DownloadVideoTask provideDownloadVideoTask() {return new DownloadVideoTask();}
 }

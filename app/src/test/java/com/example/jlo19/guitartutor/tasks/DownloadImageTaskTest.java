@@ -33,13 +33,8 @@ public class DownloadImageTaskTest {
 
     @Before
     public void setUp() throws UnsupportedEncodingException {
-        task = new DownloadImageTask();
-
         listener = Mockito.mock(DownloadImageTaskListener.class);
-        task.setListener(listener);
-
         filename = "filename";
-        task.setFilename(filename);
 
         client = Mockito.mock(AmazonS3.class);
         object = Mockito.mock(S3Object.class);
@@ -50,7 +45,7 @@ public class DownloadImageTaskTest {
                 .thenReturn(object);
         Mockito.when(object.getObjectContent()).thenReturn(input);
 
-        task.setClient(client);
+        task = new DownloadImageTask(client, filename, listener);
     }
 
     @Test

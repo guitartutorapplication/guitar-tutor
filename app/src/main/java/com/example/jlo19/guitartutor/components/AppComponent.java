@@ -12,7 +12,6 @@ import com.example.jlo19.guitartutor.presenters.LearnChordPresenter;
 import com.example.jlo19.guitartutor.presenters.LearnViewAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.PractisePresenter;
 import com.example.jlo19.guitartutor.presenters.PractiseSetupPresenter;
-import com.example.jlo19.guitartutor.services.AmazonS3Service;
 
 import javax.inject.Singleton;
 
@@ -36,5 +35,4 @@ public interface AppComponent {
     void inject(LearnChordModel model);
     void inject(LearnViewAllChordsPresenter presenter);
     void inject(LearnViewAllChordsModel model);
-    void inject(AmazonS3Service service);
 }

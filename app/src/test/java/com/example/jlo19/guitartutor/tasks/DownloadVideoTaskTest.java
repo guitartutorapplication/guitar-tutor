@@ -27,19 +27,15 @@ public class DownloadVideoTaskTest {
 
     @Before
     public void setUp() throws MalformedURLException {
-        task = new DownloadVideoTask();
-
         listener = Mockito.mock(DownloadVideoTaskListener.class);
-        task.setListener(listener);
-
         filename = "filename";
-        task.setFilename(filename);
 
         client = Mockito.mock(AmazonS3.class);
         url = new URL("http://url.com");
         Mockito.when(client.generatePresignedUrl((GeneratePresignedUrlRequest) Mockito.any()))
                 .thenReturn(url);
-        task.setClient(client);
+
+        task = new DownloadVideoTask(client, filename, listener);
     }
 
     @Test

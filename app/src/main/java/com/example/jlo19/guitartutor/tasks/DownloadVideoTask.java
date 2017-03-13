@@ -17,15 +17,9 @@ public class DownloadVideoTask extends AsyncTask<Void, Void, String> {
     private AmazonS3 client;
     GeneratePresignedUrlRequest request;
 
-    public void setClient(AmazonS3 client) {
+    public DownloadVideoTask(AmazonS3 client, String filename, DownloadVideoTaskListener listener) {
         this.client = client;
-    }
-
-    public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public void setListener(DownloadVideoTaskListener listener) {
         this.listener = listener;
     }
 

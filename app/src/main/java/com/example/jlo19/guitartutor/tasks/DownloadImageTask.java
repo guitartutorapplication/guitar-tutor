@@ -20,15 +20,9 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
     private String filename;
     private DownloadImageTaskListener listener;
 
-    public void setClient(AmazonS3 client) {
+    public DownloadImageTask(AmazonS3 client, String filename, DownloadImageTaskListener listener) {
         this.client = client;
-    }
-
-    public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public void setListener(DownloadImageTaskListener listener) {
         this.listener = listener;
     }
 
