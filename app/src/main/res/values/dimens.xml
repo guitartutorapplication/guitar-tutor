@@ -1,0 +1,10 @@
+<resources>
+    <dimen name="activity_horizontal_margin">0dp</dimen>
+    <dimen name="activity_vertical_margin">0dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="button_text_size">34sp</dimen>
+    <dimen name="toolbar_text_size">34sp</dimen>
+    <dimen name="button_min_width_height">110dp</dimen>
+    <dimen name="grid_view_padding">20dp</dimen>
+    <dimen name="button_spacing">10dp</dimen>
+</resources>

@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.widget.VideoView;
 
@@ -57,11 +56,9 @@ public class LearnChordVideoActivityTest {
     }
 
     @Test
-    public void videoViewPrepared_HidesProgressBar() {
+    public void hideProgressBar_DismissesProgressDialog() {
         // act
-        VideoView videoView = (VideoView) activity.findViewById(R.id.videoView);
-        MediaPlayer.OnPreparedListener listener = shadowOf(videoView).getOnPreparedListener();
-        listener.onPrepared(new MediaPlayer());
+        activity.hideProgressBar();
 
         // assert
         ProgressDialog dialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();

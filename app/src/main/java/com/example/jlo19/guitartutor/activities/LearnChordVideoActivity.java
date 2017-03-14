@@ -27,10 +27,14 @@ public class LearnChordVideoActivity extends AppCompatActivity {
         String url = getIntent().getExtras().getString("URL");
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+        videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
-            public void onPrepared(MediaPlayer mp) {
-                hideProgressBar();
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END){
+                    hideProgressBar();
+                }
+                return false;
             }
         });
 
