@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
@@ -31,6 +32,7 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     private SoundPool soundPool;
     private int soundId;
     private ChordChange chordChange;
+    private BeatSpeed beatSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,8 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
         selectedChords = getIntent().getExtras().getStringArrayList("CHORDS");
         // retrieving chord change
         chordChange = (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
+        // retrieving beat speed
+        beatSpeed = (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
 
         setSoundPool(new SoundPool.Builder().setMaxStreams(1).build());
 
@@ -152,5 +156,10 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     @Override
     public ChordChange getChordChange() {
         return chordChange;
+    }
+
+    @Override
+    public BeatSpeed getBeatSpeed() {
+        return beatSpeed;
     }
 }

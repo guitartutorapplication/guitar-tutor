@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
@@ -33,6 +34,7 @@ public class PractisePresenterTest {
     private PractiseView view;
     private ArrayList<String> selectedChords;
     private ChordChange chordChange;
+    private BeatSpeed beatSpeed;
 
     @Before
     public void setUp() {
@@ -49,9 +51,11 @@ public class PractisePresenterTest {
             add("D");
         }};
         chordChange = ChordChange.EIGHT_BEATS;
+        beatSpeed = BeatSpeed.FAST;
         view = Mockito.mock(PractiseView.class);
         Mockito.when(view.getSelectedChords()).thenReturn(selectedChords);
         Mockito.when(view.getChordChange()).thenReturn(chordChange);
+        Mockito.when(view.getBeatSpeed()).thenReturn(beatSpeed);
         presenter.setView(view);
 
         model = Mockito.mock(IPractiseModel.class);
@@ -92,6 +96,12 @@ public class PractisePresenterTest {
     public void setModel_CallsSetChordChangeOnModelWithViewChordChange() {
         // assert
         Mockito.verify(model).setChordChange(chordChange);
+    }
+
+    @Test
+    public void setModel_CallsSetBeatSpeedOnModelWithViewBeatSpeed() {
+        // assert
+        Mockito.verify(model).setBeatSpeed(beatSpeed);
     }
 
     @Test
@@ -176,7 +186,7 @@ public class PractisePresenterTest {
     @Test
     public void modelOnNewSecond_CallsPlaySoundOnView() {
         // act
-        presenter.modelOnNewSecond();
+        presenter.modelOnNewBeat();
 
         // assert
         Mockito.verify(view).playSound();

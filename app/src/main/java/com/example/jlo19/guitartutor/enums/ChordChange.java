@@ -5,6 +5,7 @@ package com.example.jlo19.guitartutor.enums;
  */
 
 public enum ChordChange {
+    // value = number of beats between chord changes
     ONE_BEAT(1),
     TWO_BEATS(2),
     FOUR_BEATS(4),

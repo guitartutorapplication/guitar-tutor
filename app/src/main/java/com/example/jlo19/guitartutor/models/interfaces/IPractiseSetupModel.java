@@ -10,5 +10,5 @@ import java.util.ArrayList;
 public interface IPractiseSetupModel {
     void setPresenter(IPractiseSetupPresenter presenter);
     void getChords();
-    void chordsSelected(ArrayList<String> selectedChords, int chordChangeSpeedIndex);
+    void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex);
 }

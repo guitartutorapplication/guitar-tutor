@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
@@ -118,10 +119,11 @@ public class PractiseSetupPresenterTest {
             add("B");
         }};
         int selectedChordChangeIndex = 1;
-        presenter.viewOnPractise(selectedChords, selectedChordChangeIndex);
+        int selectedBeatSpeedIndex = 1;
+        presenter.viewOnPractise(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
 
         // assert
-        Mockito.verify(model).chordsSelected(selectedChords, selectedChordChangeIndex);
+        Mockito.verify(model).chordsSelected(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
     }
 
     @Test
@@ -150,9 +152,9 @@ public class PractiseSetupPresenterTest {
             add("C");
             add("B");
         }};
-        presenter.modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT);
+        presenter.modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
 
         // assert
-        Mockito.verify(view).startPractiseActivity(selectedChords, ChordChange.ONE_BEAT);
+        Mockito.verify(view).startPractiseActivity(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
     }
 }

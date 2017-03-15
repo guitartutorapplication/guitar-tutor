@@ -134,11 +134,73 @@
 
     </RadioGroup>
 
+    <TextView
+        android:text="@string/practise_beat_speed_selection_instruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtBeatSpeedInstruction"
+        android:layout_below="@+id/rGroupChordChange"
+        android:textColor="@color/colorText"
+        android:textAlignment="center"
+        android:textSize="42sp"
+        android:layout_margin="10dp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtBeatSpeedInstruction"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/rGroupBeatSpeed"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:text="@string/practise_very_slow_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnVerySlowBeat"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:checked="true" />
+
+        <RadioButton
+            android:text="@string/practise_slow_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnSlowBeat"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+        <RadioButton
+            android:text="@string/practise_medium_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnMediumBeat"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+        <RadioButton
+            android:text="@string/practise_fast_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnFastBeat"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+        <RadioButton
+            android:text="@string/practise_very_fast_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnVeryFastBeat"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+    </RadioGroup>
+
     <Button
         android:text="@string/practise_button_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rGroupChordChange"
+        android:layout_below="@+id/rGroupBeatSpeed"
         android:layout_centerHorizontal="true"
         android:id="@+id/btnPractise"
         android:height="150dp"

@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.models;
 
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
@@ -16,6 +17,7 @@ public class PractiseModel implements IPractiseModel {
     private IPractisePresenter presenter;
     private Runnable timerTask;
     private ChordChange chordChange;
+    private BeatSpeed beatSpeed;
 
     @Override
     public void setSelectedChords(List<String> selectedChords) {
@@ -38,9 +40,9 @@ public class PractiseModel implements IPractiseModel {
                                 if (requestStop) {
                                     return;
                                 }
-                                // inform presenter every second
-                                presenter.modelOnNewSecond();
-                                Thread.sleep(1000);
+                                // inform presenter every beat
+                                presenter.modelOnNewBeat();
+                                Thread.sleep(beatSpeed.getValue());
                             }
                         }
                     }
@@ -71,5 +73,10 @@ public class PractiseModel implements IPractiseModel {
     @Override
     public void setChordChange(ChordChange chordChange) {
         this.chordChange = chordChange;
+    }
+
+    @Override
+    public void setBeatSpeed(BeatSpeed beatSpeed) {
+        this.beatSpeed = beatSpeed;
     }
 }

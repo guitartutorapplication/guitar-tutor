@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
@@ -67,7 +68,11 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
                 int selectedChordChangeIndex = rGroupChordChange.indexOfChild(findViewById(
                         rGroupChordChange.getCheckedRadioButtonId()));
 
-                presenter.viewOnPractise(selectedChords, selectedChordChangeIndex);
+                RadioGroup rGroupBeatSpeed = (RadioGroup) findViewById(R.id.rGroupBeatSpeed);
+                int selectedBeatSpeedIndex = rGroupBeatSpeed.indexOfChild(findViewById(
+                        rGroupBeatSpeed.getCheckedRadioButtonId()));
+
+                presenter.viewOnPractise(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
             }
         });
     }
@@ -138,11 +143,12 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
     }
 
     @Override
-    public void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange) {
+    public void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed) {
         // passing through selected chords and chord change to new activity
         Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
         intent.putExtra("CHORDS", selectedChords);
         intent.putExtra("CHORD_CHANGE", chordChange);
+        intent.putExtra("BEAT_SPEED", beatSpeed);
         startActivity(intent);
     }
 }

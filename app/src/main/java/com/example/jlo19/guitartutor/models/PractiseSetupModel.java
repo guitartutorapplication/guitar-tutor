@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
@@ -18,7 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Handles connection to database API
+ * Handles connection to database API and setup selection
  */
 public class PractiseSetupModel implements IPractiseSetupModel {
 
@@ -58,7 +59,7 @@ public class PractiseSetupModel implements IPractiseSetupModel {
     }
 
     @Override
-    public void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex) {
+    public void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
         Set<String> uniqueChords = new HashSet<>(selectedChords);
 
         // if the user has selected less than two chords
@@ -71,7 +72,7 @@ public class PractiseSetupModel implements IPractiseSetupModel {
         }
         else {
             presenter.modelOnCorrectSelectedChords(selectedChords,
-                    ChordChange.values()[chordChangeIndex]);
+                    ChordChange.values()[chordChangeIndex], BeatSpeed.values()[beatSpeedIndex]);
         }
     }
 }

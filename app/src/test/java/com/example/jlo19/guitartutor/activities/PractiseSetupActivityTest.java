@@ -12,6 +12,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
@@ -63,7 +64,7 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void setSelectedChordForSpinnerAndChordChangeSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
+    public void setSelectedChordChordChangeSpeedAndBeatSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
@@ -74,8 +75,12 @@ public class PractiseSetupActivityTest {
         Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
         // index 1 as default option will be at index 0
         spnChord1.setSelection(1);
+
         RadioGroup rGroupChordChange = (RadioGroup) activity.findViewById(R.id.rGroupChordChange);
         rGroupChordChange.check(R.id.rbtnEightBeats);
+
+        RadioGroup rGroupBeatSpeed = (RadioGroup) activity.findViewById(R.id.rGroupBeatSpeed);
+        rGroupBeatSpeed.check(R.id.rbtnFastBeat);
 
         // act
         Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
@@ -85,7 +90,7 @@ public class PractiseSetupActivityTest {
         ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
             add(chords.get(0).toString());
         }};
-        Mockito.verify(presenter).viewOnPractise(expectedSelectedChords, 3);
+        Mockito.verify(presenter).viewOnPractise(expectedSelectedChords, 3, 3);
     }
 
     @Test
@@ -195,14 +200,15 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChordsAndChordChange() {
+    public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChordsChordChangeAndBeatSpeed() {
         // act
         ArrayList<String> chords = new ArrayList<String>() {{
             add("A");
             add("B");
         }};
         ChordChange chordChange = ChordChange.ONE_BEAT;
-        activity.startPractiseActivity(chords, chordChange);
+        BeatSpeed beatSpeed = BeatSpeed.VERY_SLOW;
+        activity.startPractiseActivity(chords, chordChange, beatSpeed);
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
@@ -212,5 +218,7 @@ public class PractiseSetupActivityTest {
         Assert.assertEquals(chords, intent.getExtras().getStringArrayList("CHORDS"));
         // checks correct chord change is passed through
         Assert.assertEquals(chordChange, intent.getSerializableExtra("CHORD_CHANGE"));
+        // checks correct beat speed is passed through
+        Assert.assertEquals(beatSpeed, intent.getSerializableExtra("BEAT_SPEED"));
     }
 }

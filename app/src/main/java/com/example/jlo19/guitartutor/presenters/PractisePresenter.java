@@ -34,6 +34,7 @@ public class PractisePresenter implements IPractisePresenter {
         model.setPresenter(this);
         model.setSelectedChords(view.getSelectedChords());
         model.setChordChange(view.getChordChange());
+        model.setBeatSpeed(view.getBeatSpeed());
         model.createTimer();
     }
 
@@ -58,7 +59,7 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void modelOnNewSecond() {
+    public void modelOnNewBeat() {
         view.playSound();
     }
 

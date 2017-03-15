@@ -11,6 +11,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
@@ -44,6 +45,7 @@ public class PractiseActivityTest {
     private SoundPool soundPool;
     private ArrayList<String> selectedChords;
     private ChordChange chordChange;
+    private BeatSpeed beatSpeed;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -63,9 +65,11 @@ public class PractiseActivityTest {
                 add("C");
             }};
         chordChange = ChordChange.EIGHT_BEATS;
+        beatSpeed = BeatSpeed.FAST;
         Intent intent = new Intent();
         intent.putExtra("CHORDS", selectedChords);
         intent.putExtra("CHORD_CHANGE", chordChange);
+        intent.putExtra("BEAT_SPEED", beatSpeed);
 
         activity = Robolectric.buildActivity(PractiseActivity.class, intent)
                 .create().get();
@@ -147,6 +151,15 @@ public class PractiseActivityTest {
 
         // assert
         Assert.assertEquals(chordChange, actualChordChange);
+    }
+
+    @Test
+    public void getBeatSpeed_ReturnsBeatSpeedFromIntent() {
+        // act
+        BeatSpeed actualBeatSpeed = activity.getBeatSpeed();
+
+        // assert
+        Assert.assertEquals(beatSpeed, actualBeatSpeed);
     }
 
     @Test

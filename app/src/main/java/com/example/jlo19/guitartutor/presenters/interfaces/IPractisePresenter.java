@@ -7,6 +7,6 @@ public interface IPractisePresenter extends IPresenter {
     void modelOnNewChord(String newChord);
     void viewOnStartPractising();
     void viewOnStopPractising();
-    void modelOnNewSecond();
+    void modelOnNewBeat();
     void modelOnError();
 }
