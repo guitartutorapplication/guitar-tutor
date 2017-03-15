@@ -14,10 +14,10 @@
         layout="@layout/toolbar"/>
 
     <TextView
-        android:text="@string/practise_setup_instruction"
+        android:text="@string/practise_setup_information"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtInstruction"
+        android:id="@+id/txtInformation"
         android:layout_below="@+id/toolbar"
         android:textColor="@color/colorText"
         android:textAlignment="center"
@@ -25,12 +25,23 @@
         android:textStyle="italic"
         android:layout_margin="10dp" />
 
+    <TextView
+    android:text="@string/practise_chord_selection_instruction"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/txtChordSelectionInstruction"
+    android:layout_below="@+id/txtInformation"
+    android:textColor="@color/colorText"
+    android:textAlignment="center"
+    android:textSize="42sp"
+    android:layout_margin="10dp" />
+
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/spnChord1"
         android:spinnerMode="dialog"
-        android:layout_below="@+id/txtInstruction"
+        android:layout_below="@+id/txtChordSelectionInstruction"
         android:layout_alignParentStart="true"
         android:layout_margin="10dp" />
 
@@ -61,11 +72,73 @@
         android:layout_alignParentStart="true"
         android:layout_margin="10dp" />
 
+    <TextView
+        android:text="@string/practise_chord_change_selection_instruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtChordChangeInstruction"
+        android:layout_below="@+id/spnChord4"
+        android:textColor="@color/colorText"
+        android:textAlignment="center"
+        android:textSize="42sp"
+        android:layout_margin="10dp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtChordChangeInstruction"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/rGroupChordChange"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:text="@string/practise_one_beat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnOneBeat"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:checked="true" />
+
+        <RadioButton
+            android:text="@string/practise_two_beats_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnTwoBeats"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+        <RadioButton
+            android:text="@string/practise_four_beats_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnFourBeats"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+        <RadioButton
+            android:text="@string/practise_eight_beats_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnEightBeats"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+        <RadioButton
+            android:text="@string/practise_sixteen_beats_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rbtnSixteenBeats"
+            android:layout_weight="1"
+            android:textSize="24sp" />
+
+    </RadioGroup>
+
     <Button
         android:text="@string/practise_button_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spnChord4"
+        android:layout_below="@+id/rGroupChordChange"
         android:layout_centerHorizontal="true"
         android:id="@+id/btnPractise"
         android:height="150dp"

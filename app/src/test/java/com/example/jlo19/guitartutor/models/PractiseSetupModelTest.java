@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.helpers.FakeCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
@@ -90,7 +91,7 @@ public class PractiseSetupModelTest {
         ArrayList<String> selectedChords = new ArrayList<String>() {{
             add("A");
         }};
-        model.chordsSelected(selectedChords);
+        model.chordsSelected(selectedChords, 0);
 
         // assert
         Mockito.verify(presenter).modelOnLessThanTwoChordsSelected();
@@ -104,23 +105,79 @@ public class PractiseSetupModelTest {
             add("A");
             add("B");
         }};
-        model.chordsSelected(selectedChords);
+        model.chordsSelected(selectedChords, 0);
 
         // assert
         Mockito.verify(presenter).modelOnSameSelectedChord();
     }
 
     @Test
-    public void chordsSelected_WithCorrectSelectedChords_CallsCorrectSelectedChordsOnPresenter() {
+    public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexZero_CallsCorrectSelectedChordsOnPresenterWithOneBeat() {
         // act
         ArrayList<String> selectedChords = new ArrayList<String>() {{
             add("A");
             add("C");
             add("B");
         }};
-        model.chordsSelected(selectedChords);
+        model.chordsSelected(selectedChords, 0);
 
         // assert
-        Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords);
+        Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT);
+    }
+
+    @Test
+    public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexOne_CallsCorrectSelectedChordsOnPresenterWithTwoBeats() {
+        // act
+        ArrayList<String> selectedChords = new ArrayList<String>() {{
+            add("A");
+            add("C");
+            add("B");
+        }};
+        model.chordsSelected(selectedChords, 1);
+
+        // assert
+        Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.TWO_BEATS);
+    }
+
+    @Test
+    public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexTwo_CallsCorrectSelectedChordsOnPresenterWithFourBeats() {
+        // act
+        ArrayList<String> selectedChords = new ArrayList<String>() {{
+            add("A");
+            add("C");
+            add("B");
+        }};
+        model.chordsSelected(selectedChords, 2);
+
+        // assert
+        Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.FOUR_BEATS);
+    }
+
+    @Test
+    public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexThree_CallsCorrectSelectedChordsOnPresenterWithEightBeats() {
+        // act
+        ArrayList<String> selectedChords = new ArrayList<String>() {{
+            add("A");
+            add("C");
+            add("B");
+        }};
+        model.chordsSelected(selectedChords, 3);
+
+        // assert
+        Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.EIGHT_BEATS);
+    }
+
+    @Test
+    public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexFour_CallsCorrectSelectedChordsOnPresenterWithSixteenBeats() {
+        // act
+        ArrayList<String> selectedChords = new ArrayList<String>() {{
+            add("A");
+            add("C");
+            add("B");
+        }};
+        model.chordsSelected(selectedChords, 4);
+
+        // assert
+        Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.SIXTEEN_BEATS);
     }
 }

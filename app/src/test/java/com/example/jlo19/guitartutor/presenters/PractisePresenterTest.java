@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
@@ -31,6 +32,7 @@ public class PractisePresenterTest {
     private IPractiseModel model;
     private PractiseView view;
     private ArrayList<String> selectedChords;
+    private ChordChange chordChange;
 
     @Before
     public void setUp() {
@@ -46,8 +48,10 @@ public class PractisePresenterTest {
             add("C");
             add("D");
         }};
+        chordChange = ChordChange.EIGHT_BEATS;
         view = Mockito.mock(PractiseView.class);
         Mockito.when(view.getSelectedChords()).thenReturn(selectedChords);
+        Mockito.when(view.getChordChange()).thenReturn(chordChange);
         presenter.setView(view);
 
         model = Mockito.mock(IPractiseModel.class);
@@ -82,6 +86,12 @@ public class PractisePresenterTest {
     public void setModel_CallsSetSelectedChordsOnModelWithViewChords() {
         // assert
         Mockito.verify(model).setSelectedChords(selectedChords);
+    }
+
+    @Test
+    public void setModel_CallsSetChordChangeOnModelWithViewChordChange() {
+        // assert
+        Mockito.verify(model).setChordChange(chordChange);
     }
 
     @Test

@@ -33,6 +33,7 @@ public class PractisePresenter implements IPractisePresenter {
         this.model = model;
         model.setPresenter(this);
         model.setSelectedChords(view.getSelectedChords());
+        model.setChordChange(view.getChordChange());
         model.createTimer();
     }
 

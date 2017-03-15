@@ -8,12 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
@@ -61,7 +63,11 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
                     }
                 }
 
-                presenter.viewOnChordsSelected(selectedChords);
+                RadioGroup rGroupChordChange = (RadioGroup) findViewById(R.id.rGroupChordChange);
+                int selectedChordChangeIndex = rGroupChordChange.indexOfChild(findViewById(
+                        rGroupChordChange.getCheckedRadioButtonId()));
+
+                presenter.viewOnPractise(selectedChords, selectedChordChangeIndex);
             }
         });
     }
@@ -132,10 +138,11 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
     }
 
     @Override
-    public void startPractiseActivity(ArrayList<String> selectedChords) {
-        // passing through selected chords to new activity
+    public void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange) {
+        // passing through selected chords and chord change to new activity
         Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
         intent.putExtra("CHORDS", selectedChords);
+        intent.putExtra("CHORD_CHANGE", chordChange);
         startActivity(intent);
     }
 }

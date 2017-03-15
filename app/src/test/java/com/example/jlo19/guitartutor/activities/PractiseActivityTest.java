@@ -11,6 +11,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
 import junit.framework.Assert;
@@ -42,6 +43,7 @@ public class PractiseActivityTest {
     private IPractisePresenter presenter;
     private SoundPool soundPool;
     private ArrayList<String> selectedChords;
+    private ChordChange chordChange;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -60,8 +62,10 @@ public class PractiseActivityTest {
                 add("B");
                 add("C");
             }};
+        chordChange = ChordChange.EIGHT_BEATS;
         Intent intent = new Intent();
         intent.putExtra("CHORDS", selectedChords);
+        intent.putExtra("CHORD_CHANGE", chordChange);
 
         activity = Robolectric.buildActivity(PractiseActivity.class, intent)
                 .create().get();
@@ -134,6 +138,15 @@ public class PractiseActivityTest {
 
         // assert
         Assert.assertEquals(selectedChords, actualSelectedChords);
+    }
+
+    @Test
+    public void getChordChange_ReturnsChordChangeFromIntent() {
+        // act
+        ChordChange actualChordChange = activity.getChordChange();
+
+        // assert
+        Assert.assertEquals(chordChange, actualChordChange);
     }
 
     @Test

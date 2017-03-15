@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.models;
 
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
@@ -42,7 +43,54 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void start_After32Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+    public void oneBeatChordChange_start_After4Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.ONE_BEAT);
+        // act
+        model.start();
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+    }
+
+    @Test
+    public void twoBeatsChordChange_start_After8Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.TWO_BEATS);
+        // act
+        model.start();
+        Thread.sleep(8000);
+
+        // assert
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+    }
+
+    @Test
+    public void fourBeatsChordChange_start_After16Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.FOUR_BEATS);
+        // act
+        model.start();
+        Thread.sleep(16000);
+
+        // assert
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+    }
+
+    @Test
+    public void eightBeatsChordChange_start_After32Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.EIGHT_BEATS);
         // act
         model.start();
         Thread.sleep(32000);
@@ -55,7 +103,25 @@ public class PractiseModelTest {
     }
 
     @Test
+    public void sixteenBeatsChordChange_start_After64Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.SIXTEEN_BEATS);
+        // act
+        model.start();
+        Thread.sleep(64000);
+
+        // assert
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
+        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+    }
+
+    @Test
     public void start_After8Seconds_CallsNewSecondOnPresenterForEachSecond() throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.ONE_BEAT);
+
         // act
         model.start();
         Thread.sleep(8000);
@@ -65,24 +131,10 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void startAndRunFor7Seconds_Stop_DoesNotCallNewChordOnPresenterWithSecondChord()
+    public void startAndRunFor8Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnly8Times()
             throws InterruptedException {
         // arrange
-        model.start();
-        Thread.sleep(7000);
-
-        // act
-        model.stop();
-        Thread.sleep(2000);
-
-        // assert
-        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
-    }
-
-    @Test
-    public void startAndRunFor8Seconds_Stop_AfterOneSecond_CallsNewSecondOnPresenterOnly8Times()
-            throws InterruptedException {
-        // arrange
+        model.setChordChange(ChordChange.ONE_BEAT);
         model.start();
         Thread.sleep(8000);
 
@@ -92,5 +144,84 @@ public class PractiseModelTest {
 
         // assert
         Mockito.verify(presenter, times(8)).modelOnNewSecond();
+    }
+
+    @Test
+    public void oneBeatChordChange_Start_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+            throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.ONE_BEAT);
+        model.start();
+
+        // act
+        model.stop();
+        Thread.sleep(1000);
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+    }
+
+    @Test
+    public void twoBeatsChordChange_StartAndRunFor1Second_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+            throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.TWO_BEATS);
+        model.start();
+        Thread.sleep(1000);
+
+        // act
+        model.stop();
+        Thread.sleep(1000);
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+    }
+
+    @Test
+    public void fourBeatsChordChange_StartAndRunFor3Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+            throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.FOUR_BEATS);
+        model.start();
+        Thread.sleep(3000);
+
+        // act
+        model.stop();
+        Thread.sleep(1000);
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+    }
+
+    @Test
+    public void eightBeatsChordChange_StartAndRunFor7Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+            throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.EIGHT_BEATS);
+        model.start();
+        Thread.sleep(7000);
+
+        // act
+        model.stop();
+        Thread.sleep(1000);
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+    }
+
+    @Test
+    public void sixteenBeatsChordChange_StartAndRunFor15Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+            throws InterruptedException {
+        // arrange
+        model.setChordChange(ChordChange.SIXTEEN_BEATS);
+        model.start();
+        Thread.sleep(15000);
+
+        // act
+        model.stop();
+        Thread.sleep(1000);
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
     }
 }

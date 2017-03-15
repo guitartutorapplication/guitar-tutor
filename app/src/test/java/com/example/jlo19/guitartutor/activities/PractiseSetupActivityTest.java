@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 
@@ -61,7 +63,7 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void oneChordSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
+    public void setSelectedChordForSpinnerAndChordChangeSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
@@ -72,6 +74,8 @@ public class PractiseSetupActivityTest {
         Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
         // index 1 as default option will be at index 0
         spnChord1.setSelection(1);
+        RadioGroup rGroupChordChange = (RadioGroup) activity.findViewById(R.id.rGroupChordChange);
+        rGroupChordChange.check(R.id.rbtnEightBeats);
 
         // act
         Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
@@ -81,97 +85,7 @@ public class PractiseSetupActivityTest {
         ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
             add(chords.get(0).toString());
         }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
-    }
-
-    @Test
-    public void twoChordsSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
-        // arrange
-        final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
-        activity.setChords(chords);
-        Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
-        spnChord1.setSelection(1);
-        Spinner spnChord2 = (Spinner) activity.findViewById(R.id.spnChord2);
-        spnChord2.setSelection(2);
-
-        // act
-        Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
-        btnPractise.performClick();
-
-        // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
-            add(chords.get(1).toString());
-        }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
-    }
-
-    @Test
-    public void threeChordsSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
-        // arrange
-        final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
-        activity.setChords(chords);
-        Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
-        spnChord1.setSelection(1);
-        Spinner spnChord2 = (Spinner) activity.findViewById(R.id.spnChord2);
-        spnChord2.setSelection(2);
-        Spinner spnChord3 = (Spinner) activity.findViewById(R.id.spnChord3);
-        spnChord3.setSelection(3);
-
-        // act
-        Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
-        btnPractise.performClick();
-
-        // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
-            add(chords.get(1).toString());
-            add(chords.get(2).toString());
-        }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
-    }
-
-    @Test
-    public void fourChordsSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
-        // arrange
-        final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
-        activity.setChords(chords);
-        Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
-        spnChord1.setSelection(1);
-        Spinner spnChord2 = (Spinner) activity.findViewById(R.id.spnChord2);
-        spnChord2.setSelection(2);
-        Spinner spnChord3 = (Spinner) activity.findViewById(R.id.spnChord3);
-        spnChord3.setSelection(3);
-        Spinner spnChord4 = (Spinner) activity.findViewById(R.id.spnChord4);
-        spnChord4.setSelection(4);
-
-        // act
-        Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
-        btnPractise.performClick();
-
-        // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
-            add(chords.get(1).toString());
-            add(chords.get(2).toString());
-            add(chords.get(3).toString());
-        }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
+        Mockito.verify(presenter).viewOnPractise(expectedSelectedChords, 3);
     }
 
     @Test
@@ -281,13 +195,14 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChords() {
+    public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChordsAndChordChange() {
         // act
         ArrayList<String> chords = new ArrayList<String>() {{
             add("A");
             add("B");
         }};
-        activity.startPractiseActivity(chords);
+        ChordChange chordChange = ChordChange.ONE_BEAT;
+        activity.startPractiseActivity(chords, chordChange);
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
@@ -295,5 +210,7 @@ public class PractiseSetupActivityTest {
         Assert.assertEquals(PractiseActivity.class.getName(), intent.getComponent().getClassName());
         // checks correct chord is passed through
         Assert.assertEquals(chords, intent.getExtras().getStringArrayList("CHORDS"));
+        // checks correct chord change is passed through
+        Assert.assertEquals(chordChange, intent.getSerializableExtra("CHORD_CHANGE"));
     }
 }

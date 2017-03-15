@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
@@ -29,6 +30,7 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     private Button btnStop;
     private SoundPool soundPool;
     private int soundId;
+    private ChordChange chordChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
 
         // retrieving selected chords
         selectedChords = getIntent().getExtras().getStringArrayList("CHORDS");
+        // retrieving chord change
+        chordChange = (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
 
         setSoundPool(new SoundPool.Builder().setMaxStreams(1).build());
 
@@ -143,5 +147,10 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     @Override
     public void loadSound() {
         soundId = soundPool.load(this, R.raw.metronome_sound, 1);
+    }
+
+    @Override
+    public ChordChange getChordChange() {
+        return chordChange;
     }
 }

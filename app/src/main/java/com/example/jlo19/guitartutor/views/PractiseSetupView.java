@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.views;
 
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import java.util.ArrayList;
@@ -16,5 +17,5 @@ public interface PractiseSetupView extends IView {
     void showLoadChordsError();
     void showLessThanTwoChordsSelectedError();
     void showSameSelectedChordError();
-    void startPractiseActivity(ArrayList<String> selectedChords);
+    void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange);
 }

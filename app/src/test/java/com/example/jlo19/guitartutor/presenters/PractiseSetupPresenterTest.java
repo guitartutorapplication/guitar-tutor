@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
@@ -109,17 +110,18 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void viewOnChordsSelected_CallsChordsSelectedOnModel() {
+    public void viewOnPractise_CallsChordsSelectedOnModel() {
         // act
         ArrayList<String> selectedChords = new ArrayList<String>() {{
             add("A");
             add("C");
             add("B");
         }};
-        presenter.viewOnChordsSelected(selectedChords);
+        int selectedChordChangeIndex = 1;
+        presenter.viewOnPractise(selectedChords, selectedChordChangeIndex);
 
         // assert
-        Mockito.verify(model).chordsSelected(selectedChords);
+        Mockito.verify(model).chordsSelected(selectedChords, selectedChordChangeIndex);
     }
 
     @Test
@@ -148,9 +150,9 @@ public class PractiseSetupPresenterTest {
             add("C");
             add("B");
         }};
-        presenter.modelOnCorrectSelectedChords(selectedChords);
+        presenter.modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT);
 
         // assert
-        Mockito.verify(view).startPractiseActivity(selectedChords);
+        Mockito.verify(view).startPractiseActivity(selectedChords, ChordChange.ONE_BEAT);
     }
 }
