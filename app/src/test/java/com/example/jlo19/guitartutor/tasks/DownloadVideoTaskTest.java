@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.tasks;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.jlo19.guitartutor.listeners.DownloadVideoTaskListener;
@@ -74,5 +75,18 @@ public class DownloadVideoTaskTest {
 
         // assert
         Mockito.verify(listener).onVideoDownloadFailed();
+    }
+
+    @Test
+    public void doInBackground_WhenAmazonClientExceptionThrown_ReturnsNull() {
+        // arrange
+        Mockito.when(client.generatePresignedUrl((GeneratePresignedUrlRequest) Mockito.any()))
+                .thenThrow(AmazonClientException.class);
+
+        // act
+        String expectedUrl = task.doInBackground();
+
+        // assert
+        Assert.assertNull(expectedUrl);
     }
 }

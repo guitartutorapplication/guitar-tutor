@@ -3,6 +3,7 @@ package com.example.jlo19.guitartutor.tasks;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -14,7 +15,11 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,6 +27,8 @@ import java.io.UnsupportedEncodingException;
 /**
  * Testing DownloadImageTask
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(IOUtils.class)
 public class DownloadImageTaskTest {
 
     private DownloadImageTask task;
@@ -97,11 +104,27 @@ public class DownloadImageTaskTest {
     }
 
     @Test
-    public void onCancelled_CallsOnDownloadFailedOnListener() {
+    public void doInBackground_WhenAmazonClientExceptionThrown_ReturnsNull() {
+        // arrange
+        Mockito.when(client.getObject("guitar.tutor.data", filename)).thenThrow(AmazonClientException.class);
+
         // act
-        task.onCancelled();
+        Bitmap expectedBitmap = task.doInBackground();
 
         // assert
-        Mockito.verify(listener).onImageDownloadFailed();
+        Assert.assertNull(expectedBitmap);
+    }
+
+    @Test
+    public void doInBackground_WhenIOExceptionThrown_ReturnsNull() throws IOException {
+        // arrange
+        PowerMockito.mockStatic(IOUtils.class);
+        PowerMockito.when(IOUtils.toByteArray(input)).thenThrow(IOException.class);
+
+        // act
+        Bitmap expectedBitmap = task.doInBackground();
+
+        // assert
+        Assert.assertNull(expectedBitmap);
     }
 }
