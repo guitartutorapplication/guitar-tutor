@@ -26,6 +26,8 @@ import java.util.List;
 
 import retrofit2.Response;
 
+import static org.mockito.Mockito.never;
+
 /**
  * Testing PractiseSetupModel
  */
@@ -263,4 +265,89 @@ public class PractiseSetupModelTest {
         Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT,
                 BeatSpeed.VERY_FAST);
     }
+
+    @Test
+    public void startBeatPreviewWithVerySlow_After4Seconds_CallsNewBeatOnPresenterTwice() throws InterruptedException {
+        // act
+        model.startBeatPreview(0);
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter, Mockito.times(2)).modelOnNewBeat();
+    }
+
+    @Test
+    public void startBeatPreviewWithSlow_After4Seconds_CallsNewBeatOnPresenterThreeTimes() throws InterruptedException {
+        // act
+        model.startBeatPreview(1);
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter, Mockito.times(3)).modelOnNewBeat();
+    }
+
+    @Test
+    public void startBeatPreviewWithMedium_After4Seconds_CallsNewBeatOnPresenterFourTimes() throws InterruptedException {
+        // act
+        model.startBeatPreview(2);
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter, Mockito.times(4)).modelOnNewBeat();
+    }
+
+    @Test
+    public void startBeatPreviewWithFast_After4Seconds_CallsNewBeatOnPresenterFiveTimes() throws InterruptedException {
+        // act
+        model.startBeatPreview(3);
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter, Mockito.times(5)).modelOnNewBeat();
+    }
+
+    @Test
+    public void startBeatPreviewWithVeryFast_After4Seconds_CallsNewBeatOnPresenterEightTimes() throws InterruptedException {
+        // act
+        model.startBeatPreview(4);
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter, Mockito.times(8)).modelOnNewBeat();
+    }
+
+    @Test
+    public void startBeatPreview_After4Seconds_CallsBeatPreviewFinishedOnPresenter() throws InterruptedException {
+        // act
+        model.startBeatPreview(0);
+        Thread.sleep(4000);
+
+        // assert
+        Mockito.verify(presenter).modelOnBeatPreviewFinished();
+    }
+
+    @Test
+    public void startBeatPreview_StopBeatPreview_CallsBeatPreviewFinishedOnPresenter() {
+        // arrange
+        model.startBeatPreview(0);
+
+        // act
+        model.stopBeatPreview();
+
+        // assert
+        Mockito.verify(presenter).modelOnBeatPreviewFinished();
+    }
+
+    @Test
+    public void startBeatPreview_StopBeatPreview_DoesntCallsNewBeatOnPresenter() {
+        // arrange
+        model.startBeatPreview(0);
+
+        // act
+        model.stopBeatPreview();
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewBeat();
+    }
+
 }

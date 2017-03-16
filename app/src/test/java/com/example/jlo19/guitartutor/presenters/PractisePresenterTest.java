@@ -125,7 +125,7 @@ public class PractisePresenterTest {
         presenter.viewOnStartPractising();
 
         // assert
-        Mockito.verify(model).start();
+        Mockito.verify(model).startTimer();
     }
 
     @Test
@@ -153,7 +153,7 @@ public class PractisePresenterTest {
         presenter.viewOnStopPractising();
 
         // assert
-        Mockito.verify(model).stop();
+        Mockito.verify(model).stopTimer();
     }
 
     @Test

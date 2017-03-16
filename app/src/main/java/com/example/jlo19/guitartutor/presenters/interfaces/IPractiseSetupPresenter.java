@@ -17,4 +17,9 @@ public interface IPractiseSetupPresenter extends IPresenter {
     void modelOnLessThanTwoChordsSelected();
     void modelOnSameSelectedChord();
     void modelOnCorrectSelectedChords(ArrayList<String> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed);
+    void viewOnBeatPreview(int beatSpeedIndex);
+    void modelOnNewBeat();
+    void modelOnPreviewBeatError();
+    void modelOnBeatPreviewFinished();
+    void viewOnBeatSpeedChanged();
 }

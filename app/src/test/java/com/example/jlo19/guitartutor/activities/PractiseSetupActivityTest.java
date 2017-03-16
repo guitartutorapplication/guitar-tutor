@@ -2,8 +2,10 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.SoundPool;
 import android.os.Build;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,6 +48,7 @@ public class PractiseSetupActivityTest {
 
     private PractiseSetupActivity activity;
     private IPractiseSetupPresenter presenter;
+    private SoundPool soundPool;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -61,6 +64,8 @@ public class PractiseSetupActivityTest {
                 .create().get();
         presenter = PowerMockito.mock(IPractiseSetupPresenter.class);
         activity.setPresenter(presenter);
+        soundPool = PowerMockito.mock(SoundPool.class);
+        activity.setSoundPool(soundPool);
     }
 
     @Test
@@ -91,6 +96,30 @@ public class PractiseSetupActivityTest {
             add(chords.get(0).toString());
         }};
         Mockito.verify(presenter).viewOnPractise(expectedSelectedChords, 3, 3);
+    }
+
+    @Test
+    public void onBeatSpeedChanged_CallsBeatSpeedChangedOnPresenter() {
+        // act
+        RadioButton rbtnFastBeat = (RadioButton) activity.findViewById(R.id.rbtnFastBeat);
+        rbtnFastBeat.setChecked(true);
+
+        // assert
+        Mockito.verify(presenter).viewOnBeatSpeedChanged();
+    }
+
+    @Test
+    public void previewButtonClicked_CallsBeatPreviewOnPresenter() {
+        // assert
+        RadioButton rbtnFastBeat = (RadioButton) activity.findViewById(R.id.rbtnFastBeat);
+        rbtnFastBeat.setChecked(true);
+
+        // act
+        Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
+        btnPreview.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnBeatPreview(3);
     }
 
     @Test
@@ -180,6 +209,16 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
+    public void showPreviewBeatError_MakesToastWithPreviewBeatFailureMessage() {
+        // act
+        activity.showPreviewBeatError();
+
+        // assert
+        Assert.assertEquals(getApp().getResources().getString(R.string.practise_beat_preview_error_message),
+                ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
     public void showLessThanTwoChordsSelectedError_MakesToastWithLessThanTwoChordsSelectedMessage() {
         // act
         activity.showLessThanTwoChordsSelectedError();
@@ -220,5 +259,57 @@ public class PractiseSetupActivityTest {
         Assert.assertEquals(chordChange, intent.getSerializableExtra("CHORD_CHANGE"));
         // checks correct beat speed is passed through
         Assert.assertEquals(beatSpeed, intent.getSerializableExtra("BEAT_SPEED"));
+    }
+
+    @Test
+    public void onDestroy_SoundPoolReleased() {
+        // act
+        activity.onDestroy();
+
+        // assert
+        Mockito.verify(soundPool).release();
+    }
+
+    @Test
+    public void loadSound_CallsLoadOnSoundPoolWithMetronomeClip() {
+        // act
+        activity.loadSound();
+
+        // assert
+        Mockito.verify(soundPool).load(activity, R.raw.metronome_sound, 1);
+    }
+
+    @Test
+    public void playSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
+        // arrange
+        int expectedSoundId = 1;
+        Mockito.when(soundPool.load(activity, R.raw.metronome_sound, 1)).thenReturn(expectedSoundId);
+        activity.loadSound();
+
+        // act
+        activity.playSound();
+
+        // assert
+        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    }
+
+    @Test
+    public void enablePreviewButtonWithFalse_DisablesPreviewButton() {
+        // act
+        activity.enablePreviewButton(false);
+
+        // assert
+        Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
+        Assert.assertFalse(btnPreview.isEnabled());
+    }
+
+    @Test
+    public void enablePreviewButtonWithTrue_EnablesPreviewButton() {
+        // act
+        activity.enablePreviewButton(true);
+
+        // assert
+        Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
+        Assert.assertTrue(btnPreview.isEnabled());
     }
 }

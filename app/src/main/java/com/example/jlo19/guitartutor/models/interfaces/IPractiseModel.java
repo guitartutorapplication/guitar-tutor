@@ -13,8 +13,8 @@ public interface IPractiseModel {
     void setSelectedChords(List<String> selectedChords);
     void createTimer();
     void setPresenter(IPractisePresenter presenter);
-    void start();
-    void stop();
+    void startTimer();
+    void stopTimer();
     void setChordChange(ChordChange chordChange);
     void setBeatSpeed(BeatSpeed beatSpeed);
 }

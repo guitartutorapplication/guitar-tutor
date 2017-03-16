@@ -45,14 +45,14 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void viewOnStartPractising() {
-        model.start();
+        model.startTimer();
         view.setStopButtonVisibility(View.VISIBLE);
         view.setStartButtonVisibility(View.INVISIBLE);
     }
 
     @Override
     public void viewOnStopPractising() {
-        model.stop();
+        model.stopTimer();
         view.setChordText(view.getSelectedChords().get(0));
         view.setStopButtonVisibility(View.INVISIBLE);
         view.setStartButtonVisibility(View.VISIBLE);

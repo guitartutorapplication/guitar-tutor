@@ -33,7 +33,7 @@
     android:layout_below="@+id/txtInformation"
     android:textColor="@color/colorText"
     android:textAlignment="center"
-    android:textSize="42sp"
+    android:textSize="36sp"
     android:layout_margin="10dp" />
 
     <Spinner
@@ -80,7 +80,7 @@
         android:layout_below="@+id/spnChord4"
         android:textColor="@color/colorText"
         android:textAlignment="center"
-        android:textSize="42sp"
+        android:textSize="36sp"
         android:layout_margin="10dp" />
 
     <RadioGroup
@@ -133,17 +133,6 @@
             android:textSize="24sp" />
 
     </RadioGroup>
-
-    <TextView
-        android:text="@string/practise_beat_speed_selection_instruction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtBeatSpeedInstruction"
-        android:layout_below="@+id/rGroupChordChange"
-        android:textColor="@color/colorText"
-        android:textAlignment="center"
-        android:textSize="42sp"
-        android:layout_margin="10dp" />
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -207,6 +196,30 @@
         android:width="320dp"
         android:textSize="43sp"
         android:drawableStart="@drawable/quaver_music_icon"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:text="@string/practise_beat_speed_selection_instruction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtBeatSpeedInstruction"
+        android:textColor="@color/colorText"
+        android:textAlignment="textStart"
+        android:textSize="36sp"
+        android:layout_below="@+id/rGroupChordChange"
+        android:layout_margin="10dp" />
+
+    <Button
+        android:text="@string/preview_button_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnPreview"
+        android:width="110dp"
+        android:height="40dp"
+        android:textSize="24sp"
+        android:layout_below="@+id/rGroupChordChange"
+        android:layout_toEndOf="@id/txtBeatSpeedInstruction"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp" />
 
 </RelativeLayout>

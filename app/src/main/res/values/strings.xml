@@ -27,6 +27,7 @@
     <string name="less_than_two_selected_chords_error">Please select 2 or more chords to practise</string>
     <string name="same_chord_selected_error">Please do not select the same chord multiple times</string>
     <string name="practise_button_text">Practise!</string>
+    <string name="preview_button_text">Preview</string>
     <string name="practise_error_occurred_message">An error has occurred in the practise activity</string>
     <string name="practise_setup_information">For this activity you will practise your changes between chords.</string>
     <string name="practise_one_beat_name">every 1 beat</string>
@@ -39,4 +40,5 @@
     <string name="practise_medium_name">medium</string>
     <string name="practise_fast_name">fast</string>
     <string name="practise_very_fast_name">very fast</string>
+    <string name="practise_beat_preview_error_message">An error has occurred while trying to preview beat</string>
 </resources>

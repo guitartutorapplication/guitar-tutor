@@ -31,6 +31,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
         this.view = (PractiseSetupView) view;
         this.view.setToolbarTitleText();
         this.view.showProgressBar();
+        this.view.loadSound();
 
         model.getChords();
     }
@@ -55,6 +56,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     @Override
     public void viewOnPractise(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
+        model.stopBeatPreview();
         model.chordsSelected(selectedChords, chordChangeIndex, beatSpeedIndex);
     }
 
@@ -71,5 +73,31 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     @Override
     public void modelOnCorrectSelectedChords(ArrayList<String> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed) {
         view.startPractiseActivity(selectedChords, chordChange, beatSpeed);
+    }
+
+    @Override
+    public void viewOnBeatPreview(int beatSpeedIndex) {
+        view.enablePreviewButton(false);
+        model.startBeatPreview(beatSpeedIndex);
+    }
+
+    @Override
+    public void modelOnNewBeat() {
+        view.playSound();
+    }
+
+    @Override
+    public void modelOnPreviewBeatError() {
+        view.showPreviewBeatError();
+    }
+
+    @Override
+    public void modelOnBeatPreviewFinished() {
+        view.enablePreviewButton(true);
+    }
+
+    @Override
+    public void viewOnBeatSpeedChanged() {
+        model.stopBeatPreview();
     }
 }

@@ -60,13 +60,13 @@ public class PractiseModel implements IPractiseModel {
     }
 
     @Override
-    public void start() {
+    public void startTimer() {
         requestStop = false;
         new Thread(timerTask).start();
     }
 
     @Override
-    public void stop() {
+    public void stopTimer() {
         requestStop = true;
     }
 

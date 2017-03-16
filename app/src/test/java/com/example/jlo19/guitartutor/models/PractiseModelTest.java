@@ -51,7 +51,7 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.ONE_BEAT);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(4000);
 
         // assert
@@ -67,7 +67,7 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.TWO_BEATS);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(8000);
 
         // assert
@@ -83,7 +83,7 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.FOUR_BEATS);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(16000);
 
         // assert
@@ -99,7 +99,7 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.EIGHT_BEATS);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(32000);
 
         // assert
@@ -115,7 +115,7 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(64000);
 
         // assert
@@ -131,7 +131,7 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(3000);
 
         // assert
@@ -144,7 +144,7 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.SLOW);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(5000);
 
         // assert
@@ -157,7 +157,7 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(2000);
 
         // assert
@@ -170,7 +170,7 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.FAST);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(3000);
 
         // assert
@@ -183,7 +183,7 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
 
         // act
-        model.start();
+        model.startTimer();
         Thread.sleep(1000);
 
         // assert
@@ -195,11 +195,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
-        model.start();
+        model.startTimer();
         Thread.sleep(3000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(2000);
 
         // assert
@@ -211,11 +211,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.SLOW);
-        model.start();
+        model.startTimer();
         Thread.sleep(5000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(2000);
 
         // assert
@@ -227,11 +227,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.MEDIUM);
-        model.start();
+        model.startTimer();
         Thread.sleep(2000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -243,11 +243,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.FAST);
-        model.start();
+        model.startTimer();
         Thread.sleep(3000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -259,11 +259,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
-        model.start();
+        model.startTimer();
         Thread.sleep(1000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -275,10 +275,10 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.ONE_BEAT);
-        model.start();
+        model.startTimer();
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -290,11 +290,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.TWO_BEATS);
-        model.start();
+        model.startTimer();
         Thread.sleep(1000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -306,11 +306,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.FOUR_BEATS);
-        model.start();
+        model.startTimer();
         Thread.sleep(3000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -322,11 +322,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.EIGHT_BEATS);
-        model.start();
+        model.startTimer();
         Thread.sleep(7000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert
@@ -338,11 +338,11 @@ public class PractiseModelTest {
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
-        model.start();
+        model.startTimer();
         Thread.sleep(15000);
 
         // act
-        model.stop();
+        model.stopTimer();
         Thread.sleep(1000);
 
         // assert

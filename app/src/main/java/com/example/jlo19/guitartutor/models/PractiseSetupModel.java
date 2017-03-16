@@ -19,12 +19,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Handles connection to database API and setup selection
+ * Handles connection to database API, setup selection and timer for beat preview
  */
 public class PractiseSetupModel implements IPractiseSetupModel {
 
     private DatabaseApi api;
     private IPractiseSetupPresenter presenter;
+    private Thread currentBeatPreview;
+    private boolean requestStop;
 
     public PractiseSetupModel() {
         App.getComponent().inject(this);
@@ -73,6 +75,53 @@ public class PractiseSetupModel implements IPractiseSetupModel {
         else {
             presenter.modelOnCorrectSelectedChords(selectedChords,
                     ChordChange.values()[chordChangeIndex], BeatSpeed.values()[beatSpeedIndex]);
+        }
+    }
+
+    @Override
+    public void startBeatPreview(int beatSpeedIndex) {
+        final BeatSpeed beatSpeed = BeatSpeed.values()[beatSpeedIndex];
+        requestStop = false;
+
+        Runnable timerTask = new Runnable() {
+            final int totalLength = 4000;
+            int currentLength = 0;
+
+            @Override
+            public void run() {
+                // while timer has been running for less than 4 seconds
+                while (totalLength - currentLength >= beatSpeed.getValue()) {
+                    try {
+                        if (requestStop) {
+                            return;
+                        }
+
+                        // inform presenter every beat
+                        presenter.modelOnNewBeat();
+                        Thread.sleep(beatSpeed.getValue());
+                        currentLength += beatSpeed.getValue();
+
+                    } catch (InterruptedException e) {
+                        presenter.modelOnPreviewBeatError();
+                    }
+                }
+
+                presenter.modelOnBeatPreviewFinished();
+            }
+        };
+
+        currentBeatPreview = new Thread(timerTask);
+        currentBeatPreview.start();
+    }
+
+    @Override
+    public void stopBeatPreview() {
+        // stop if there is currently a beat preview running
+        if (currentBeatPreview != null) {
+            if (currentBeatPreview.isAlive()) {
+                requestStop = true;
+                presenter.modelOnBeatPreviewFinished();
+            }
         }
     }
 }

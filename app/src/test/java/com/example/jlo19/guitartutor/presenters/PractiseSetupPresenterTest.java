@@ -48,6 +48,12 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
+    public void setView_CallsLoadSoundOnView() {
+        // assert
+        Mockito.verify(view).loadSound();
+    }
+
+    @Test
     public void setView_CallsSetToolbarTitleTextOnView() {
         // assert
         Mockito.verify(view).setToolbarTitleText();
@@ -127,6 +133,20 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
+    public void viewOnPractise_CallsStopBeatPreviewOnModel() {
+        // act
+        ArrayList<String> selectedChords = new ArrayList<String>() {{
+            add("A");
+            add("C");
+            add("B");
+        }};
+        presenter.viewOnPractise(selectedChords, 1, 1);
+
+        // assert
+        Mockito.verify(model).stopBeatPreview();
+    }
+
+    @Test
     public void modelOnLessThanTwoChordsSelected_CallsLessThanTwoChordsSelectedErrorOnView() {
         // act
         presenter.modelOnLessThanTwoChordsSelected();
@@ -156,5 +176,60 @@ public class PractiseSetupPresenterTest {
 
         // assert
         Mockito.verify(view).startPractiseActivity(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
+    }
+
+    @Test
+    public void viewOnBeatPreview_CallsStartBeatPreviewTimerOnModel() {
+        // act
+        int selectedBeatSpeedIndex = 3;
+        presenter.viewOnBeatPreview(selectedBeatSpeedIndex);
+
+        // assert
+        Mockito.verify(model).startBeatPreview(selectedBeatSpeedIndex);
+    }
+
+    @Test
+    public void viewOnBeatPreview_CallsEnablePreviewButtonWithFalseOnView() {
+        // act
+        presenter.viewOnBeatPreview(3);
+
+        // assert
+        Mockito.verify(view).enablePreviewButton(false);
+    }
+
+    @Test
+    public void modelOnNewBeat_CallsPlaySoundOnView() {
+        // act
+        presenter.modelOnNewBeat();
+
+        // assert
+        Mockito.verify(view).playSound();
+    }
+
+    @Test
+    public void modelOnPreviewBeatError_CallsShowPreviewBeatErrorOnView() {
+        // act
+        presenter.modelOnPreviewBeatError();
+
+        // assert
+        Mockito.verify(view).showPreviewBeatError();
+    }
+
+    @Test
+    public void modelOnBeatPreviewFinished_CallsEnablePreviewButtonWithTrueOnView() {
+        // act
+        presenter.modelOnBeatPreviewFinished();
+
+        // assert
+        Mockito.verify(view).enablePreviewButton(true);
+    }
+
+    @Test
+    public void viewOnBeatSpeedChanged_CallsStopBeatPreviewOnModel() {
+        // act
+        presenter.viewOnBeatSpeedChanged();
+
+        // assert
+        Mockito.verify(model).stopBeatPreview();
     }
 }

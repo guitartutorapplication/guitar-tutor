@@ -19,4 +19,8 @@ public interface PractiseSetupView extends IView {
     void showLessThanTwoChordsSelectedError();
     void showSameSelectedChordError();
     void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed);
+    void playSound();
+    void loadSound();
+    void showPreviewBeatError();
+    void enablePreviewButton(boolean isEnabled);
 }
