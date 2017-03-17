@@ -22,4 +22,7 @@ public interface IPractiseSetupPresenter extends IPresenter {
     void modelOnPreviewBeatError();
     void modelOnBeatPreviewFinished();
     void viewOnBeatSpeedChanged();
+    void viewOnDestroy();
+    void viewOnPause();
+    void viewOnStop();
 }

@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
+import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
@@ -25,7 +26,7 @@ public class PractiseModel implements IPractiseModel {
     }
 
     @Override
-    public void createTimer() {
+    public void createPractiseTimer() {
         timerTask = new Runnable() {
             @Override
             public void run() {
@@ -60,7 +61,7 @@ public class PractiseModel implements IPractiseModel {
     }
 
     @Override
-    public void startTimer() {
+    public void startPractiseTimer() {
         requestStop = false;
         new Thread(timerTask).start();
     }
@@ -78,5 +79,37 @@ public class PractiseModel implements IPractiseModel {
     @Override
     public void setBeatSpeed(BeatSpeed beatSpeed) {
         this.beatSpeed = beatSpeed;
+    }
+
+    @Override
+    public void startCountdown() {
+        requestStop = false;
+        Runnable countdown = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < 4; i++) {
+                        if (requestStop) {
+                            return;
+                        }
+
+                        // inform presenter every second of countdown
+                        presenter.modelOnNewSecondOfCountdown(Countdown.values()[i]);
+                        if (i == 3) {
+                            Thread.sleep(3000);
+                        }
+                        else {
+                            Thread.sleep(1500);
+                        }
+                    }
+                }
+                catch (InterruptedException e) {
+                    presenter.modelOnError();
+                }
+                presenter.modelOnCountdownFinished();
+            }
+        };
+
+        new Thread(countdown).start();
     }
 }

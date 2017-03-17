@@ -133,20 +133,6 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void viewOnPractise_CallsStopBeatPreviewOnModel() {
-        // act
-        ArrayList<String> selectedChords = new ArrayList<String>() {{
-            add("A");
-            add("C");
-            add("B");
-        }};
-        presenter.viewOnPractise(selectedChords, 1, 1);
-
-        // assert
-        Mockito.verify(model).stopBeatPreview();
-    }
-
-    @Test
     public void modelOnLessThanTwoChordsSelected_CallsLessThanTwoChordsSelectedErrorOnView() {
         // act
         presenter.modelOnLessThanTwoChordsSelected();
@@ -228,6 +214,33 @@ public class PractiseSetupPresenterTest {
     public void viewOnBeatSpeedChanged_CallsStopBeatPreviewOnModel() {
         // act
         presenter.viewOnBeatSpeedChanged();
+
+        // assert
+        Mockito.verify(model).stopBeatPreview();
+    }
+
+    @Test
+    public void viewOnDestroy_StopsBeatPreviewOnModel() {
+        // act
+        presenter.viewOnDestroy();
+
+        // assert
+        Mockito.verify(model).stopBeatPreview();
+    }
+
+    @Test
+    public void viewOnPause_StopsBeatPreviewOnModel() {
+        // act
+        presenter.viewOnPause();
+
+        // assert
+        Mockito.verify(model).stopBeatPreview();
+    }
+
+    @Test
+    public void viewOnStop_StopsBeatPreviewOnModel() {
+        // act
+        presenter.viewOnStop();
 
         // assert
         Mockito.verify(model).stopBeatPreview();

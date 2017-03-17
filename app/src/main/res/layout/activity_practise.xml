@@ -25,19 +25,6 @@
         android:textStyle="italic" />
 
     <Button
-        android:text="@string/start_button_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnStart"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:textSize="50sp"
-        android:drawableTop="@drawable/play_icon"
-        android:width="200dp"
-        android:height="150dp"
-        android:layout_marginBottom="20dp" />
-
-    <Button
         android:text="@string/stop_button_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,5 +47,36 @@
         android:textStyle="bold"
         android:textSize="340sp"
         android:textColor="@color/colorText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/txtCountdown"
+        android:textStyle="bold"
+        android:textSize="340sp"
+        android:textColor="@color/colorText" />
+
+    <TextView
+        android:text="@string/practise_first_chord_instruction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtFirstChordInstruction"
+        android:textStyle="normal|italic"
+        android:textSize="50sp"
+        android:textColor="@color/colorText"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/txtChord" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtFirstChord"
+        android:textStyle="normal|bold"
+        android:textSize="50sp"
+        android:textColor="@color/colorText"
+        android:layout_below="@+id/txtFirstChordInstruction"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.MediaController;
@@ -15,6 +16,9 @@ import com.example.jlo19.guitartutor.R;
 public class LearnChordVideoActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    MediaPlayer.OnInfoListener onInfoListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +32,7 @@ public class LearnChordVideoActivity extends AppCompatActivity {
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
 
-        videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+        onInfoListener = new MediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(MediaPlayer mp, int what, int extra) {
                 if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END){
@@ -36,7 +40,8 @@ public class LearnChordVideoActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        };
+        videoView.setOnInfoListener(onInfoListener);
 
         MediaController mediaCtrl = new MediaController(this);
         mediaCtrl.setMediaPlayer(videoView);

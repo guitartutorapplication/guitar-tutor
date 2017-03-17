@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
+import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
@@ -42,16 +43,17 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.ONE_BEAT);
         model.setBeatSpeed(BeatSpeed.MEDIUM);
 
-        model.createTimer();
+        model.createPractiseTimer();
     }
 
     @Test
-    public void oneBeatChordChange_start_After4Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+    public void oneBeatChordChange_StartPractiseTimer_After4Seconds_CallsNewChordOnPresenterForEachChord()
+            throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.ONE_BEAT);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(4000);
 
         // assert
@@ -62,12 +64,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void twoBeatsChordChange_start_After8Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+    public void twoBeatsChordChange_StartPractiseTimer_After8Seconds_CallsNewChordOnPresenterForEachChord()
+            throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.TWO_BEATS);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(8000);
 
         // assert
@@ -78,12 +81,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void fourBeatsChordChange_start_After16Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+    public void fourBeatsChordChange_StartPractiseTimer_After16Seconds_CallsNewChordOnPresenterForEachChord()
+            throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.FOUR_BEATS);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(16000);
 
         // assert
@@ -94,12 +98,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void eightBeatsChordChange_start_After32Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+    public void eightBeatsChordChange_StartPractiseTimer_After32Seconds_CallsNewChordOnPresenterForEachChord()
+            throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.EIGHT_BEATS);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(32000);
 
         // assert
@@ -110,12 +115,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void sixteenBeatsChordChange_start_After64Seconds_CallsNewChordOnPresenterForEachChord() throws InterruptedException {
+    public void sixteenBeatsChordChange_StartPractiseTimer_After64Seconds_CallsNewChordOnPresenterForEachChord()
+            throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(64000);
 
         // assert
@@ -126,12 +132,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void verySlowBeatSpeed_Start_After3Seconds_CallsNewBeatOnPresenterTwice() throws InterruptedException {
+    public void verySlowBeatSpeed_StartPractiseTimer_After3Seconds_CallsNewBeatOnPresenterTwice()
+            throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(3000);
 
         // assert
@@ -139,12 +146,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void slowBeatSpeed_Start_After5Seconds_CallsNewBeatOnPresenterFourTimes() throws InterruptedException {
+    public void slowBeatSpeed_StartPractiseTimer_After5Seconds_CallsNewBeatOnPresenterFourTimes()
+            throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.SLOW);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(5000);
 
         // assert
@@ -152,12 +160,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void mediumBeatSpeed_Start_After2Seconds_CallsNewBeatOnPresenterTwice() throws InterruptedException {
+    public void mediumBeatSpeed_StartPractiseTimer_After2Seconds_CallsNewBeatOnPresenterTwice()
+            throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(2000);
 
         // assert
@@ -165,12 +174,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void fastBeatSpeed_Start_After3Seconds_CallsNewBeatOnPresenterFourTimes() throws InterruptedException {
+    public void fastBeatSpeed_StartPractiseTimer_After3Seconds_CallsNewBeatOnPresenterFourTimes()
+            throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.FAST);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(3000);
 
         // assert
@@ -178,12 +188,13 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void veryFastBeatSpeed_Start_After1Second_CallsNewBeatOnPresenterTwice() throws InterruptedException {
+    public void veryFastBeatSpeed_StartPractiseTimer_After1Second_CallsNewBeatOnPresenterTwice()
+            throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
 
         // act
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(1000);
 
         // assert
@@ -191,11 +202,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void verySlowBeatSpeed_StartAndRunFor3Seconds_Stop_After2Seconds_CallsNewSecondOnPresenterOnlyTwice()
+    public void verySlowBeatSpeed_StartPractiseTimerAndRunFor3Seconds_Stop_After2Seconds_CallsNewSecondOnPresenterOnlyTwice()
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(3000);
 
         // act
@@ -207,11 +218,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void slowBeatSpeed_StartAndRunFor5Seconds_Stop_After2Seconds_CallsNewSecondOnPresenterOnlyFourTimes()
+    public void slowBeatSpeed_StartPractiseTimerAndRunFor5Seconds_Stop_After2Seconds_CallsNewSecondOnPresenterOnlyFourTimes()
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.SLOW);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(5000);
 
         // act
@@ -223,11 +234,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void mediumBeatSpeed_StartAndRunFor2Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnlyTwice()
+    public void mediumBeatSpeed_StartPractiseTimerAndRunFor2Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnlyTwice()
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.MEDIUM);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(2000);
 
         // act
@@ -239,11 +250,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void fastBeatSpeed_StartAndRunFor3Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnlyFourTimes()
+    public void fastBeatSpeed_StartPractiseTimerAndRunFor3Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnlyFourTimes()
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.FAST);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(3000);
 
         // act
@@ -255,11 +266,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void veryFastBeatSpeed_StartAndRunFor1Second_Stop_After1Second_CallsNewSecondOnPresenterOnlyTwice()
+    public void veryFastBeatSpeed_StartPractiseTimerAndRunFor1Second_Stop_After1Second_CallsNewSecondOnPresenterOnlyTwice()
             throws InterruptedException {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(1000);
 
         // act
@@ -271,11 +282,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void oneBeatChordChange_Start_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+    public void oneBeatChordChange_StartPractiseTimer_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.ONE_BEAT);
-        model.startTimer();
+        model.startPractiseTimer();
 
         // act
         model.stopTimer();
@@ -286,11 +297,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void twoBeatsChordChange_StartAndRunFor1Second_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+    public void twoBeatsChordChange_StartPractiseTimerAndRunFor1Second_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.TWO_BEATS);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(1000);
 
         // act
@@ -302,11 +313,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void fourBeatsChordChange_StartAndRunFor3Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+    public void fourBeatsChordChange_StartPractiseTimerAndRunFor3Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.FOUR_BEATS);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(3000);
 
         // act
@@ -318,11 +329,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void eightBeatsChordChange_StartAndRunFor7Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+    public void eightBeatsChordChange_StartPractiseTimerAndRunFor7Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.EIGHT_BEATS);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(7000);
 
         // act
@@ -334,11 +345,11 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void sixteenBeatsChordChange_StartAndRunFor15Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
+    public void sixteenBeatsChordChange_StartPractiseTimerAndRunFor15Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
-        model.startTimer();
+        model.startPractiseTimer();
         Thread.sleep(15000);
 
         // act
@@ -348,4 +359,54 @@ public class PractiseModelTest {
         // assert
         Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
     }
+
+    @Test
+    public void startCountdown_After6Seconds_CallsNewSecondOfCountdownForEachOnPresenter()
+            throws InterruptedException {
+        // act
+        model.startCountdown();
+        Thread.sleep(6000);
+
+        // assert
+        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.THREE);
+        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.TWO);
+        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.ONE);
+        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.GO);
+    }
+
+    @Test
+    public void startCountdown_After8Seconds_CallsCountdownFinishedOnPresenter()
+            throws InterruptedException {
+        // act
+        model.startCountdown();
+        Thread.sleep(8000);
+
+        // assert
+        Mockito.verify(presenter).modelOnCountdownFinished();
+    }
+
+    @Test
+    public void startCountdown_Stop_DoesntCallsNewSecondOnPresenter() {
+        // arrange
+        model.startCountdown();
+
+        // act
+        model.stopTimer();
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnNewSecondOfCountdown((Countdown) Mockito.any());
+    }
+
+    @Test
+    public void startCountdown_Stop_DoesntCallsCountdownFinishedOnPresenter() {
+        // arrange
+        model.startCountdown();
+
+        // act
+        model.stopTimer();
+
+        // assert
+        Mockito.verify(presenter, never()).modelOnCountdownFinished();
+    }
+
 }

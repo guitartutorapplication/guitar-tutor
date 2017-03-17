@@ -117,8 +117,21 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
     @Override
     public void onDestroy() {
         super.onDestroy();
+        presenter.viewOnDestroy();
         soundPool.release();
         soundPool = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.viewOnPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        presenter.viewOnStop();
     }
 
     @Override

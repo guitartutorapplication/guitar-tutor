@@ -1,6 +1,5 @@
 package com.example.jlo19.guitartutor.activities;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -27,12 +26,22 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
 
     private List<String> selectedChords;
     private IPractisePresenter presenter;
-    private Button btnStart;
     private Button btnStop;
     private SoundPool soundPool;
-    private int soundId;
+    private int metronomeSoundId;
     private ChordChange chordChange;
     private BeatSpeed beatSpeed;
+    private TextView txtCountdown;
+    private TextView txtFirstChordInstruction;
+    private TextView txtFirstChord;
+    private int countdown1SoundId;
+    private int countdown2SoundId;
+    private int countdown3SoundId;
+    private int countdownGoSoundId;
+    private int numSoundsLoaded;
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    SoundPool.OnLoadCompleteListener onLoadCompleteListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +56,17 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
         // retrieving beat speed
         beatSpeed = (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
 
+        numSoundsLoaded = 0;
         setSoundPool(new SoundPool.Builder().setMaxStreams(1).build());
+
+        txtCountdown = (TextView) findViewById(R.id.txtCountdown);
+        txtFirstChordInstruction = (TextView) findViewById(R.id.txtFirstChordInstruction);
+        txtFirstChord = (TextView) findViewById(R.id.txtFirstChord);
 
         // allows injection of presenter
         App.getComponent().inject(this);
 
-        btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
-
-        btnStart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    presenter.viewOnStartPractising();
-                }
-            });
-
         btnStop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -73,6 +78,16 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     void setSoundPool(SoundPool soundPool) {
         this.soundPool = soundPool;
+        onLoadCompleteListener = new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                numSoundsLoaded++;
+                if (numSoundsLoaded == 5) {
+                    presenter.viewOnSoundsLoaded();
+                }
+            }
+        };
+        soundPool.setOnLoadCompleteListener(onLoadCompleteListener);
     }
 
     @Inject
@@ -84,14 +99,15 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        presenter.viewOnDestroy();
         soundPool.release();
         soundPool = null;
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        presenter.viewOnStopPractising();
+    public void onStop() {
+        super.onStop();
+        presenter.viewOnStop();
     }
 
     @Override
@@ -122,18 +138,18 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     }
 
     @Override
-    public void setStopButtonVisibility(int isVisible) {
-        btnStop.setVisibility(isVisible);
+    public void showStopButton() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                btnStop.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
-    public void setStartButtonVisibility(int isVisible) {
-        btnStart.setVisibility(isVisible);
-    }
-
-    @Override
-    public void playSound() {
-        soundPool.play(soundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    public void playMetronomeSound() {
+        soundPool.play(metronomeSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
     }
 
     @Override
@@ -143,14 +159,17 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     }
 
     @Override
-    public void startPractiseSetupActivity() {
-        Intent intent = new Intent(getBaseContext(), PractiseSetupActivity.class);
-        startActivity(intent);
+    public void returnToPractiseSetup() {
+        finish();
     }
 
     @Override
-    public void loadSound() {
-        soundId = soundPool.load(this, R.raw.metronome_sound, 1);
+    public void loadSounds() {
+        countdown3SoundId = soundPool.load(this, R.raw.countdown_3, 1);
+        countdown2SoundId = soundPool.load(this, R.raw.countdown_2, 1);
+        countdown1SoundId = soundPool.load(this, R.raw.countdown_1, 1);
+        countdownGoSoundId = soundPool.load(this, R.raw.countdown_go, 1);
+        metronomeSoundId = soundPool.load(this, R.raw.metronome_sound, 1);
     }
 
     @Override
@@ -161,5 +180,61 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     @Override
     public BeatSpeed getBeatSpeed() {
         return beatSpeed;
+    }
+
+    @Override
+    public void setCountdownText(final String second) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtCountdown.setText(second);
+            }
+        });
+    }
+
+    @Override
+    public void hideCountdown() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtCountdown.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void hideFirstChordInstruction() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtFirstChord.setVisibility(View.INVISIBLE);
+                txtFirstChordInstruction.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void setFirstChordText(String firstChord) {
+        txtFirstChord.setText(firstChord);
+    }
+
+    @Override
+    public void playCountdownOneSound() {
+        soundPool.play(countdown1SoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    }
+
+    @Override
+    public void playCountdownTwoSound() {
+        soundPool.play(countdown2SoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    }
+
+    @Override
+    public void playCountdownThreeSound() {
+        soundPool.play(countdown3SoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    }
+
+    @Override
+    public void playCountdownGoSound() {
+        soundPool.play(countdownGoSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
     }
 }

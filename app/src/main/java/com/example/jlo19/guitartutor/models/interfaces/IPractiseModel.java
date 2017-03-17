@@ -11,10 +11,11 @@ import java.util.List;
  */
 public interface IPractiseModel {
     void setSelectedChords(List<String> selectedChords);
-    void createTimer();
+    void createPractiseTimer();
     void setPresenter(IPractisePresenter presenter);
-    void startTimer();
+    void startPractiseTimer();
     void stopTimer();
     void setChordChange(ChordChange chordChange);
     void setBeatSpeed(BeatSpeed beatSpeed);
+    void startCountdown();
 }

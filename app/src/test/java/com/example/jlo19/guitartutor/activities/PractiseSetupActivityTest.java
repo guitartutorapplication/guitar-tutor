@@ -271,6 +271,15 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
+    public void onDestroy_CallsOnDestroyOnPresenter() {
+        // act
+        activity.onDestroy();
+
+        // assert
+        Mockito.verify(presenter).viewOnDestroy();
+    }
+
+    @Test
     public void loadSound_CallsLoadOnSoundPoolWithMetronomeClip() {
         // act
         activity.loadSound();
@@ -311,5 +320,23 @@ public class PractiseSetupActivityTest {
         // assert
         Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
         Assert.assertTrue(btnPreview.isEnabled());
+    }
+
+    @Test
+    public void onPause_CallsOnPauseOnPresenter() {
+        // act
+        activity.onPause();
+
+        // assert
+        Mockito.verify(presenter).viewOnPause();
+    }
+
+    @Test
+    public void onStop_CallsOnStopOnPresenter() {
+        // act
+        activity.onStop();
+
+        // assert
+        Mockito.verify(presenter).viewOnStop();
     }
 }

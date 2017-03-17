@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.widget.VideoView;
 
@@ -85,5 +86,15 @@ public class LearnChordVideoActivityTest {
         // assert
         VideoView videoView = (VideoView) activity.findViewById(R.id.videoView);
         Assert.assertTrue(videoView.isPlaying());
+    }
+
+    @Test
+    public void onInfoWithBufferingEnd_HidesProgressBar() {
+        // act
+        activity.onInfoListener.onInfo(null, MediaPlayer.MEDIA_INFO_BUFFERING_END, 0);
+
+        // assert
+        ProgressDialog dialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
+        Assert.assertFalse(dialog.isShowing());
     }
 }

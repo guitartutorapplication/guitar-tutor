@@ -56,7 +56,6 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     @Override
     public void viewOnPractise(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
-        model.stopBeatPreview();
         model.chordsSelected(selectedChords, chordChangeIndex, beatSpeedIndex);
     }
 
@@ -98,6 +97,21 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     @Override
     public void viewOnBeatSpeedChanged() {
+        model.stopBeatPreview();
+    }
+
+    @Override
+    public void viewOnDestroy() {
+        model.stopBeatPreview();
+    }
+
+    @Override
+    public void viewOnPause() {
+        model.stopBeatPreview();
+    }
+
+    @Override
+    public void viewOnStop() {
         model.stopBeatPreview();
     }
 }

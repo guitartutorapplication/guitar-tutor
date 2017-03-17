@@ -14,9 +14,8 @@
     <string name="practising_chords_name">Practising chords</string>
     <string name="learn_chords_button_text">Learn chords</string>
     <string name="practise_chords_button_text">Practise chords</string>
-    <string name="practise_instruction">For this activity you play 8 strums on each of your
-        selected chords. Listen to the sound to stay in time and watch the screen to keep
-    track of the chord you should be playing.</string>
+    <string name="practise_instruction">Tip: try to keep your strumming in time with the beat.</string>
+    <string name="practise_first_chord_instruction">Your first chord: </string>
     <string name="stop_button_text">Stop</string>
     <string name="start_button_text">Start</string>
     <string name="practise_setup_name">Practise setup</string>
