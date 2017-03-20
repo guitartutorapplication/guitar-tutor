@@ -3,7 +3,6 @@ package com.example.jlo19.guitartutor.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
@@ -38,14 +37,6 @@ public class HomeActivityTest {
     public void setUp() {
         activity = Robolectric.buildActivity(HomeActivity.class)
                 .create().get();
-    }
-
-    @Test
-    public void setToolbarTitleTextToAppName() {
-        // assert
-        TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
-        Assert.assertEquals(getApp().getResources().getString(R.string.app_name),
-                view.getText());
     }
 
     @Test

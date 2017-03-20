@@ -1,11 +1,14 @@
 package com.example.jlo19.guitartutor.adapters;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
+import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import java.util.List;
@@ -48,9 +51,23 @@ public class ChordsButtonAdapter extends BaseAdapter {
         else {
             button = (Button) convertView;
         }
+
         button.setOnClickListener(listener);
         button.setText(chords.get(position).toString());
         button.setId(position);
+        button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
+        button.setBackground(context.getDrawable(R.drawable.chord_button));
+
+        float textSize = context.getResources().getDimension(
+                R.dimen.chord_button_text_size);
+        button.setTextSize(textSize);
+
+        // getting width/height of button in pixels to set
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float widthHeightDp = context.getResources().getDimension(
+                R.dimen.chord_button_width_height);
+        int widthHeightPx = (int) ((widthHeightDp * displayMetrics.density) + 0.5);
+        button.setLayoutParams(new ViewGroup.LayoutParams(widthHeightPx, widthHeightPx));
 
         return button;
     }

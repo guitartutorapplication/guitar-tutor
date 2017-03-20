@@ -2,10 +2,14 @@ package com.example.jlo19.guitartutor.adapters;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.jlo19.guitartutor.BuildConfig;
+import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import junit.framework.Assert;
@@ -30,6 +34,7 @@ public class ChordsButtonAdapterTest {
 
     private ChordsButtonAdapter adapter;
     private List<Chord> chords;
+    private Context context;
 
     @Before
     public void setUp() {
@@ -37,7 +42,7 @@ public class ChordsButtonAdapterTest {
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
         View.OnClickListener listener = PowerMockito.mock(View.OnClickListener.class);
-        Context context = RuntimeEnvironment.application;
+        context = RuntimeEnvironment.application;
 
         adapter = new ChordsButtonAdapter(context, chords, listener);
     }
@@ -74,15 +79,27 @@ public class ChordsButtonAdapterTest {
     }
 
     @Test
-    public void getView_ReturnsButtonWithIdAndText() {
+    public void getView_ReturnsButton() {
         int position = 0;
 
         // act
         Button button = (Button) adapter.getView(position, null , null);
 
         // assert
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int expectedWidthHeightPx = (int) ((context.getResources().getDimension(
+                R.dimen.chord_button_width_height) * displayMetrics.density) + 0.5);
+
+        ViewGroup.LayoutParams actualLayoutParams = button.getLayoutParams();
+
+        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.height);
+        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.width);
         Assert.assertEquals(position, button.getId());
         Assert.assertEquals(chords.get(position).toString(), button.getText());
+        Assert.assertEquals(Gravity.TOP|Gravity.CENTER_HORIZONTAL, button.getGravity());
+        Assert.assertEquals(context.getResources().getDimension(R.dimen.chord_button_text_size),
+                button.getTextSize());
+
     }
 
 }

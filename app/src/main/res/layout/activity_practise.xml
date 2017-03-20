@@ -4,10 +4,6 @@
     android:id="@+id/activity_practise"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.jlo19.guitartutor.activities.PractiseActivity">
 
     <include android:id="@+id/toolbar"
@@ -19,24 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:id="@+id/txtInstruction"
-        android:textSize="40sp"
+        android:textSize="@dimen/practise_setup_small_text"
         android:textColor="@color/colorText"
         android:gravity="center"
         android:textStyle="italic" />
-
-    <Button
-        android:text="@string/stop_button_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnStop"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:textSize="50sp"
-        android:drawableTop="@drawable/stop_icon"
-        android:width="200dp"
-        android:height="150dp"
-        android:visibility="invisible"
-        android:layout_marginBottom="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,7 +27,7 @@
         android:layout_centerVertical="true"
         android:id="@+id/txtChord"
         android:textStyle="bold"
-        android:textSize="340sp"
+        android:textSize="@dimen/practise_big_text"
         android:textColor="@color/colorText" />
 
     <TextView
@@ -55,7 +37,7 @@
         android:layout_centerVertical="true"
         android:id="@+id/txtCountdown"
         android:textStyle="bold"
-        android:textSize="340sp"
+        android:textSize="@dimen/practise_big_text"
         android:textColor="@color/colorText" />
 
     <TextView
@@ -64,7 +46,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtFirstChordInstruction"
         android:textStyle="normal|italic"
-        android:textSize="50sp"
+        android:textSize="@dimen/practise_setup_big_text"
         android:textColor="@color/colorText"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/txtChord" />
@@ -74,9 +56,39 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtFirstChord"
         android:textStyle="normal|bold"
-        android:textSize="50sp"
+        android:textSize="@dimen/practise_setup_big_text"
         android:textColor="@color/colorText"
         android:layout_below="@+id/txtFirstChordInstruction"
         android:layout_centerHorizontal="true" />
+
+    <View
+        android:id="@+id/shadow"
+        android:background="@drawable/gradient"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/btnLayout"
+        android:nestedScrollingEnabled="false"
+        android:layout_height="5dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLayout"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+
+        <Button
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnStop"
+            android:textSize="50sp"
+            android:layout_marginTop="@dimen/big_layout_margin"
+            android:background="@drawable/stop_button"
+            android:layout_width="@dimen/main_buttons_width"
+            android:layout_height="@dimen/main_buttons_height"
+            android:visibility="visible"
+            />
+
+    </RelativeLayout>
 
 </RelativeLayout>

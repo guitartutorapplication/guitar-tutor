@@ -1,41 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_home"
     tools:context="com.example.jlo19.guitartutor.activities.HomeActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/home_layout_margin"
+    android:layout_marginTop="@dimen/home_layout_margin">
 
-    <include android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/btnLearn"
+            android:textSize="50sp"
+            android:background="@drawable/learn_chords_button"
+            android:layout_marginBottom="5dp" />
 
-    <Button
-        android:text="@string/learn_chords_button_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnLearn"
-        android:layout_above="@+id/viewCenter"
-        android:layout_centerHorizontal="true"
-        android:width="500dp"
-        android:textSize="50sp"
-        android:height="200dp" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnPractise"
+            android:layout_weight="1"
+            android:textSize="50sp"
+            android:background="@drawable/practise_chords_button"
+            android:layout_marginTop="5dp" />
 
-    <View
-        android:id="@+id/viewCenter"
-        android:layout_height="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_width="20dp" />
-
-    <Button
-        android:text="@string/practise_chords_button_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnPractise"
-        android:width="500dp"
-        android:textSize="50sp"
-        android:height="200dp"
-        android:layout_below="@+id/viewCenter"
-        android:layout_alignStart="@+id/btnLearn" />
-
-</RelativeLayout>
+</LinearLayout>

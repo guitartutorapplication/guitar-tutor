@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#dbdada</color>
-    <color name="colorPrimaryDark">#bfbebe</color>
-    <color name="colorAccent">#cda780</color>
+    <color name="colorPrimary">#b19270</color>
+    <color name="colorPrimaryDark">#836c53</color>
+    <color name="colorAccent">#e6be92</color>
     <color name="colorText">#000000</color>
 </resources>
