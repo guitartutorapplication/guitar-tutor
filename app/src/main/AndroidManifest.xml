@@ -15,7 +15,8 @@
         <activity
             android:name=".activities.LearnViewAllChordsActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.HomeActivity" />
+            android:parentActivityName=".activities.HomeActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.LearnChordActivity"
             android:configChanges="orientation|screenSize"
@@ -28,23 +29,26 @@
         <activity
             android:name=".activities.LearnDiagramHelpActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.LearnChordActivity" />
+            android:parentActivityName=".activities.LearnChordActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.HomeActivity"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.PractiseActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.PractiseSetupActivity" />
+            android:parentActivityName=".activities.PractiseSetupActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activities.PractiseSetupActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.HomeActivity"/>
+            android:parentActivityName=".activities.HomeActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

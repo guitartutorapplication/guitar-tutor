@@ -1,8 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.view.View;
-
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.IView;
@@ -22,8 +21,7 @@ public class PractisePresenter implements IPractisePresenter {
     public void setView(IView view) {
         this.view = (PractiseView) view;
         this.view.setToolbarTitleText();
-        this.view.setChordText(this.view.getSelectedChords().get(0));
-        this.view.loadSound();
+        this.view.setFirstChordText(this.view.getSelectedChords().get(0));
 
         App.getComponent().inject(this);
     }
@@ -33,7 +31,11 @@ public class PractisePresenter implements IPractisePresenter {
         this.model = model;
         model.setPresenter(this);
         model.setSelectedChords(view.getSelectedChords());
-        model.createTimer();
+        model.setChordChange(view.getChordChange());
+        model.setBeatSpeed(view.getBeatSpeed());
+        model.createPractiseTimer();
+
+        view.loadSounds();
     }
 
     @Override
@@ -42,28 +44,61 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void viewOnStartPractising() {
-        model.start();
-        view.setStopButtonVisibility(View.VISIBLE);
-        view.setStartButtonVisibility(View.INVISIBLE);
-    }
-
-    @Override
     public void viewOnStopPractising() {
-        model.stop();
-        view.setChordText(view.getSelectedChords().get(0));
-        view.setStopButtonVisibility(View.INVISIBLE);
-        view.setStartButtonVisibility(View.VISIBLE);
+        view.returnToPractiseSetup();
     }
 
     @Override
-    public void modelOnNewSecond() {
-        view.playSound();
+    public void modelOnNewBeat() {
+        view.playMetronomeSound();
     }
 
     @Override
     public void modelOnError() {
         view.showError();
-        view.startPractiseSetupActivity();
+        view.returnToPractiseSetup();
+    }
+
+    @Override
+    public void modelOnNewSecondOfCountdown(Countdown countdownStage) {
+        view.setCountdownText(countdownStage.toString());
+
+        switch (countdownStage) {
+            case ONE:
+                view.playCountdownOneSound();
+                break;
+            case TWO:
+                view.playCountdownTwoSound();
+                break;
+            case THREE:
+                view.playCountdownThreeSound();
+                break;
+            case GO:
+                view.playCountdownGoSound();
+                break;
+        }
+    }
+
+    @Override
+    public void modelOnCountdownFinished() {
+        model.startPractiseTimer();
+        view.hideCountdown();
+        view.hideFirstChordInstruction();
+        view.showStopButton();
+    }
+
+    @Override
+    public void viewOnSoundsLoaded() {
+        model.startCountdown();
+    }
+
+    @Override
+    public void viewOnDestroy() {
+        model.stopTimer();
+    }
+
+    @Override
+    public void viewOnStop() {
+        view.returnToPractiseSetup();
     }
 }

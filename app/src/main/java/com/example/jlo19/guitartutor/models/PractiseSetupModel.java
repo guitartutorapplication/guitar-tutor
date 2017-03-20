@@ -1,6 +1,8 @@
 package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
@@ -17,12 +19,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Handles connection to database API
+ * Handles connection to database API, setup selection and timer for beat preview
  */
 public class PractiseSetupModel implements IPractiseSetupModel {
 
     private DatabaseApi api;
     private IPractiseSetupPresenter presenter;
+    private Thread currentBeatPreview;
+    private boolean requestStop;
 
     public PractiseSetupModel() {
         App.getComponent().inject(this);
@@ -57,7 +61,7 @@ public class PractiseSetupModel implements IPractiseSetupModel {
     }
 
     @Override
-    public void chordsSelected(ArrayList<String> selectedChords) {
+    public void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
         Set<String> uniqueChords = new HashSet<>(selectedChords);
 
         // if the user has selected less than two chords
@@ -69,7 +73,55 @@ public class PractiseSetupModel implements IPractiseSetupModel {
             presenter.modelOnSameSelectedChord();
         }
         else {
-            presenter.modelOnCorrectSelectedChords(selectedChords);
+            presenter.modelOnCorrectSelectedChords(selectedChords,
+                    ChordChange.values()[chordChangeIndex], BeatSpeed.values()[beatSpeedIndex]);
+        }
+    }
+
+    @Override
+    public void startBeatPreview(int beatSpeedIndex) {
+        final BeatSpeed beatSpeed = BeatSpeed.values()[beatSpeedIndex];
+        requestStop = false;
+
+        Runnable timerTask = new Runnable() {
+            final int totalLength = 4000;
+            int currentLength = 0;
+
+            @Override
+            public void run() {
+                // while timer has been running for less than 4 seconds
+                while (totalLength - currentLength >= beatSpeed.getValue()) {
+                    try {
+                        if (requestStop) {
+                            return;
+                        }
+
+                        // inform presenter every beat
+                        presenter.modelOnNewBeat();
+                        Thread.sleep(beatSpeed.getValue());
+                        currentLength += beatSpeed.getValue();
+
+                    } catch (InterruptedException e) {
+                        presenter.modelOnPreviewBeatError();
+                    }
+                }
+
+                presenter.modelOnBeatPreviewFinished();
+            }
+        };
+
+        currentBeatPreview = new Thread(timerTask);
+        currentBeatPreview.start();
+    }
+
+    @Override
+    public void stopBeatPreview() {
+        // stop if there is currently a beat preview running
+        if (currentBeatPreview != null) {
+            if (currentBeatPreview.isAlive()) {
+                requestStop = true;
+                presenter.modelOnBeatPreviewFinished();
+            }
         }
     }
 }

@@ -14,16 +14,30 @@
     <string name="practising_chords_name">Practising chords</string>
     <string name="learn_chords_button_text">Learn chords</string>
     <string name="practise_chords_button_text">Practise chords</string>
-    <string name="practise_instruction">For this activity you play 8 strums on each of your
-        selected chords. Listen to the sound to stay in time and watch the screen to keep
-    track of the chord you should be playing.</string>
+    <string name="practise_instruction">Tip: try to keep your strumming in time with the beat.</string>
+    <string name="practise_first_chord_instruction">Your first chord: </string>
     <string name="stop_button_text">Stop</string>
     <string name="start_button_text">Start</string>
     <string name="practise_setup_name">Practise setup</string>
-    <string name="practise_setup_instruction">Please select between 2 and 4 chords to practise</string>
+    <string name="practise_chord_selection_instruction">Please select between 2 and 4 chords to practise</string>
+    <string name="practise_chord_change_selection_instruction">Please select how often you want to change chords</string>
+    <string name="practise_beat_speed_selection_instruction">Please select the speed of your beat</string>
     <string name="select_chord_instruction">Please select a chord…</string>
     <string name="less_than_two_selected_chords_error">Please select 2 or more chords to practise</string>
     <string name="same_chord_selected_error">Please do not select the same chord multiple times</string>
     <string name="practise_button_text">Practise!</string>
+    <string name="preview_button_text">Preview</string>
     <string name="practise_error_occurred_message">An error has occurred in the practise activity</string>
+    <string name="practise_setup_information">For this activity you will practise your changes between chords.</string>
+    <string name="practise_one_beat_name">every 1 beat</string>
+    <string name="practise_two_beats_name">2 beats</string>
+    <string name="practise_four_beats_name">4 beats</string>
+    <string name="practise_eight_beats_name">8 beats</string>
+    <string name="practise_sixteen_beats_name">16 beats</string>
+    <string name="practise_very_slow_name">very slow</string>
+    <string name="practise_slow_name">slow</string>
+    <string name="practise_medium_name">medium</string>
+    <string name="practise_fast_name">fast</string>
+    <string name="practise_very_fast_name">very fast</string>
+    <string name="practise_beat_preview_error_message">An error has occurred while trying to preview beat</string>
 </resources>

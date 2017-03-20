@@ -34,14 +34,12 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
                     .getObjectContent();
 
             // retrieves bitmap from input stream
-            byte[] bytes = new byte[0];
             try {
-                bytes = IOUtils.toByteArray(content);
+                byte[] bytes = IOUtils.toByteArray(content);
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             } catch (IOException e) {
-                // if exception is found, cancel task
-                cancel(true);
+                return null;
             }
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
         catch (AmazonClientException ex) {
             return null;
@@ -56,11 +54,6 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
         else {
             listener.onImageDownloadFailed();
         }
-    }
-
-    @Override
-    protected void onCancelled() {
-        listener.onImageDownloadFailed();
     }
 
 }

@@ -57,11 +57,9 @@ public class LearnChordVideoActivityTest {
     }
 
     @Test
-    public void videoViewPrepared_HidesProgressBar() {
+    public void hideProgressBar_DismissesProgressDialog() {
         // act
-        VideoView videoView = (VideoView) activity.findViewById(R.id.videoView);
-        MediaPlayer.OnPreparedListener listener = shadowOf(videoView).getOnPreparedListener();
-        listener.onPrepared(new MediaPlayer());
+        activity.hideProgressBar();
 
         // assert
         ProgressDialog dialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
@@ -88,5 +86,15 @@ public class LearnChordVideoActivityTest {
         // assert
         VideoView videoView = (VideoView) activity.findViewById(R.id.videoView);
         Assert.assertTrue(videoView.isPlaying());
+    }
+
+    @Test
+    public void onInfoWithBufferingEnd_HidesProgressBar() {
+        // act
+        activity.onInfoListener.onInfo(null, MediaPlayer.MEDIA_INFO_BUFFERING_END, 0);
+
+        // assert
+        ProgressDialog dialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
+        Assert.assertFalse(dialog.isShowing());
     }
 }

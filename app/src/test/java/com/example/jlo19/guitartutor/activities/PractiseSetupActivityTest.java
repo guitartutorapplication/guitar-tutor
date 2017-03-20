@@ -2,8 +2,11 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.SoundPool;
 import android.os.Build;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -11,6 +14,8 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
+import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 
@@ -43,6 +48,7 @@ public class PractiseSetupActivityTest {
 
     private PractiseSetupActivity activity;
     private IPractiseSetupPresenter presenter;
+    private SoundPool soundPool;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -58,10 +64,12 @@ public class PractiseSetupActivityTest {
                 .create().get();
         presenter = PowerMockito.mock(IPractiseSetupPresenter.class);
         activity.setPresenter(presenter);
+        soundPool = PowerMockito.mock(SoundPool.class);
+        activity.setSoundPool(soundPool);
     }
 
     @Test
-    public void oneChordSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
+    public void setSelectedChordChordChangeSpeedAndBeatSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
@@ -73,6 +81,12 @@ public class PractiseSetupActivityTest {
         // index 1 as default option will be at index 0
         spnChord1.setSelection(1);
 
+        RadioGroup rGroupChordChange = (RadioGroup) activity.findViewById(R.id.rGroupChordChange);
+        rGroupChordChange.check(R.id.rbtnEightBeats);
+
+        RadioGroup rGroupBeatSpeed = (RadioGroup) activity.findViewById(R.id.rGroupBeatSpeed);
+        rGroupBeatSpeed.check(R.id.rbtnFastBeat);
+
         // act
         Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
         btnPractise.performClick();
@@ -81,97 +95,31 @@ public class PractiseSetupActivityTest {
         ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
             add(chords.get(0).toString());
         }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
+        Mockito.verify(presenter).viewOnPractise(expectedSelectedChords, 3, 3);
     }
 
     @Test
-    public void twoChordsSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
-        // arrange
-        final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
-        activity.setChords(chords);
-        Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
-        spnChord1.setSelection(1);
-        Spinner spnChord2 = (Spinner) activity.findViewById(R.id.spnChord2);
-        spnChord2.setSelection(2);
-
+    public void onBeatSpeedChanged_CallsBeatSpeedChangedOnPresenter() {
         // act
-        Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
-        btnPractise.performClick();
+        RadioButton rbtnFastBeat = (RadioButton) activity.findViewById(R.id.rbtnFastBeat);
+        rbtnFastBeat.setChecked(true);
 
         // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
-            add(chords.get(1).toString());
-        }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
+        Mockito.verify(presenter).viewOnBeatSpeedChanged();
     }
 
     @Test
-    public void threeChordsSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
-        // arrange
-        final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
-        activity.setChords(chords);
-        Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
-        spnChord1.setSelection(1);
-        Spinner spnChord2 = (Spinner) activity.findViewById(R.id.spnChord2);
-        spnChord2.setSelection(2);
-        Spinner spnChord3 = (Spinner) activity.findViewById(R.id.spnChord3);
-        spnChord3.setSelection(3);
+    public void previewButtonClicked_CallsBeatPreviewOnPresenter() {
+        // assert
+        RadioButton rbtnFastBeat = (RadioButton) activity.findViewById(R.id.rbtnFastBeat);
+        rbtnFastBeat.setChecked(true);
 
         // act
-        Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
-        btnPractise.performClick();
+        Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
+        btnPreview.performClick();
 
         // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
-            add(chords.get(1).toString());
-            add(chords.get(2).toString());
-        }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
-    }
-
-    @Test
-    public void fourChordsSelected_WhenPractiseButtonIsClicked_CallsChordsSelectedOnPresenter() {
-        // arrange
-        final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
-        activity.setChords(chords);
-        Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
-        spnChord1.setSelection(1);
-        Spinner spnChord2 = (Spinner) activity.findViewById(R.id.spnChord2);
-        spnChord2.setSelection(2);
-        Spinner spnChord3 = (Spinner) activity.findViewById(R.id.spnChord3);
-        spnChord3.setSelection(3);
-        Spinner spnChord4 = (Spinner) activity.findViewById(R.id.spnChord4);
-        spnChord4.setSelection(4);
-
-        // act
-        Button btnPractise = (Button) activity.findViewById(R.id.btnPractise);
-        btnPractise.performClick();
-
-        // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
-            add(chords.get(1).toString());
-            add(chords.get(2).toString());
-            add(chords.get(3).toString());
-        }};
-        Mockito.verify(presenter).viewOnChordsSelected(expectedSelectedChords);
+        Mockito.verify(presenter).viewOnBeatPreview(3);
     }
 
     @Test
@@ -261,6 +209,16 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
+    public void showPreviewBeatError_MakesToastWithPreviewBeatFailureMessage() {
+        // act
+        activity.showPreviewBeatError();
+
+        // assert
+        Assert.assertEquals(getApp().getResources().getString(R.string.practise_beat_preview_error_message),
+                ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
     public void showLessThanTwoChordsSelectedError_MakesToastWithLessThanTwoChordsSelectedMessage() {
         // act
         activity.showLessThanTwoChordsSelectedError();
@@ -281,13 +239,15 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChords() {
+    public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChordsChordChangeAndBeatSpeed() {
         // act
         ArrayList<String> chords = new ArrayList<String>() {{
             add("A");
             add("B");
         }};
-        activity.startPractiseActivity(chords);
+        ChordChange chordChange = ChordChange.ONE_BEAT;
+        BeatSpeed beatSpeed = BeatSpeed.VERY_SLOW;
+        activity.startPractiseActivity(chords, chordChange, beatSpeed);
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
@@ -295,5 +255,88 @@ public class PractiseSetupActivityTest {
         Assert.assertEquals(PractiseActivity.class.getName(), intent.getComponent().getClassName());
         // checks correct chord is passed through
         Assert.assertEquals(chords, intent.getExtras().getStringArrayList("CHORDS"));
+        // checks correct chord change is passed through
+        Assert.assertEquals(chordChange, intent.getSerializableExtra("CHORD_CHANGE"));
+        // checks correct beat speed is passed through
+        Assert.assertEquals(beatSpeed, intent.getSerializableExtra("BEAT_SPEED"));
+    }
+
+    @Test
+    public void onDestroy_SoundPoolReleased() {
+        // act
+        activity.onDestroy();
+
+        // assert
+        Mockito.verify(soundPool).release();
+    }
+
+    @Test
+    public void onDestroy_CallsOnDestroyOnPresenter() {
+        // act
+        activity.onDestroy();
+
+        // assert
+        Mockito.verify(presenter).viewOnDestroy();
+    }
+
+    @Test
+    public void loadSound_CallsLoadOnSoundPoolWithMetronomeClip() {
+        // act
+        activity.loadSound();
+
+        // assert
+        Mockito.verify(soundPool).load(activity, R.raw.metronome_sound, 1);
+    }
+
+    @Test
+    public void playSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
+        // arrange
+        int expectedSoundId = 1;
+        Mockito.when(soundPool.load(activity, R.raw.metronome_sound, 1)).thenReturn(expectedSoundId);
+        activity.loadSound();
+
+        // act
+        activity.playSound();
+
+        // assert
+        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    }
+
+    @Test
+    public void enablePreviewButtonWithFalse_DisablesPreviewButton() {
+        // act
+        activity.enablePreviewButton(false);
+
+        // assert
+        Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
+        Assert.assertFalse(btnPreview.isEnabled());
+    }
+
+    @Test
+    public void enablePreviewButtonWithTrue_EnablesPreviewButton() {
+        // act
+        activity.enablePreviewButton(true);
+
+        // assert
+        Button btnPreview = (Button) activity.findViewById(R.id.btnPreview);
+        Assert.assertTrue(btnPreview.isEnabled());
+    }
+
+    @Test
+    public void onPause_CallsOnPauseOnPresenter() {
+        // act
+        activity.onPause();
+
+        // assert
+        Mockito.verify(presenter).viewOnPause();
+    }
+
+    @Test
+    public void onStop_CallsOnStopOnPresenter() {
+        // act
+        activity.onStop();
+
+        // assert
+        Mockito.verify(presenter).viewOnStop();
     }
 }

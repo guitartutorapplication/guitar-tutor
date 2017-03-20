@@ -1,9 +1,10 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.view.View;
-
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
+import com.example.jlo19.guitartutor.enums.ChordChange;
+import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
@@ -18,8 +19,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.atLeast;
-
 /**
  * Testing PractisePresenter
  */
@@ -31,6 +30,8 @@ public class PractisePresenterTest {
     private IPractiseModel model;
     private PractiseView view;
     private ArrayList<String> selectedChords;
+    private ChordChange chordChange;
+    private BeatSpeed beatSpeed;
 
     @Before
     public void setUp() {
@@ -46,8 +47,12 @@ public class PractisePresenterTest {
             add("C");
             add("D");
         }};
+        chordChange = ChordChange.EIGHT_BEATS;
+        beatSpeed = BeatSpeed.FAST;
         view = Mockito.mock(PractiseView.class);
         Mockito.when(view.getSelectedChords()).thenReturn(selectedChords);
+        Mockito.when(view.getChordChange()).thenReturn(chordChange);
+        Mockito.when(view.getBeatSpeed()).thenReturn(beatSpeed);
         presenter.setView(view);
 
         model = Mockito.mock(IPractiseModel.class);
@@ -61,15 +66,15 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void setView_CallsSetChordTextOnViewWithFirstSelectedChord() {
+    public void setModel_CallsLoadSoundOnView() {
         // assert
-        Mockito.verify(view).setChordText(selectedChords.get(0));
+        Mockito.verify(view).loadSounds();
     }
 
     @Test
-    public void setView_CallsLoadSoundOnView() {
+    public void setView_CallsSetFirstChordTextOnViewWithFirstChord() {
         // assert
-        Mockito.verify(view).loadSound();
+        Mockito.verify(view).setFirstChordText(selectedChords.get(0));
     }
 
     @Test
@@ -85,9 +90,21 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void setModel_CallsCreateTimerOnModel() {
+    public void setModel_CallsSetChordChangeOnModelWithViewChordChange() {
         // assert
-        Mockito.verify(model).createTimer();
+        Mockito.verify(model).setChordChange(chordChange);
+    }
+
+    @Test
+    public void setModel_CallsSetBeatSpeedOnModelWithViewBeatSpeed() {
+        // assert
+        Mockito.verify(model).setBeatSpeed(beatSpeed);
+    }
+
+    @Test
+    public void setModel_CallsCreatePractiseTimerOnModel() {
+        // assert
+        Mockito.verify(model).createPractiseTimer();
     }
 
     @Test
@@ -100,76 +117,12 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void viewOnStartPractising_CallsStartOnModel() {
+    public void modelOnNewBeat_CallsPlayMetronomeSoundOnView() {
         // act
-        presenter.viewOnStartPractising();
+        presenter.modelOnNewBeat();
 
         // assert
-        Mockito.verify(model).start();
-    }
-
-    @Test
-    public void viewOnStartPractising_CallsSetStopButtonVisibilityOnViewWithVisible() {
-        // act
-        presenter.viewOnStartPractising();
-
-        // assert
-        Mockito.verify(view).setStopButtonVisibility(View.VISIBLE);
-    }
-
-    @Test
-    public void viewOnStartPractising_CallsSetStartButtonVisibilityOnViewWithInvisible() {
-        // act
-        presenter.viewOnStartPractising();
-
-        // assert
-        Mockito.verify(view).setStartButtonVisibility(View.INVISIBLE);
-    }
-
-
-    @Test
-    public void viewOnStopPractising_CallsStopOnModel() {
-        // act
-        presenter.viewOnStopPractising();
-
-        // assert
-        Mockito.verify(model).stop();
-    }
-
-    @Test
-    public void viewOnStopPractising_CallsSetStopButtonVisibilityOnViewWithInvisible() {
-        // act
-        presenter.viewOnStopPractising();
-
-        // assert
-        Mockito.verify(view).setStopButtonVisibility(View.INVISIBLE);
-    }
-
-    @Test
-    public void viewOnStopPractising_CallsSetStartButtonVisibilityOnViewWithVisible() {
-        // act
-        presenter.viewOnStopPractising();
-
-        // assert
-        Mockito.verify(view).setStartButtonVisibility(View.VISIBLE);
-    }
-
-    @Test
-    public void viewOnStopPractising_CallsSetChordTextOnViewWithFirstSelectedChord() {
-        // act
-        presenter.viewOnStopPractising();
-
-        // assert
-        Mockito.verify(view, atLeast(1)).setChordText(selectedChords.get(0));
-    }
-
-    @Test
-    public void modelOnNewSecond_CallsPlaySoundOnView() {
-        // act
-        presenter.modelOnNewSecond();
-
-        // assert
-        Mockito.verify(view).playSound();
+        Mockito.verify(view).playMetronomeSound();
     }
 
     @Test
@@ -182,11 +135,128 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void modelOnError_CallsStartPractiseSetupActivity() {
+    public void modelOnError_CallsReturnToPractiseSetup() {
         // act
         presenter.modelOnError();
 
         // assert
-        Mockito.verify(view).startPractiseSetupActivity();
+        Mockito.verify(view).returnToPractiseSetup();
+    }
+
+    @Test
+    public void viewOnStopPractising_CallsReturnToPractiseSetupOnView() {
+        // act
+        presenter.viewOnStopPractising();
+
+        // assert
+        Mockito.verify(view).returnToPractiseSetup();
+    }
+
+    @Test
+    public void modelOnNewSecondOfCountdown_CallsSetCountdownText() {
+        // act
+        presenter.modelOnNewSecondOfCountdown(Countdown.THREE);
+
+        // assert
+        Mockito.verify(view).setCountdownText(Countdown.THREE.toString());
+    }
+
+    @Test
+    public void modelOnNewSecondOfCountdownWith3_CallsPlayCountdownThreeSoundOnView() {
+        // act
+        presenter.modelOnNewSecondOfCountdown(Countdown.THREE);
+
+        // assert
+        Mockito.verify(view).playCountdownThreeSound();
+    }
+
+    @Test
+    public void modelOnNewSecondOfCountdownWith2_CallsPlayCountdownTwoSoundOnView() {
+        // act
+        presenter.modelOnNewSecondOfCountdown(Countdown.TWO);
+
+        // assert
+        Mockito.verify(view).playCountdownTwoSound();
+    }
+
+    @Test
+    public void modelOnNewSecondOfCountdownWith1_CallsPlayCountdownOneSoundOnView() {
+        // act
+        presenter.modelOnNewSecondOfCountdown(Countdown.ONE);
+
+        // assert
+        Mockito.verify(view).playCountdownOneSound();
+    }
+
+    @Test
+    public void modelOnNewSecondOfCountdownWithGo_CallsPlayCountdownGoSoundOnView() {
+        // act
+        presenter.modelOnNewSecondOfCountdown(Countdown.GO);
+
+        // assert
+        Mockito.verify(view).playCountdownGoSound();
+    }
+
+    @Test
+    public void modelOnCountdownFinished_CallsStartPractiseTimerOnModel() {
+        // act
+        presenter.modelOnCountdownFinished();
+
+        // assert
+        Mockito.verify(model).startPractiseTimer();
+    }
+
+    @Test
+    public void modelOnCountdownFinished_CallsHideCountdownOnView() {
+        // act
+        presenter.modelOnCountdownFinished();
+
+        // assert
+        Mockito.verify(view).hideCountdown();
+    }
+
+    @Test
+    public void modelOnCountdownFinished_CallsHideFirstChordInstructionOnView() {
+        // act
+        presenter.modelOnCountdownFinished();
+
+        // assert
+        Mockito.verify(view).hideFirstChordInstruction();
+    }
+
+    @Test
+    public void modelOnCountdownFinished_ShowStopButtonOnView() {
+        // act
+        presenter.modelOnCountdownFinished();
+
+        // assert
+        Mockito.verify(view).showStopButton();
+    }
+
+    @Test
+    public void viewOnSoundsLoaded_StartCountdownOnModel() {
+        // act
+        presenter.viewOnSoundsLoaded();
+
+        // assert
+        Mockito.verify(model).startCountdown();
+    }
+
+    @Test
+    public void viewOnDestroy_StopsTimerOnModel() {
+        // act
+        presenter.viewOnDestroy();
+
+        // assert
+        Mockito.verify(model).stopTimer();
+    }
+
+    @Test
+    public void viewOnStop_CallsReturnToPractiseSetupOnView() {
+        // act
+        presenter.viewOnStop();
+
+        // assert
+        Mockito.verify(view).returnToPractiseSetup();
     }
 }
