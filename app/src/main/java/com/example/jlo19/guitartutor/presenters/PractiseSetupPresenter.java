@@ -15,7 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Presenter which provides PractiseSetupActivity with chords from database API
+ * Presenter which provides PractiseSetupActivity with chords from database API and timer capabilities
  */
 public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 

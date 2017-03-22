@@ -13,14 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.LearnViewAllChordsActivity"
+            android:name=".activities.LearnAllChordsActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.HomeActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.LearnChordActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.LearnViewAllChordsActivity"
+            android:parentActivityName=".activities.LearnAllChordsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.LearnChordVideoActivity"
@@ -30,13 +30,14 @@
             android:name=".activities.LearnDiagramHelpActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.LearnChordActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.HomeActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,9 +45,13 @@
             android:name=".activities.PractiseActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.PractiseSetupActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activities.PractiseSetupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PractiseSetupActivity"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".activities.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.SongLibraryActivity"
             android:parentActivityName=".activities.HomeActivity"
             android:screenOrientation="portrait"/>
     </application>

@@ -27,4 +27,12 @@
             android:background="@drawable/practise_chords_button"
             android:layout_marginTop="5dp" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnPlay"
+            android:layout_weight="1"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/play_songs_button" />
+
 </LinearLayout>

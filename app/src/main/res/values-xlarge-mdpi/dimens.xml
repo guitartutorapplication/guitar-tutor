@@ -13,5 +13,5 @@
     <dimen name="small_button_text_size">24sp</dimen>
     <dimen name="spinner_height">30dp</dimen>
     <dimen name="practise_big_text">320sp</dimen>
-    <dimen name="home_layout_margin">250dp</dimen>
+    <dimen name="home_layout_margin">180dp</dimen>
 </resources>

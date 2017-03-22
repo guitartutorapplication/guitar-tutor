@@ -7,5 +7,5 @@
     <dimen name="practise_setup_small_text">16sp</dimen>
     <dimen name="big_layout_margin">6dp</dimen>
     <dimen name="small_layout_margin">3dp</dimen>
-    <dimen name="home_layout_margin">100dp</dimen>
+    <dimen name="home_layout_margin">60dp</dimen>
 </resources>

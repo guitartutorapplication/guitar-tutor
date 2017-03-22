@@ -5,7 +5,7 @@ import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnViewAllChordsPresenter;
-import com.example.jlo19.guitartutor.views.LearnViewAllChordsView;
+import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Testing LearnViewAllChordsPresenter
+ * Testing LearnAllChordsPresenter
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(App.class)
-public class LearnViewAllChordsPresenterTest {
+public class LearnAllChordsPresenterTest {
 
-    private LearnViewAllChordsView view;
+    private LearnAllChordsView view;
     private ILearnViewAllChordsPresenter presenter;
     private ILearnViewAllChordsModel model;
 
@@ -35,12 +35,12 @@ public class LearnViewAllChordsPresenterTest {
         PowerMockito.mockStatic(App.class);
         PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
 
-        presenter = new LearnViewAllChordsPresenter();
+        presenter = new LearnAllChordsPresenter();
 
         model = Mockito.mock(ILearnViewAllChordsModel.class);
-        ((LearnViewAllChordsPresenter) presenter).setModel(model);
+        ((LearnAllChordsPresenter) presenter).setModel(model);
 
-        view = Mockito.mock(LearnViewAllChordsView.class);
+        view = Mockito.mock(LearnAllChordsView.class);
         presenter.setView(view);
     }
 

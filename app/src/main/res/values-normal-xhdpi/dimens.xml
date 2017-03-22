@@ -9,5 +9,5 @@
     <dimen name="practise_setup_big_text">20sp</dimen>
     <dimen name="practise_setup_small_text">18sp</dimen>
     <dimen name="spinner_height">25dp</dimen>
-    <dimen name="home_layout_margin">100dp</dimen>
+    <dimen name="home_layout_margin">60dp</dimen>
 </resources>

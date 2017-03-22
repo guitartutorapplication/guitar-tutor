@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
 
 import java.io.IOException;
 
@@ -10,23 +10,23 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Fakes retrofit calls
+ * Fakes retrofit call with SongsResponse
  */
-public class FakeCall implements Call<ChordsResponse> {
+public class FakeSongsResponseCall implements Call<SongsResponse> {
 
-    private final Response<ChordsResponse> response;
+    private final Response<SongsResponse> response;
 
-    public FakeCall(Response<ChordsResponse> response) {
+    public FakeSongsResponseCall(Response<SongsResponse> response) {
         this.response = response;
     }
 
     @Override
-    public Response<ChordsResponse> execute() throws IOException {
+    public Response<SongsResponse> execute() throws IOException {
         return null;
     }
 
     @Override
-    public void enqueue(Callback<ChordsResponse> callback) {
+    public void enqueue(Callback<SongsResponse> callback) {
         if (response != null) {
             callback.onResponse(this, response);
         }
@@ -51,7 +51,7 @@ public class FakeCall implements Call<ChordsResponse> {
     }
 
     @Override
-    public Call<ChordsResponse> clone() {
+    public Call<SongsResponse> clone() {
         return null;
     }
 

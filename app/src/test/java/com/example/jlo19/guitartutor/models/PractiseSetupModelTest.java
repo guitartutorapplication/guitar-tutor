@@ -4,7 +4,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.helpers.FakeCall;
+import com.example.jlo19.guitartutor.helpers.FakeChordsResponseCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
@@ -63,7 +63,7 @@ public class PractiseSetupModelTest {
                 PowerMockito.mock(Response.class);
         PowerMockito.when(response.body()).thenReturn(chordsResponse);
 
-        DatabaseApi api = new FakeDatabaseApi(new FakeCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(response));
         ((PractiseSetupModel) model).setApi(api);
 
         // act
@@ -77,7 +77,7 @@ public class PractiseSetupModelTest {
     public void getChords_OnFailure_CallsErrorOnPresenter() {
         // arrange
         // sets fake call with no response (failure)
-        FakeCall call = new FakeCall(null);
+        FakeChordsResponseCall call = new FakeChordsResponseCall(null);
         DatabaseApi api = new FakeDatabaseApi(call);
         ((PractiseSetupModel) model).setApi(api);
 

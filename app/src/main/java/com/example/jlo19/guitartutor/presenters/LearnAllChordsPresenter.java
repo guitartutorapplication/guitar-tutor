@@ -5,7 +5,7 @@ import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnViewAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.IView;
-import com.example.jlo19.guitartutor.views.LearnViewAllChordsView;
+import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
 import java.util.List;
 
@@ -14,18 +14,18 @@ import javax.inject.Inject;
 /**
  * Presenter which provides the activities with all chords from the database API
  */
-public class LearnViewAllChordsPresenter implements ILearnViewAllChordsPresenter {
+public class LearnAllChordsPresenter implements ILearnViewAllChordsPresenter {
 
-    private LearnViewAllChordsView view;
+    private LearnAllChordsView view;
     private ILearnViewAllChordsModel model;
 
-    public LearnViewAllChordsPresenter() {
+    public LearnAllChordsPresenter() {
         App.getComponent().inject(this);
     }
 
     @Override
     public void setView(IView view) {
-        this.view = (LearnViewAllChordsView) view;
+        this.view = (LearnAllChordsView) view;
         this.view.setToolbarTitleText();
         this.view.showProgressBar();
 

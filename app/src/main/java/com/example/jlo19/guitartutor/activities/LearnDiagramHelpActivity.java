@@ -7,6 +7,9 @@ import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
 
+/**
+ * Activity that shows diagram help
+ */
 public class LearnDiagramHelpActivity extends AppCompatActivity {
 
     @Override

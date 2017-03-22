@@ -15,12 +15,12 @@ import retrofit2.Response;
 /**
  * Handles connection to database API
  */
-public class LearnViewAllChordsModel implements ILearnViewAllChordsModel {
+public class LearnAllChordsModel implements ILearnViewAllChordsModel {
 
     private ILearnViewAllChordsPresenter presenter;
     private DatabaseApi api;
 
-    public LearnViewAllChordsModel() {
+    public LearnAllChordsModel() {
         App.getComponent().inject(this);
     }
 

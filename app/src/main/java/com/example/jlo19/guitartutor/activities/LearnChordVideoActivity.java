@@ -13,6 +13,9 @@ import android.widget.VideoView;
 
 import com.example.jlo19.guitartutor.R;
 
+/**
+ * Activity that shows video of selected chord
+ */
 public class LearnChordVideoActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;

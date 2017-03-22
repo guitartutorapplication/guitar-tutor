@@ -15,7 +15,7 @@ import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPresenter;
-import com.example.jlo19.guitartutor.views.LearnViewAllChordsView;
+import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import javax.inject.Inject;
 /**
  * Activity that shows all the chords on the screen
  */
-public class LearnViewAllChordsActivity extends AppCompatActivity implements LearnViewAllChordsView {
+public class LearnAllChordsActivity extends AppCompatActivity implements LearnAllChordsView {
 
     private ProgressDialog progressDialog;
 
@@ -45,7 +45,7 @@ public class LearnViewAllChordsActivity extends AppCompatActivity implements Lea
     public void setChords(final List<Chord> chords) {
         GridView gridView = (GridView) findViewById(R.id.gridView);
         // setting buttons in grid view with on click event to start LearnChordActivity
-        gridView.setAdapter(new ChordsButtonAdapter(LearnViewAllChordsActivity.this, chords,
+        gridView.setAdapter(new ChordsButtonAdapter(LearnAllChordsActivity.this, chords,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -64,7 +64,7 @@ public class LearnViewAllChordsActivity extends AppCompatActivity implements Lea
     }
 
     public void showProgressBar() {
-        progressDialog = new ProgressDialog(LearnViewAllChordsActivity.this, R.style.AppTheme_ProgressDialog);
+        progressDialog = new ProgressDialog(LearnAllChordsActivity.this, R.style.AppTheme_ProgressDialog);
         progressDialog.setMessage(getString(R.string.loading_chords_message));
         progressDialog.show();
     }

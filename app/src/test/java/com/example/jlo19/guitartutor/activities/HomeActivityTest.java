@@ -48,7 +48,7 @@ public class HomeActivityTest {
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
-        Assert.assertEquals(LearnViewAllChordsActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertEquals(LearnAllChordsActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test
@@ -61,5 +61,17 @@ public class HomeActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(PractiseSetupActivity.class.getName(), intent.getComponent().getClassName());
+    }
+
+    @Test
+    public void whenPlayButtonClicked_SongLibraryActivityIsStarted() {
+        // act
+        Button button = (Button) activity.findViewById(R.id.btnPlay);
+        button.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(SongLibraryActivity.class.getName(), intent.getComponent().getClassName());
     }
 }

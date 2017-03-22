@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.helpers.FakeCall;
+import com.example.jlo19.guitartutor.helpers.FakeChordsResponseCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
@@ -24,11 +24,11 @@ import java.util.List;
 import retrofit2.Response;
 
 /**
- * Testing LearnViewAllChordsModel
+ * Testing LearnAllChordsModel
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({App.class, Response.class})
-public class LearnViewAllChordsModelTest {
+public class LearnAllChordsModelTest {
 
     private ILearnViewAllChordsModel model;
     private ILearnViewAllChordsPresenter presenter;
@@ -39,7 +39,7 @@ public class LearnViewAllChordsModelTest {
         PowerMockito.mockStatic(App.class);
         PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
 
-        model = new LearnViewAllChordsModel();
+        model = new LearnAllChordsModel();
 
         presenter = PowerMockito.mock(ILearnViewAllChordsPresenter.class);
         model.setPresenter(presenter);
@@ -58,8 +58,8 @@ public class LearnViewAllChordsModelTest {
                 PowerMockito.mock(Response.class);
         PowerMockito.when(response.body()).thenReturn(chordsResponse);
 
-        DatabaseApi api = new FakeDatabaseApi(new FakeCall(response));
-        ((LearnViewAllChordsModel) model).setApi(api);
+        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(response));
+        ((LearnAllChordsModel) model).setApi(api);
 
         // act
         model.getChords();
@@ -72,9 +72,9 @@ public class LearnViewAllChordsModelTest {
     public void getChords_OnFailure_CallsErrorOnPresenter() {
         // arrange
         // sets fake call with no response (failure)
-        FakeCall call = new FakeCall(null);
+        FakeChordsResponseCall call = new FakeChordsResponseCall(null);
         DatabaseApi api = new FakeDatabaseApi(call);
-        ((LearnViewAllChordsModel) model).setApi(api);
+        ((LearnAllChordsModel) model).setApi(api);
 
         // act
         model.getChords();

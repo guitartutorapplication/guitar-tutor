@@ -34,13 +34,13 @@ import java.util.List;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
- * Testing LearnViewAllChordsActivity
+ * Testing LearnAllChordsActivity
  */
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
 @RunWith(RobolectricTestRunner.class)
-public class LearnViewAllChordsActivityTest {
+public class LearnAllChordsActivityTest {
 
-    private LearnViewAllChordsActivity activity;
+    private LearnAllChordsActivity activity;
     private IPresenter presenter;
 
     public App getApp() {
@@ -53,7 +53,7 @@ public class LearnViewAllChordsActivityTest {
         // stops real injection of presenter
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        activity = Robolectric.buildActivity(LearnViewAllChordsActivity.class)
+        activity = Robolectric.buildActivity(LearnAllChordsActivity.class)
                 .create().get();
         presenter = PowerMockito.mock(IPresenter.class);
         activity.setPresenter(presenter);

@@ -22,6 +22,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that runs the practise activity
+ */
 public class PractiseActivity extends AppCompatActivity implements PractiseView{
 
     private List<String> selectedChords;

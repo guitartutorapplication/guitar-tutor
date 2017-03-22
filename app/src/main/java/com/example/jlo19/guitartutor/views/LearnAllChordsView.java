@@ -5,9 +5,9 @@ import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import java.util.List;
 
 /**
- * View interface for activities that get all chords from DB
+ * View interface for LearnAllChordsActivity
  */
-public interface LearnViewAllChordsView extends IView {
+public interface LearnAllChordsView extends IView {
     void setToolbarTitleText();
     void showProgressBar();
     void hideProgressBar();

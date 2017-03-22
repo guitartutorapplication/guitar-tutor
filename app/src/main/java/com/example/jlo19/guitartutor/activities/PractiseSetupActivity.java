@@ -30,6 +30,9 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+/**
+ * Activity to decide set up for practise activity
+ */
 public class PractiseSetupActivity extends AppCompatActivity implements PractiseSetupView {
 
     private ProgressDialog progressDialog;
