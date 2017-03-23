@@ -14,4 +14,6 @@
     <dimen name="spinner_height">25dp</dimen>
     <dimen name="practise_big_text">250sp</dimen>
     <dimen name="home_layout_margin">150dp</dimen>
+    <dimen name="toolbar_text_size">28sp</dimen>
+    <dimen name="song_text_size">18sp</dimen>
 </resources>

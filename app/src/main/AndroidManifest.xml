@@ -51,8 +51,12 @@
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.HomeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.SongLibraryActivity"
+        <activity
+            android:name=".activities.SongLibraryActivity"
             android:parentActivityName=".activities.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.SongActivity"
+            android:parentActivityName=".activities.SongLibraryActivity"
             android:screenOrientation="portrait"/>
     </application>
 

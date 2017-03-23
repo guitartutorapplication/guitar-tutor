@@ -41,7 +41,7 @@ public class LearnDiagramHelpActivityTest {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.diagram_help_name),
-                view.getText());
+                view.getText().toString());
 
     }
 }

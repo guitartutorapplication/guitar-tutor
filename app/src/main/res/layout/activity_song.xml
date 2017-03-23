@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_song"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.jlo19.guitartutor.activities.SongActivity">
+
+    <include android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <me.grantland.widget.AutofitTextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/textView"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:textColor="@color/colorText"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/toolbar"
+        android:textSize="@dimen/song_text_size"
+        android:layout_margin="@dimen/big_layout_margin" />
+
+</RelativeLayout>

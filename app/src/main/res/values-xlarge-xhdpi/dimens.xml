@@ -13,4 +13,6 @@
     <dimen name="small_button_text_size">24sp</dimen>
     <dimen name="spinner_height">30dp</dimen>
     <dimen name="home_layout_margin">150dp</dimen>
+    <dimen name="toolbar_text_size">24sp</dimen>
+    <dimen name="song_text_size">18sp</dimen>
 </resources>

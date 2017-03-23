@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="toolbar_text_size">34sp</dimen>
+    <dimen name="toolbar_text_size">20sp</dimen>
     <dimen name="chord_button_text_size">15sp</dimen>
     <dimen name="chord_button_width_height">40dp</dimen>
     <dimen name="main_buttons_width">80dp</dimen>
@@ -15,4 +15,5 @@
     <dimen name="small_button_text_size">12sp</dimen>
     <dimen name="practise_big_text">200sp</dimen>
     <dimen name="home_layout_margin">100dp</dimen>
+    <dimen name="song_text_size">18sp</dimen>
 </resources>

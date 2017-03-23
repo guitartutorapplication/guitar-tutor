@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -72,7 +73,7 @@ public class SongLibraryActivityTest {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.song_library_name),
-                view.getText());
+                view.getText().toString());
     }
 
     @Test
@@ -125,5 +126,29 @@ public class SongLibraryActivityTest {
         ListView listView = (ListView) activity.findViewById(R.id.listView);
         Assert.assertEquals(expectedSongs.get(0), listView.getAdapter().getItem(0));
         Assert.assertEquals(expectedSongs.get(1), listView.getAdapter().getItem(1));
+    }
+
+    @Test
+    public void setSongs_WhenSongListItemClicked_SongActivityIsStartedWithSelectedSong() {
+        // arrange
+        List<Chord> chords = Arrays.asList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+        List<Song> songs = Arrays.asList(
+                new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
+                new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
+        activity.setSongs(songs);
+
+        // act
+        int position = 1;
+        ListView listView = (ListView) activity.findViewById(R.id.listView);
+        shadowOf(listView).performItemClick(position);
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(SongActivity.class.getName(), intent.getComponent().getClassName());
+        // checks correct song is passed through
+        Assert.assertEquals(songs.get(position), intent.getParcelableExtra("SONG"));
     }
 }

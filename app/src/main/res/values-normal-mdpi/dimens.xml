@@ -14,4 +14,6 @@
     <dimen name="small_button_text_size">11sp</dimen>
     <dimen name="practise_big_text">150sp</dimen>
     <dimen name="home_layout_margin">60dp</dimen>
+    <dimen name="toolbar_text_size">18sp</dimen>
+    <dimen name="song_text_size">14sp</dimen>
 </resources>

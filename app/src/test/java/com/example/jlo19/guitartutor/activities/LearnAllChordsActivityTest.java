@@ -122,7 +122,7 @@ public class LearnAllChordsActivityTest {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.all_chords_name),
-                view.getText());
+                view.getText().toString());
     }
 
     @Test

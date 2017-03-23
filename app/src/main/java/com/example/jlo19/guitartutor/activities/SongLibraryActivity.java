@@ -1,8 +1,11 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +27,8 @@ import javax.inject.Inject;
 public class SongLibraryActivity extends AppCompatActivity implements SongLibraryView {
 
     private ProgressDialog progressDialog;
+    private ListView listView;
+    private List<Song> songs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,17 @@ public class SongLibraryActivity extends AppCompatActivity implements SongLibrar
 
         // allows injection of presenter
         App.getComponent().inject(this);
+
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // passing selected song to new activity
+                Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                intent.putExtra("SONG", songs.get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     @Inject
@@ -59,7 +75,7 @@ public class SongLibraryActivity extends AppCompatActivity implements SongLibrar
 
     @Override
     public void setSongs(List<Song> songs) {
-        ListView listView = (ListView) findViewById(R.id.listView);
+        this.songs = songs;
         listView.setAdapter(new SongsListAdapter(SongLibraryActivity.this, R.layout.song_list_item, songs));
     }
 

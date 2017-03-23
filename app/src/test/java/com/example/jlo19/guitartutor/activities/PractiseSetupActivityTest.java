@@ -136,7 +136,7 @@ public class PractiseSetupActivityTest {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_setup_name),
-                view.getText());
+                view.getText().toString());
     }
 
     @Test

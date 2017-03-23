@@ -8,4 +8,5 @@
     <dimen name="big_layout_margin">6dp</dimen>
     <dimen name="small_layout_margin">3dp</dimen>
     <dimen name="home_layout_margin">60dp</dimen>
+    <dimen name="song_text_size">18sp</dimen>
 </resources>
