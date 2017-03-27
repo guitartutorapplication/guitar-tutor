@@ -19,14 +19,16 @@
     <string name="practise_first_chord_instruction">Your first chord: </string>
     <string name="practise_setup_name">Practise setup</string>
     <string name="practise_chord_selection_instruction">Please select between 2 and 4 chords to practise</string>
-    <string name="practise_chord_change_selection_instruction">Please select how often you want to change chords</string>
+    <string name="practise_chord_change_selection_instruction">Please select how often you want to
+        change chords</string>
     <string name="practise_beat_speed_selection_instruction">Please select the speed of your beat</string>
     <string name="select_chord_instruction">Please select a chord…</string>
     <string name="less_than_two_selected_chords_error">Please select 2 or more chords to practise</string>
     <string name="same_chord_selected_error">Please do not select the same chord multiple times</string>
     <string name="preview_button_text">Preview</string>
     <string name="practise_error_occurred_message">An error has occurred in the practise activity</string>
-    <string name="practise_setup_information">For this activity you will practise your changes between chords.</string>
+    <string name="practise_setup_information">For this activity you will practise your changes between
+        chords.</string>
     <string name="practise_one_beat_name">every 1 beat</string>
     <string name="practise_two_beats_name">2 beats</string>
     <string name="practise_four_beats_name">4 beats</string>
@@ -37,5 +39,25 @@
     <string name="practise_medium_name">medium</string>
     <string name="practise_fast_name">fast</string>
     <string name="practise_very_fast_name">very fast</string>
-    <string name="practise_beat_preview_error_message">An error has occurred while trying to preview beat</string>
+    <string name="practise_beat_preview_error_message">An error has occurred while trying to preview
+        beat</string>
+    <string name="field_empty_error_message">Please complete all fields</string>
+    <string name="field_email_mismatch_error_message">Please make sure emails match</string>
+    <string name="field_password_mismatch_error_message">Please make sure passwords match</string>
+    <string name="invalid_email_error_message">Please enter a valid email</string>
+    <string name="password_too_short_error_message">Please make sure password is at least 8 characters
+        long</string>
+    <string name="password_no_upper_case_letter_error_message">Please make sure password has at least
+        one upper case letter</string>
+    <string name="password_no_lower_case_letter_error_message">Please make sure password has at least
+        one lower case letter</string>
+    <string name="password_no_number_error_message">Please make sure password has at least one number</string>
+    <string name="register_error_message">An error has occurred while trying to register</string>
+    <string name="already_registered_error_message">Email address already registered with an account</string>
+    <string name="registering_message">Registering…</string>
+    <string name="name_name">Name</string>
+    <string name="email_name">Email address</string>
+    <string name="confirm_email_name">Confirm email address</string>
+    <string name="password_name">Password</string>
+    <string name="confirm_password_name">Confirm password</string>
 </resources>
