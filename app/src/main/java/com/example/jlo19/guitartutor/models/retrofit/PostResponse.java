@@ -3,15 +3,15 @@ package com.example.jlo19.guitartutor.models.retrofit;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Response object from POST users request
+ * Response object from POST requests
  */
-public class RegisterResponse {
+public class PostResponse {
     @SerializedName("error")
     private boolean error;
     @SerializedName("message")
     private String message;
 
-    public RegisterResponse(Boolean error, String message) {
+    public PostResponse(Boolean error, String message) {
         this.error = error;
         this.message = message;
     }

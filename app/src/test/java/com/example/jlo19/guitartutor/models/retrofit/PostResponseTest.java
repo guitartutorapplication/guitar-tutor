@@ -5,18 +5,18 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /**
- * Testing RegisterResponse
+ * Testing PostResponse
  */
-public class RegisterResponseTest {
+public class PostResponseTest {
     @Test
     public void getMessage_ReturnsMessage() {
         // arrange
         String expectedMessage = "User has been successfully registered";
-        RegisterResponse registerResponse = new RegisterResponse(false,
+        PostResponse postResponse = new PostResponse(false,
                 expectedMessage);
 
         // act
-        String actualMessage = registerResponse.getMessage();
+        String actualMessage = postResponse.getMessage();
 
         // assert
         Assert.assertEquals(expectedMessage, actualMessage);

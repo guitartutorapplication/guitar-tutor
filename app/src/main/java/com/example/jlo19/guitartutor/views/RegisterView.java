@@ -15,7 +15,7 @@ public interface RegisterView extends IView {
     void showPasswordNoNumberError();
     void showRegisterError();
     void showAlreadyRegisteredError();
-    void startHomeActivity();
+    void startLoginActivity();
     void showProgressBar();
     void hideProgressBar();
 }

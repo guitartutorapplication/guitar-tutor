@@ -192,14 +192,14 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void startHomeActivity_HomeActivityIsStarted() {
+    public void startLoginActivity_LoginActivityIsStarted() {
         // act
-        activity.startHomeActivity();
+        activity.startLoginActivity();
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
-        Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertEquals(LoginActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test

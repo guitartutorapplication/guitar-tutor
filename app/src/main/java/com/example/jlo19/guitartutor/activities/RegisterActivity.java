@@ -115,8 +115,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     }
 
     @Override
-    public void startHomeActivity() {
-        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+    public void startLoginActivity() {
+        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
         startActivity(intent);
     }
 

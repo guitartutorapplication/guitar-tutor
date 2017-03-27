@@ -1,7 +1,7 @@
 package com.example.jlo19.guitartutor.services.interfaces;
 
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.RegisterResponse;
+import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
 import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
 
 import retrofit2.Call;
@@ -20,6 +20,9 @@ public interface DatabaseApi {
     Call<SongsResponse> getSongs();
     @FormUrlEncoded
     @POST("users")
-    Call<RegisterResponse> registerUser(@Field("name") String name, @Field("email") String email,
-                                        @Field("password") String password);
+    Call<PostResponse> registerUser(@Field("name") String name, @Field("email") String email,
+                                    @Field("password") String password);
+    @FormUrlEncoded
+    @POST("users/login")
+    Call<PostResponse> loginUser(@Field("email") String email, @Field("password") String password);
 }

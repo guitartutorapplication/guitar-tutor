@@ -1,9 +1,9 @@
 package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.RegisterError;
+import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
-import com.example.jlo19.guitartutor.models.retrofit.RegisterResponse;
+import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.google.gson.Gson;
@@ -79,30 +79,30 @@ public class RegisterModel implements IRegisterModel {
             presenter.modelOnPasswordNoNumber();
         }
         else {
-            Call<RegisterResponse> call = api.registerUser(name, email, password);
+            Call<PostResponse> call = api.registerUser(name, email, password);
 
             // asynchronously executing call
-            call.enqueue(new Callback<RegisterResponse>() {
+            call.enqueue(new Callback<PostResponse>() {
                 @Override
-                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
                     if (response.isSuccessful()) {
                         presenter.modelOnRegisterSuccess();
                     }
                     else {
                         // convert raw response when error
                         Gson gson = new Gson();
-                        TypeAdapter<RegisterResponse> adapter = gson.getAdapter(RegisterResponse.class);
+                        TypeAdapter<PostResponse> adapter = gson.getAdapter(PostResponse.class);
 
                         try {
-                            RegisterResponse registerResponse = adapter.fromJson(
+                            PostResponse postResponse = adapter.fromJson(
                                     response.errorBody().string());
 
-                            if (registerResponse.getMessage().equals(
-                                    RegisterError.INVALID_EMAIL.toString())) {
+                            if (postResponse.getMessage().equals(
+                                    ResponseError.INVALID_EMAIL.toString())) {
                                 presenter.modelOnInvalidEmail();
                             }
-                            else if (registerResponse.getMessage().equals(
-                                    RegisterError.ALREADY_REGISTERED.toString())) {
+                            else if (postResponse.getMessage().equals(
+                                    ResponseError.ALREADY_REGISTERED.toString())) {
                                 presenter.modelOnAlreadyRegistered();
                             }
                             else {
@@ -116,7 +116,7 @@ public class RegisterModel implements IRegisterModel {
                 }
 
                 @Override
-                public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                public void onFailure(Call<PostResponse> call, Throwable t) {
                     presenter.modelOnRegisterError();
                 }
             });
