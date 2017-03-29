@@ -3,11 +3,9 @@ package com.example.jlo19.guitartutor.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
@@ -24,16 +22,25 @@ import javax.inject.Inject;
 /**
  * Activity that displays all songs
  */
-public class SongLibraryActivity extends AppCompatActivity implements SongLibraryView {
+public class SongLibraryActivity extends BaseWithToolbarActivity implements SongLibraryView {
 
     private ProgressDialog progressDialog;
     private ListView listView;
     private List<Song> songs;
 
     @Override
+    public int getLayout() {
+        return R.layout.activity_song_library;
+    }
+
+    @Override
+    public String getToolbarTitle() {
+        return getResources().getString(R.string.song_library_name);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_library);
 
         // allows injection of presenter
         App.getComponent().inject(this);
@@ -53,12 +60,6 @@ public class SongLibraryActivity extends AppCompatActivity implements SongLibrar
     @Inject
     public void setPresenter(ISongLibraryPresenter presenter) {
         presenter.setView(this);
-    }
-
-    @Override
-    public void setToolbarTitleText() {
-        TextView toolbarText = (TextView) findViewById(R.id.toolbarTitle);
-        toolbarText.setText(R.string.song_library_name);
     }
 
     @Override

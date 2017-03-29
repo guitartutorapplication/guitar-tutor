@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
@@ -24,6 +26,7 @@ public class LoginPresenterTest {
     private ILoginPresenter presenter;
     private LoginView view;
     private ILoginModel model;
+    private SharedPreferences sharedPreferences;
 
     @Before
     public void setUp() {
@@ -33,11 +36,20 @@ public class LoginPresenterTest {
 
         presenter = new LoginPresenter();
 
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
+        presenter.setSharedPreferences(sharedPreferences);
+
         model = Mockito.mock(ILoginModel.class);
         ((LoginPresenter) presenter).setModel(model);
 
         view = Mockito.mock(LoginView.class);
         presenter.setView(view);
+    }
+
+    @Test
+    public void setModel_SetsSharedPreferencesOnModel() {
+        // assert
+        Mockito.verify(model).setSharedPreferences(sharedPreferences);
     }
 
     @Test

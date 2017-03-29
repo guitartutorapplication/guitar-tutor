@@ -54,12 +54,6 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void setView_CallsSetToolbarTitleTextOnView() {
-        // assert
-        Mockito.verify(view).setToolbarTitleText();
-    }
-
-    @Test
     public void setView_CallsShowProgressBarOnView() {
         // assert
         Mockito.verify(view).showProgressBar();

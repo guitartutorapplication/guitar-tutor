@@ -29,7 +29,6 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     @Override
     public void setView(IView view) {
         this.view = (PractiseSetupView) view;
-        this.view.setToolbarTitleText();
         this.view.showProgressBar();
         this.view.loadSound();
 

@@ -11,7 +11,6 @@ import java.util.List;
  * View interface for PractiseSetupActivity
  */
 public interface PractiseSetupView extends IView {
-    void setToolbarTitleText();
     void showProgressBar();
     void hideProgressBar();
     void setChords(List<Chord> chords);

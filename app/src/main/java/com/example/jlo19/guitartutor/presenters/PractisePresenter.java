@@ -20,7 +20,6 @@ public class PractisePresenter implements IPractisePresenter {
     @Override
     public void setView(IView view) {
         this.view = (PractiseView) view;
-        this.view.setToolbarTitleText();
         this.view.setFirstChordText(this.view.getSelectedChords().get(0));
 
         App.getComponent().inject(this);
@@ -99,6 +98,11 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void viewOnStop() {
+        view.returnToPractiseSetup();
+    }
+
+    @Override
+    public void viewOnPause() {
         view.returnToPractiseSetup();
     }
 }

@@ -46,12 +46,6 @@ public class SongLibraryPresenterTest {
     }
 
     @Test
-    public void setView_CallsSetToolbarTitleTextOnView() {
-        // assert
-        Mockito.verify(view).setToolbarTitleText();
-    }
-
-    @Test
     public void setModel_SetsPresenterOnModel() {
         // assert
         Mockito.verify(model).setPresenter(presenter);

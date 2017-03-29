@@ -74,4 +74,16 @@ public class HomeActivityTest {
         // checks correct activity is started
         Assert.assertEquals(SongLibraryActivity.class.getName(), intent.getComponent().getClassName());
     }
+
+    @Test
+    public void whenAccountButtonClicked_AccountActivityIsStarted() {
+        // act
+        Button button = (Button) activity.findViewById(R.id.btnAccount);
+        button.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
+    }
 }

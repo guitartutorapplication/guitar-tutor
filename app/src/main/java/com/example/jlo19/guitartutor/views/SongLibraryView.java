@@ -8,7 +8,6 @@ import java.util.List;
  * View interface for SongLibraryActivity
  */
 public interface SongLibraryView extends IView {
-    void setToolbarTitleText();
     void showProgressBar();
     void hideProgressBar();
     void setSongs(List<Song> songs);

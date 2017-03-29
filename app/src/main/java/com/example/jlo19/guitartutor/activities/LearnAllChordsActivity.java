@@ -4,10 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
@@ -25,14 +23,24 @@ import javax.inject.Inject;
 /**
  * Activity that shows all the chords on the screen
  */
-public class LearnAllChordsActivity extends AppCompatActivity implements LearnAllChordsView {
+public class LearnAllChordsActivity extends BaseWithToolbarActivity implements LearnAllChordsView {
 
     private ProgressDialog progressDialog;
 
     @Override
+    public int getLayout() {
+        return R.layout.activity_all_chords;
+    }
+
+    @Override
+    public String getToolbarTitle() {
+        return getResources().getString(R.string.all_chords_name);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_chords);
+
         // allows injection of presenter
         App.getComponent().inject(this);
     }
@@ -67,11 +75,6 @@ public class LearnAllChordsActivity extends AppCompatActivity implements LearnAl
         progressDialog = new ProgressDialog(LearnAllChordsActivity.this, R.style.AppTheme_ProgressDialog);
         progressDialog.setMessage(getString(R.string.loading_chords_message));
         progressDialog.show();
-    }
-
-    public void setToolbarTitleText() {
-        TextView toolbarText = (TextView) findViewById(R.id.toolbarTitle);
-        toolbarText.setText(R.string.all_chords_name);
     }
 
     public void hideProgressBar(){

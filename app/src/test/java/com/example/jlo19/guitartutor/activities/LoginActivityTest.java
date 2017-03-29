@@ -3,6 +3,7 @@ package com.example.jlo19.guitartutor.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -60,6 +61,12 @@ public class LoginActivityTest {
     public void setPresenter_SetsActivityAsViewInPresenter() {
         // assert
         Mockito.verify(presenter).setView(activity);
+    }
+
+    @Test
+    public void setPresenter_SetsSharedPreferencesOnPresenter() {
+        // assert
+        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
     }
 
     @Test

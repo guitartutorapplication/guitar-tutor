@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,15 +22,25 @@ import javax.inject.Inject;
 /**
  * Activity that shows the details of a selected chord on screen
  */
-public class LearnChordActivity extends AppCompatActivity implements LearnChordView {
+public class LearnChordActivity extends BaseWithToolbarActivity implements LearnChordView {
     private ProgressDialog progressDialog;
     private Chord chord;
     private ILearnChordPresenter presenter;
 
     @Override
+    public int getLayout() {
+        return R.layout.activity_chord;
+    }
+
+    @Override
+    public String getToolbarTitle() {
+        // no title on this screen
+        return "";
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chord);
 
         // retrieving selected chord
         chord = getIntent().getParcelableExtra("CHORD");

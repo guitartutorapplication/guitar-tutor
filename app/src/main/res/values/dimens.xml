@@ -14,6 +14,7 @@
     <dimen name="small_button_height">35dp</dimen>
     <dimen name="small_button_text_size">12sp</dimen>
     <dimen name="practise_big_text">200sp</dimen>
-    <dimen name="home_layout_margin">100dp</dimen>
+    <dimen name="home_layout_margin">50dp</dimen>
     <dimen name="song_text_size">18sp</dimen>
+    <dimen name="account_text_size">20sp</dimen>
 </resources>

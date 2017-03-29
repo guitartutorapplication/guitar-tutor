@@ -26,7 +26,6 @@ public class LearnAllChordsPresenter implements ILearnViewAllChordsPresenter {
     @Override
     public void setView(IView view) {
         this.view = (LearnAllChordsView) view;
-        this.view.setToolbarTitleText();
         this.view.showProgressBar();
 
         model.getChords();

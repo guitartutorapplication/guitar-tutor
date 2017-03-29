@@ -1,9 +1,11 @@
 package com.example.jlo19.guitartutor.models;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
+import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.google.gson.Gson;
@@ -24,6 +26,7 @@ public class LoginModel implements ILoginModel {
 
     private ILoginPresenter presenter;
     private DatabaseApi api;
+    private SharedPreferences sharedPreferences;
 
     public LoginModel() {
         App.getComponent().inject(this);}
@@ -44,25 +47,30 @@ public class LoginModel implements ILoginModel {
             presenter.modelOnFieldEmpty();
         }
         else {
-            Call<PostResponse> call = api.loginUser(email, password);
+            Call<LoginResponse> call = api.loginUser(email, password);
 
             // asynchronously executing call
-            call.enqueue(new Callback<PostResponse>() {
+            call.enqueue(new Callback<LoginResponse>() {
                 @Override
-                public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if (response.isSuccessful()) {
+                        // adding user id to shared preferences for later use
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("user_id", response.body().getUserId());
+                        editor.apply();
+
                         presenter.modelOnLoginSuccess();
                     }
                     else {
                         // convert raw response when error
                         Gson gson = new Gson();
-                        TypeAdapter<PostResponse> adapter = gson.getAdapter(PostResponse.class);
+                        TypeAdapter<LoginResponse> adapter = gson.getAdapter(LoginResponse.class);
 
                         try {
-                            PostResponse postResponse = adapter.fromJson(
+                            LoginResponse loginResponse = adapter.fromJson(
                                     response.errorBody().string());
 
-                            if (postResponse.getMessage().equals(
+                            if (loginResponse.getMessage().equals(
                                     ResponseError.INCORRECT_CREDENTIALS.toString())) {
                                 presenter.modelOnIncorrectCredentials();
                             }
@@ -77,10 +85,15 @@ public class LoginModel implements ILoginModel {
                 }
 
                 @Override
-                public void onFailure(Call<PostResponse> call, Throwable t) {
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
                     presenter.modelOnLoginError();
                 }
             });
         }
+    }
+
+    @Override
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 }

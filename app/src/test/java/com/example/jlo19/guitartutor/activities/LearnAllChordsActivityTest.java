@@ -115,14 +115,23 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void setToolbarTitleText_SetsTitleOfToolbar() {
-        // act
-        activity.setToolbarTitleText();
-
+    public void setsTitleOfToolbar() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.all_chords_name),
                 view.getText().toString());
+    }
+
+    @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test

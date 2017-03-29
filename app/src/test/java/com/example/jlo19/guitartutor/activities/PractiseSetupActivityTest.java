@@ -129,14 +129,23 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void setToolbarTitleText_SetsToolbarTextToPractiseSetupName() {
-        // act
-        activity.setToolbarTitleText();
-
+    public void setsToolbarTextToPractiseSetupName() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_setup_name),
                 view.getText().toString());
+    }
+
+    @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test

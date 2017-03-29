@@ -1,12 +1,14 @@
 package com.example.jlo19.guitartutor.models;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
-import com.example.jlo19.guitartutor.helpers.FakePostResponseCall;
+import com.example.jlo19.guitartutor.helpers.FakeLoginResponseCall;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
+import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.google.gson.Gson;
@@ -86,11 +88,20 @@ public class LoginModelTest {
     public void loginWithValidCredentials_OnSuccessfulResponse_CallsLoginSuccessOnPresenter() {
         // arrange
         // sets fake call with a successful response
-        Response<PostResponse> response = (Response<PostResponse>)
+        LoginResponse loginResponse = new LoginResponse(false, "success", 1);
+
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(sharedPreferences.edit()).thenReturn(editor);
+
+        model.setSharedPreferences(sharedPreferences);
+
+        Response<LoginResponse> response = (Response<LoginResponse>)
                 PowerMockito.mock(Response.class);
+        PowerMockito.when(response.body()).thenReturn(loginResponse);
         PowerMockito.when(response.isSuccessful()).thenReturn(true);
 
-        DatabaseApi api = new FakeDatabaseApi(new FakePostResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeLoginResponseCall(response));
         ((LoginModel) model).setApi(api);
 
         // act
@@ -101,21 +112,50 @@ public class LoginModelTest {
     }
 
     @Test
+    public void loginWithValidCredentials_OnSuccessfulResponse_AddsUserIdToSharedPreferences() {
+        // arrange
+        // sets fake call with a successful response
+        int userId = 1;
+        LoginResponse loginResponse = new LoginResponse(false, "success", userId);
+
+        SharedPreferences sharedPreferences = Mockito.spy(SharedPreferences.class);
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(sharedPreferences.edit()).thenReturn(editor);
+
+        model.setSharedPreferences(sharedPreferences);
+
+        Response<LoginResponse> response = (Response<LoginResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(response.body()).thenReturn(loginResponse);
+        PowerMockito.when(response.isSuccessful()).thenReturn(true);
+
+        DatabaseApi api = new FakeDatabaseApi(new FakeLoginResponseCall(response));
+        ((LoginModel) model).setApi(api);
+
+        // act
+        model.login("kate@gmail.com", "password");
+
+        // assert
+        Mockito.verify(editor).putInt("user_id", userId);
+        Mockito.verify(editor).apply();
+    }
+
+    @Test
     public void loginWithValidCredentials_OnIncorrectCredentialsResponse_CallsIncorrectCredentialsOnPresenter()
             throws IOException {
         // arrange
         // sets fake call with an invalid credentials response
-        Response<PostResponse> response = (Response<PostResponse>)
+        Response<LoginResponse> response = (Response<LoginResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(response.isSuccessful()).thenReturn(false);
 
-        PostResponse postResponse = new PostResponse(true,
-                ResponseError.INCORRECT_CREDENTIALS.toString());
+        LoginResponse loginResponse = new LoginResponse(true,
+                ResponseError.INCORRECT_CREDENTIALS.toString(), 0);
         ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postResponse));
+        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(loginResponse));
         PowerMockito.when(response.errorBody()).thenReturn(errorBody);
 
-        DatabaseApi api = new FakeDatabaseApi(new FakePostResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeLoginResponseCall(response));
         ((LoginModel) model).setApi(api);
 
         // act
@@ -130,17 +170,17 @@ public class LoginModelTest {
             throws IOException {
         // arrange
         // sets fake call with a different error response
-        Response<PostResponse> response = (Response<PostResponse>)
+        Response<LoginResponse> response = (Response<LoginResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(response.isSuccessful()).thenReturn(false);
 
-        PostResponse postResponse = new PostResponse(true,
-                "another error");
+        LoginResponse loginResponse = new LoginResponse(true,
+                "another error", 0);
         ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postResponse));
+        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(loginResponse));
         PowerMockito.when(response.errorBody()).thenReturn(errorBody);
 
-        DatabaseApi api = new FakeDatabaseApi(new FakePostResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeLoginResponseCall(response));
         ((LoginModel) model).setApi(api);
 
         // act
@@ -154,7 +194,7 @@ public class LoginModelTest {
     public void loginWithValidCredentials_OnFailure_CallsLoginErrorOnPresenter() {
         // arrange
         // sets fake call with no response (failure)
-        FakePostResponseCall call = new FakePostResponseCall(null);
+        FakeLoginResponseCall call = new FakeLoginResponseCall(null);
         DatabaseApi api = new FakeDatabaseApi(call);
         ((LoginModel) model).setApi(api);
 

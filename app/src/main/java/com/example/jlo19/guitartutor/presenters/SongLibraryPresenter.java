@@ -25,7 +25,6 @@ public class SongLibraryPresenter implements ISongLibraryPresenter {
     @Override
     public void setView(IView view) {
         this.view = (SongLibraryView) view;
-        this.view.setToolbarTitleText();
         this.view.showProgressBar();
 
         model.getSongs();

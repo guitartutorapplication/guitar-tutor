@@ -8,7 +8,6 @@ import java.util.List;
  * View interface for LearnAllChordsActivity
  */
 public interface LearnAllChordsView extends IView {
-    void setToolbarTitleText();
     void showProgressBar();
     void hideProgressBar();
     void setChords(List<Chord> chords);

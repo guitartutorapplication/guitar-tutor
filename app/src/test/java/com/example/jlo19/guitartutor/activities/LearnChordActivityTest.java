@@ -65,6 +65,18 @@ public class LearnChordActivityTest {
     }
 
     @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
+    }
+
+    @Test
     public void setPresenter_SetsActivityAsViewInPresenter() {
         // assert
         Mockito.verify(presenter).setView(activity);

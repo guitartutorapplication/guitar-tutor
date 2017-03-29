@@ -35,4 +35,12 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/play_songs_button" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAccount"
+            android:layout_weight="1"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/account_home_button" />
+
 </LinearLayout>

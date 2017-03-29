@@ -17,6 +17,15 @@
         android:textColor="@color/colorText"
         android:textStyle="normal|bold"
         android:textSize="@dimen/toolbar_text_size"
-/>
+    />
+
+    <Button
+        android:id="@+id/btnAccount"
+        android:height="60dp"
+        android:width="60dp"
+        android:background="@drawable/account_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="end" />
 
 </android.support.v7.widget.Toolbar>

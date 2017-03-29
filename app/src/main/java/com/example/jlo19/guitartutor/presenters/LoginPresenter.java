@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
@@ -15,20 +17,20 @@ public class LoginPresenter implements ILoginPresenter {
 
     private LoginView view;
     private ILoginModel model;
-
-    public LoginPresenter() {
-        App.getComponent().inject(this);
-    }
+    private SharedPreferences sharedPreferences;
 
     @Inject
     public void setModel(ILoginModel model) {
         this.model = model;
         model.setPresenter(this);
+        model.setSharedPreferences(sharedPreferences);
     }
 
     @Override
     public void setView(IView view) {
         this.view = (LoginView) view;
+
+        App.getComponent().inject(this);
     }
 
     @Override
@@ -64,5 +66,10 @@ public class LoginPresenter implements ILoginPresenter {
     public void modelOnLoginError() {
         view.hideProgressBar();
         view.showLoginError();
+    }
+
+    @Override
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 }

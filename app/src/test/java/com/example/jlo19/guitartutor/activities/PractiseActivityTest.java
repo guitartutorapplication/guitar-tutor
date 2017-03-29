@@ -31,6 +31,8 @@ import org.robolectric.shadows.ShadowToast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.robolectric.Shadows.shadowOf;
+
 /**
  * Testing PractiseActivity
  */
@@ -143,14 +145,32 @@ public class PractiseActivityTest {
     }
 
     @Test
-    public void setToolbarTitleText_SetsToolbarTextToPractisingChordsName() {
-        // act
-        activity.setToolbarTitleText();
-
+    public void setsToolbarTextToPractisingChordsName() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.practising_chords_name),
                 view.getText().toString());
+    }
+
+    @Test
+    public void onPause_CallsOnPauseOnPresenter() {
+        // act
+        activity.onPause();
+
+        // assert
+        Mockito.verify(presenter).viewOnPause();
+    }
+
+    @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test

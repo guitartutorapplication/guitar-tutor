@@ -3,6 +3,7 @@ package com.example.jlo19.guitartutor.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.text.method.ScrollingMovementMethod;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.BuildConfig;
@@ -23,6 +24,8 @@ import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.robolectric.Shadows.shadowOf;
 
 /**
  * Testing SongActivity
@@ -59,6 +62,18 @@ public class SongActivityTest {
 
         TextView textView = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(expectedToolbarText, textView.getText().toString());
+    }
+
+    @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test
