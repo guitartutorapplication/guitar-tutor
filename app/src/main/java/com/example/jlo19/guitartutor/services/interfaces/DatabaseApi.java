@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.services.interfaces;
 
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
 import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
-import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
+import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
 import com.example.jlo19.guitartutor.models.retrofit.User;
 
@@ -11,6 +11,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -25,10 +26,15 @@ public interface DatabaseApi {
 
     @FormUrlEncoded
     @POST("users")
-    Call<PostResponse> registerUser(@Field("name") String name, @Field("email") String email,
-                                    @Field("password") String password);
+    Call<PostPutResponse> registerUser(@Field("name") String name, @Field("email") String email,
+                                       @Field("password") String password);
     @GET("users/{id}")
     Call<User> getAccountDetails(@Path("id") int userId);
+    @FormUrlEncoded
+    @PUT("users/{id}")
+    Call<PostPutResponse> editAccountDetails(@Path("id") int userId, @Field("name") String name,
+                                             @Field("email") String email, @Field("password")
+                                                     String password);
     @FormUrlEncoded
     @POST("users/login")
     Call<LoginResponse> loginUser(@Field("email") String email, @Field("password") String password);

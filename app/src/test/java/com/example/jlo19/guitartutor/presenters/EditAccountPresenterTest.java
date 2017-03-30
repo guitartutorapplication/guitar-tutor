@@ -1,11 +1,13 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
-import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
-import com.example.jlo19.guitartutor.views.RegisterView;
+import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
+import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
+import com.example.jlo19.guitartutor.views.EditAccountView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,15 +18,16 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * Testing RegisterPresenter
+ * Testing EditAccountPresenter
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(App.class)
-public class RegisterPresenterTest {
+public class EditAccountPresenterTest {
 
-    private IRegisterPresenter presenter;
-    private IRegisterModel model;
-    private RegisterView view;
+    private IEditAccountPresenter presenter;
+    private SharedPreferences sharedPreferences;
+    private IEditAccountModel model;
+    private EditAccountView view;
 
     @Before
     public void setUp() {
@@ -32,13 +35,21 @@ public class RegisterPresenterTest {
         PowerMockito.mockStatic(App.class);
         PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
 
-        presenter = new RegisterPresenter();
+        presenter = new EditAccountPresenter();
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
+        presenter.setSharedPreferences(sharedPreferences);
 
-        model = Mockito.mock(IRegisterModel.class);
-        ((RegisterPresenter) presenter).setModel(model);
+        model = Mockito.mock(IEditAccountModel.class);
+        ((EditAccountPresenter) presenter).setModel(model);
 
-        view = Mockito.mock(RegisterView.class);
+        view = Mockito.mock(EditAccountView.class);
         presenter.setView(view);
+    }
+
+    @Test
+    public void setModel_SetsSharedPreferencesOnModel() {
+        // assert
+        Mockito.verify(model).setSharedPreferences(sharedPreferences);
     }
 
     @Test
@@ -48,23 +59,29 @@ public class RegisterPresenterTest {
     }
 
     @Test
-    public void viewOnRegister_CallsRegisterOnModel() {
+    public void setView_HidesAccountButtonOnView() {
+        // assert
+        Mockito.verify(view).hideAccountButton();
+    }
+
+    @Test
+    public void viewOnSave_CallsSaveOnModel() {
         // act
         String expectedName = "Kate";
         String expectedEmail = "kate@gmail.com";
         String expectedPassword = "password";
-        presenter.viewOnRegister(expectedName, expectedEmail, expectedEmail, expectedPassword,
+        presenter.viewOnSave(expectedName, expectedEmail, expectedEmail, expectedPassword,
                 expectedPassword);
 
         // assert
-        Mockito.verify(model).register(expectedName, expectedEmail, expectedEmail, expectedPassword,
+        Mockito.verify(model).save(expectedName, expectedEmail, expectedEmail, expectedPassword,
                 expectedPassword);
     }
 
     @Test
-    public void viewOnRegister_CallsShowProgressBarOnView() {
+    public void viewOnSave_CallsShowProgressBarOnView() {
         // act
-        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "password", "password");
+        presenter.viewOnSave("Kate", "kate@gmail.com", "kate@gmail.com", "password", "password");
 
         // assert
         Mockito.verify(view).showProgressBar();
@@ -215,56 +232,38 @@ public class RegisterPresenterTest {
     }
 
     @Test
-    public void modelOnRegisterError_HidesProgressBarOnView() {
+    public void modelOnSaveError_HidesProgressBarOnView() {
         // act
-        presenter.modelOnRegisterError();
+        presenter.modelOnSaveError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnRegisterError_ShowsRegisterErrorOnView() {
+    public void modelOnSaveError_ShowsSaveErrorOnView() {
         // act
-        presenter.modelOnRegisterError();
+        presenter.modelOnSaveError();
 
         // assert
-        Mockito.verify(view).showRegisterError();
+        Mockito.verify(view).showSaveError();
     }
 
     @Test
-    public void modelOnAlreadyRegistered_HidesProgressBarOnView() {
+    public void modelOnSaveSuccess_HidesProgressBarOnView() {
         // act
-        presenter.modelOnAlreadyRegistered();
+        presenter.modelOnSaveSuccess();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnAlreadyRegistered_ShowsAlreadyRegisterErrorOnView() {
+    public void modelOnSaveSuccess_CallsStartAccountActivityOnView() {
         // act
-        presenter.modelOnAlreadyRegistered();
+        presenter.modelOnSaveSuccess();
 
         // assert
-        Mockito.verify(view).showAlreadyRegisteredError();
-    }
-
-    @Test
-    public void modelOnRegisterSuccess_HidesProgressBarOnView() {
-        // act
-        presenter.modelOnRegisterSuccess();
-
-        // assert
-        Mockito.verify(view).hideProgressBar();
-    }
-
-    @Test
-    public void modelOnRegisterSuccess_CallsStartLoginActivityOnView() {
-        // act
-        presenter.modelOnRegisterSuccess();
-
-        // assert
-        Mockito.verify(view).startLoginActivity();
+        Mockito.verify(view).startAccountActivity();
     }
 }

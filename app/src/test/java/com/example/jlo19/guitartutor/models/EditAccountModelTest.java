@@ -1,14 +1,17 @@
 package com.example.jlo19.guitartutor.models;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.helpers.FakePostPutResponseCall;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
+import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
 import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
-import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
+import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
+import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.google.gson.Gson;
 
@@ -27,14 +30,15 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 /**
- * Testing RegisterModel
+ * Testing EditAccountModel
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({App.class, ResponseBody.class, Response.class})
-public class RegisterModelTest {
+public class EditAccountModelTest {
 
-    private IRegisterModel model;
-    private IRegisterPresenter presenter;
+    private IEditAccountModel model;
+    private IEditAccountPresenter presenter;
+    private int userId;
 
     @Before
     public void setUp() {
@@ -42,140 +46,146 @@ public class RegisterModelTest {
         PowerMockito.mockStatic(App.class);
         PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
 
-        model = new RegisterModel();
+        model = new EditAccountModel();
 
-        presenter = PowerMockito.mock(IRegisterPresenter.class);
+        presenter = PowerMockito.mock(EditAccountPresenter.class);
         model.setPresenter(presenter);
+
+        userId = 1;
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        model.setSharedPreferences(sharedPreferences);
     }
 
     @Test
-    public void registerWithEmptyNameField_CallsEmptyFieldOnPresenter() {
+    public void saveWithEmptyNameField_CallsEmptyFieldOnPresenter() {
         // act
-        model.register("", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+        model.save("", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.FIELD_EMPTY);
     }
 
     @Test
-    public void registerWithEmptyEmailField_CallsEmptyFieldOnPresenter() {
+    public void saveWithEmptyEmailField_CallsEmptyFieldOnPresenter() {
         // act
-        model.register("Kate", "", "kate@gmail.com", "Password123", "Password123");
+        model.save("Kate", "", "kate@gmail.com", "Password123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.FIELD_EMPTY);
     }
 
     @Test
-    public void registerWithEmptyConfirmEmailField_CallsEmptyFieldOnPresenter() {
+    public void saveWithEmptyConfirmEmailField_CallsEmptyFieldOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "", "Password123", "Password123");
+        model.save("Kate", "kate@gmail.com", "", "Password123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.FIELD_EMPTY);
     }
 
     @Test
-    public void registerWithEmptyPasswordField_CallsEmptyFieldOnPresenter() {
+    public void saveWithEmptyPasswordField_CallsEmptyFieldOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "", "Password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.FIELD_EMPTY);
     }
 
     @Test
-    public void registerWithEmptyConfirmPasswordField_CallsEmptyFieldOnPresenter() {
+    public void saveWithEmptyConfirmPasswordField_CallsEmptyFieldOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.FIELD_EMPTY);
     }
 
     @Test
-    public void registerWithTwoDifferentEmails_CallsEmailMismatchOnPresenter() {
+    public void saveWithTwoDifferentEmails_CallsEmailMismatchOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "katet@gmail.com", "Password123", "Password123");
+        model.save("Kate", "kate@gmail.com", "katet@gmail.com", "Password123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.EMAIL_MISMATCH);
     }
 
     @Test
-    public void registerWithTwoDifferentEmails_CallsPasswordMismatchOnPresenter() {
+    public void saveWithTwoDifferentEmails_CallsPasswordMismatchOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Passwrod123", "Password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Passwrod123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_MISMATCH);
     }
 
     @Test
-    public void registerWithInvalidEmail_CallsInvalidEmailOnPresenter() {
+    public void saveWithInvalidEmail_CallsInvalidEmailOnPresenter() {
         // act
-        model.register("Kate", "kate@gmailcom", "kate@gmailcom", "Password123", "Password123");
+        model.save("Kate", "kate@gmailcom", "kate@gmailcom", "Password123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.INVALID_EMAIL);
     }
 
     @Test
-    public void registerWithPasswordLessThanEightCharacters_CallsPasswordTooShortOnPresenter() {
+    public void saveWithPasswordLessThanEightCharacters_CallsPasswordTooShortOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "pass", "pass");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "pass", "pass");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_TOO_SHORT);
     }
 
     @Test
-    public void registerWithPasswordWithNoUpperCaseLetter_CallsPasswordNoUpperCaseLetterOnPresenter() {
+    public void saveWithPasswordWithNoUpperCaseLetter_CallsPasswordNoUpperCaseLetterOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "password123", "password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "password123", "password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_UPPER);
     }
 
     @Test
-    public void registerWithPasswordWithNoLowerCaseLetter_CallsPasswordNoLowerCaseLetterOnPresenter() {
+    public void saveWithPasswordWithNoLowerCaseLetter_CallsPasswordNoLowerCaseLetterOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "PASSWORD123", "PASSWORD123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "PASSWORD123", "PASSWORD123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_LOWER);
     }
 
     @Test
-    public void registerWithPasswordWithNoNumber_CallsPasswordNoNumberOnPresenter() {
+    public void saveWithPasswordWithNoNumber_CallsPasswordNoNumberOnPresenter() {
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password", "Password");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password", "Password");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_NUMBER);
     }
 
     @Test
-    public void registerWithCorrectCredentials_CallsRegisterOnDatabaseApiWithCredentials() {
+    public void saveWithCorrectCredentials_CallsEditAccountDetailsOnDatabaseApiWithCredentials() {
         // arrange
         DatabaseApi api = Mockito.mock(DatabaseApi.class);
-        Mockito.when(api.registerUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        Mockito.when(api.editAccountDetails(Mockito.anyInt(),
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Mockito.mock(Call.class));
-        ((RegisterModel) model).setApi(api);
+        ((EditAccountModel) model).setApi(api);
 
         // act
         String expectedName = "Kate";
         String expectedEmail = "kate@gmail.com";
         String expectedPassword = "Password123";
-        model.register(expectedName, expectedEmail, expectedEmail, expectedPassword, expectedPassword);
+        model.save(expectedName, expectedEmail, expectedEmail, expectedPassword, expectedPassword);
 
         // assert
-        Mockito.verify(api).registerUser(expectedName, expectedEmail, expectedPassword);
+        Mockito.verify(api).editAccountDetails(userId, expectedName, expectedEmail, expectedPassword);
     }
 
     @Test
-    public void registerWithCorrectCredentials_OnSuccessfulResponse_CallsRegisterSuccessOnPresenter() {
+    public void saveWithCorrectCredentials_OnSuccessfulResponse_CallsSaveSuccessOnPresenter() {
         // arrange
         // sets fake call with a successful response
         Response<PostPutResponse> response = (Response<PostPutResponse>)
@@ -183,17 +193,17 @@ public class RegisterModelTest {
         PowerMockito.when(response.isSuccessful()).thenReturn(true);
 
         DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
-        ((RegisterModel) model).setApi(api);
+        ((EditAccountModel) model).setApi(api);
 
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
 
         // assert
-        Mockito.verify(presenter).modelOnRegisterSuccess();
+        Mockito.verify(presenter).modelOnSaveSuccess();
     }
 
     @Test
-    public void registerWithCorrectCredentials_OnInvalidEmailResponse_CallsInvalidEmailOnPresenter()
+    public void saveWithCorrectCredentials_OnInvalidEmailResponse_CallsInvalidEmailOnPresenter()
             throws IOException {
         // arrange
         // sets fake call with a invalid email response
@@ -208,42 +218,17 @@ public class RegisterModelTest {
         PowerMockito.when(response.errorBody()).thenReturn(errorBody);
 
         DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
-        ((RegisterModel) model).setApi(api);
+        ((EditAccountModel) model).setApi(api);
 
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.INVALID_EMAIL);
     }
 
     @Test
-    public void registerWithCorrectCredentials_OnAlreadyRegisteredResponse_CallsAlreadyRegisterOnPresenter()
-            throws IOException {
-        // arrange
-        // sets fake call with an already registered response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
-                ResponseError.ALREADY_REGISTERED.toString());
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
-        ((RegisterModel) model).setApi(api);
-
-        // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
-
-        // assert
-        Mockito.verify(presenter).modelOnAlreadyRegistered();
-    }
-
-    @Test
-    public void registerWithCorrectCredentials_OnErrorResponse_CallsRegisterErrorOnPresenter()
+    public void saveWithCorrectCredentials_OnErrorResponse_CallsSaveErrorOnPresenter()
             throws IOException {
         // arrange
         // sets fake call with a different error response
@@ -258,27 +243,27 @@ public class RegisterModelTest {
         PowerMockito.when(response.errorBody()).thenReturn(errorBody);
 
         DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
-        ((RegisterModel) model).setApi(api);
+        ((EditAccountModel) model).setApi(api);
 
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
 
         // assert
-        Mockito.verify(presenter).modelOnRegisterError();
+        Mockito.verify(presenter).modelOnSaveError();
     }
 
     @Test
-    public void registerWithCorrectCredentials_OnFailure_CallsRegisterErrorOnPresenter() {
+    public void saveWithCorrectCredentials_OnFailure_CallsSaveErrorOnPresenter() {
         // arrange
         // sets fake call with no response (failure)
         FakePostPutResponseCall call = new FakePostPutResponseCall(null);
         DatabaseApi api = new FakeDatabaseApi(call);
-        ((RegisterModel) model).setApi(api);
+        ((EditAccountModel) model).setApi(api);
 
         // act
-        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
 
         // assert
-        Mockito.verify(presenter).modelOnRegisterError();
+        Mockito.verify(presenter).modelOnSaveError();
     }
 }

@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.helpers;
 
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
 import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
-import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
+import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
 import com.example.jlo19.guitartutor.models.retrofit.User;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
@@ -15,7 +15,7 @@ import retrofit2.Call;
 public class FakeDatabaseApi implements DatabaseApi{
 
     private FakeUserCall fakeUserCall;
-    private FakePostResponseCall fakePostResponseCall;
+    private FakePostPutResponseCall fakePostPutResponseCall;
     private FakeChordsResponseCall fakeChordsResponseCall;
     private FakeSongsResponseCall fakeSongsResponseCall;
     private FakeLoginResponseCall fakeLoginResponseCall;
@@ -28,8 +28,8 @@ public class FakeDatabaseApi implements DatabaseApi{
         this.fakeSongsResponseCall = fakeSongsResponseCall;
     }
 
-    public FakeDatabaseApi(FakePostResponseCall fakePostResponseCall) {
-        this.fakePostResponseCall = fakePostResponseCall;
+    public FakeDatabaseApi(FakePostPutResponseCall fakePostPutResponseCall) {
+        this.fakePostPutResponseCall = fakePostPutResponseCall;
     }
 
     public FakeDatabaseApi(FakeLoginResponseCall fakeLoginResponseCall) {
@@ -51,13 +51,18 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<PostResponse> registerUser(String name, String email, String password) {
-        return fakePostResponseCall;
+    public Call<PostPutResponse> registerUser(String name, String email, String password) {
+        return fakePostPutResponseCall;
     }
 
     @Override
     public Call<User> getAccountDetails(int userId) {
         return fakeUserCall;
+    }
+
+    @Override
+    public Call<PostPutResponse> editAccountDetails(int userId, String name, String email, String password) {
+        return fakePostPutResponseCall;
     }
 
     @Override

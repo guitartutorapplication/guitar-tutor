@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -143,5 +144,24 @@ public class AccountActivityTest {
         // assert
         ProgressDialog dialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
         Assert.assertFalse(dialog.isShowing());
+    }
+
+    @Test
+    public void editAccountButtonClicked_EditAccountActivityIsStartedWithAccountDetails() {
+        // arrange
+        User user = new User("Kate", "katesmith@gmail.com", 2,
+                2000);
+        activity.setAccountDetails(user);
+
+        // act
+        Button button = (Button) activity.findViewById(R.id.btnEditAccount);
+        button.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(EditAccountActivity.class.getName(), intent.getComponent().getClassName());
+        // checks correct chord is passed through
+        Assert.assertEquals(user, intent.getParcelableExtra("USER"));
     }
 }

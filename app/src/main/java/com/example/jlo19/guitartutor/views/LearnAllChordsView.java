@@ -7,9 +7,7 @@ import java.util.List;
 /**
  * View interface for LearnAllChordsActivity
  */
-public interface LearnAllChordsView extends IView {
-    void showProgressBar();
-    void hideProgressBar();
+public interface LearnAllChordsView extends IProgressBarView {
     void setChords(List<Chord> chords);
     void showError();
 }

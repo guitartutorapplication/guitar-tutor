@@ -69,5 +69,8 @@
     <string name="register_here_message">Register here</string>
     <string name="no_account_question_message">Don\'t have an account?</string>
     <string name="account_details_name">Account details</string>
+    <string name="edit_account_details_name">Edit account details</string>
     <string name="account_error_message">An error has occurred while trying to retrieve your details</string>
+    <string name="saving_changes_message">Saving changes…</string>
+    <string name="saving_changes_error_message">An error has occurred while trying to save changes</string>
 </resources>

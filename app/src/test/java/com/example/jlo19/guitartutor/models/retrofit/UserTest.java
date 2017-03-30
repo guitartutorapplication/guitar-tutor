@@ -1,9 +1,13 @@
 package com.example.jlo19.guitartutor.models.retrofit;
 
+import android.os.Parcel;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 
 /**
  * Testing User
@@ -59,5 +63,42 @@ public class UserTest {
 
         // assert
         Assert.assertEquals(achievements, actualAchievements);
+    }
+
+
+    @Test
+    public void describeContents_ReturnsZero() {
+        // act
+        int actual = user.describeContents();
+
+        // assert
+        Assert.assertEquals(0, actual);
+    }
+
+    @Test
+    public void writeToParcel_WritesFieldsToParcel() {
+        // arrange
+        Parcel parcel = PowerMockito.mock(Parcel.class);
+
+        // act
+        user.writeToParcel(parcel, 0);
+
+        // assert
+        Mockito.verify(parcel).writeString(name);
+        Mockito.verify(parcel).writeString(email);
+        Mockito.verify(parcel).writeInt(level);
+        Mockito.verify(parcel).writeInt(achievements);
+    }
+
+    @Test
+    public void newArray_ReturnsArrayOfUsersWithSpecifiedSize() {
+        // arrange
+        int expected = 1;
+
+        // act
+        User[] users = User.CREATOR.newArray(expected);
+
+        // assert
+        Assert.assertEquals(expected, users.length);
     }
 }

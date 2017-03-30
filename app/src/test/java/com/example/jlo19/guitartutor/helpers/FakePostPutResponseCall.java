@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.PostResponse;
+import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 
 import java.io.IOException;
 
@@ -10,23 +10,23 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Fakes retrofit call with PostResponse
+ * Fakes retrofit call with PostPutResponse
  */
-public class FakePostResponseCall implements Call<PostResponse> {
+public class FakePostPutResponseCall implements Call<PostPutResponse> {
 
-    private final Response<PostResponse> response;
+    private final Response<PostPutResponse> response;
 
-    public FakePostResponseCall(Response<PostResponse> response) {
+    public FakePostPutResponseCall(Response<PostPutResponse> response) {
         this.response = response;
     }
 
     @Override
-    public Response<PostResponse> execute() throws IOException {
+    public Response<PostPutResponse> execute() throws IOException {
         return null;
     }
 
     @Override
-    public void enqueue(Callback<PostResponse> callback) {
+    public void enqueue(Callback<PostPutResponse> callback) {
         if (response != null) {
             callback.onResponse(this, response);
         }
@@ -51,7 +51,7 @@ public class FakePostResponseCall implements Call<PostResponse> {
     }
 
     @Override
-    public Call<PostResponse> clone() {
+    public Call<PostPutResponse> clone() {
         return null;
     }
 

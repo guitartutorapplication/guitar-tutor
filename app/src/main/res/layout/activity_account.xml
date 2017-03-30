@@ -119,4 +119,27 @@
     <include android:id="@+id/toolbar"
         layout="@layout/toolbar"/>
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLayout"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnEditAccount"
+            android:height="@dimen/main_buttons_height"
+            android:width="@dimen/main_buttons_width"
+            android:textSize="43sp"
+            android:layout_marginTop="@dimen/big_layout_margin"
+            android:textAlignment="center"
+            android:background="@drawable/edit_account_button"
+            android:layout_width="@dimen/main_buttons_width"
+            android:layout_height="@dimen/main_buttons_height" />
+
+    </RelativeLayout>
+
 </RelativeLayout>

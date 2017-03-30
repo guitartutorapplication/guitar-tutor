@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.modules;
 
 import com.example.jlo19.guitartutor.models.AccountModel;
+import com.example.jlo19.guitartutor.models.EditAccountModel;
 import com.example.jlo19.guitartutor.models.LearnChordModel;
 import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.LoginModel;
@@ -9,6 +10,7 @@ import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
+import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
@@ -17,6 +19,7 @@ import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
+import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.LearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.LearnChordPresenter;
 import com.example.jlo19.guitartutor.presenters.LoginPresenter;
@@ -25,6 +28,7 @@ import com.example.jlo19.guitartutor.presenters.PractiseSetupPresenter;
 import com.example.jlo19.guitartutor.presenters.RegisterPresenter;
 import com.example.jlo19.guitartutor.presenters.SongLibraryPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
+import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
@@ -123,4 +127,12 @@ public class AppModule {
     @Provides
     @Singleton
     IAccountModel provideAccountModel() {return new AccountModel();}
+
+    @Provides
+    @Singleton
+    IEditAccountPresenter provideEditAccountPresenter() {return new EditAccountPresenter();}
+
+    @Provides
+    @Singleton
+    IEditAccountModel provideEditAccountModel() {return new EditAccountModel();}
 }

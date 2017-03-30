@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 public class AccountActivity extends BaseWithToolbarActivity implements AccountView {
 
     private ProgressDialog progressDialog;
+    private User user;
 
     @Override
     public int getLayout() {
@@ -39,6 +41,17 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
 
         // allows injection of presenter
         App.getComponent().inject(this);
+
+        Button btnEditAccount = (Button) findViewById(R.id.btnEditAccount);
+        btnEditAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // passing account details to next activity
+                Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
+                intent.putExtra("USER", user);
+                startActivity(intent);
+            }
+        });
     }
 
     @Inject
@@ -55,6 +68,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
 
     @Override
     public void setAccountDetails(User user) {
+        this.user = user;
         TextView txtName = (TextView) findViewById(R.id.txtName);
         TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
         TextView txtLevel = (TextView) findViewById(R.id.txtLevel);

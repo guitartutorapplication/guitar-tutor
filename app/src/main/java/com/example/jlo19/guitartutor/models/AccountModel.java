@@ -15,7 +15,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Handles connection to DB API and business/data logic
+ * Handles connection to DB API
  */
 public class AccountModel implements IAccountModel {
 

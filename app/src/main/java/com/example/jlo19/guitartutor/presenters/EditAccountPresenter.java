@@ -1,60 +1,61 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
-import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
+import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
+import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
+import com.example.jlo19.guitartutor.views.EditAccountView;
 import com.example.jlo19.guitartutor.views.IView;
-import com.example.jlo19.guitartutor.views.RegisterView;
 
 import javax.inject.Inject;
 
 /**
- * Presenter which provides RegisterActivity with the ability to add an account to DB
+ * Presenter that provides the EditAccountActivity with ability to edit details on DB
  */
-public class RegisterPresenter implements IRegisterPresenter {
+public class EditAccountPresenter implements IEditAccountPresenter {
 
-    private RegisterView view;
-    private IRegisterModel model;
-
-    public RegisterPresenter() {
-        App.getComponent().inject(this);
-    }
+    private EditAccountView view;
+    private IEditAccountModel model;
+    private SharedPreferences sharedPreferences;
 
     @Inject
-    public void setModel(IRegisterModel model) {
+    public void setModel(IEditAccountModel model) {
         this.model = model;
-        model.setPresenter(this);
+        this.model.setPresenter(this);
+        this.model.setSharedPreferences(sharedPreferences);
     }
 
     @Override
     public void setView(IView view) {
-        this.view = (RegisterView) view;
+        this.view = (EditAccountView) view;
+        this.view.hideAccountButton();
+
+        App.getComponent().inject(this);
     }
 
     @Override
-    public void viewOnRegister(String name, String email, String confirmEmail, String password,
-                               String confirmPassword) {
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public void viewOnSave(String name, String email, String confirmEmail, String password, String confirmPassword) {
         view.showProgressBar();
-        model.register(name, email, confirmEmail, password, confirmPassword);
+        model.save(name, email, confirmEmail, password, confirmPassword);
     }
 
     @Override
-    public void modelOnRegisterError() {
+    public void modelOnSaveSuccess() {
         view.hideProgressBar();
-        view.showRegisterError();
+        view.startAccountActivity();
     }
 
     @Override
-    public void modelOnAlreadyRegistered() {
+    public void modelOnSaveError() {
         view.hideProgressBar();
-        view.showAlreadyRegisteredError();
-    }
-
-    @Override
-    public void modelOnRegisterSuccess() {
-        view.hideProgressBar();
-        view.startLoginActivity();
+        view.showSaveError();
     }
 
     @Override
