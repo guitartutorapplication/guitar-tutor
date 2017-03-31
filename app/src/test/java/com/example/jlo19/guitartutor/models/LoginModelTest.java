@@ -27,6 +27,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static org.mockito.Mockito.never;
+
 /**
  * Testing LoginModel
  */
@@ -47,6 +49,34 @@ public class LoginModelTest {
 
         presenter = PowerMockito.mock(ILoginPresenter.class);
         model.setPresenter(presenter);
+    }
+
+    @Test
+    public void checkForPreexistingUser_UserAlreadyLoggedIn_CallsUserAlreadyLoggedInOnPresenter() {
+        // arrange
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(2);
+        model.setSharedPreferences(sharedPreferences);
+
+        // act
+        model.checkForPreexistingLogIn();
+
+        // arrange
+        Mockito.verify(presenter).modelOnUserAlreadyLoggedIn();
+    }
+
+    @Test
+    public void checkForPreexistingUser_NoExistingUser_DoesntCallUserAlreadyLoggedInOnPresenter() {
+        // arrange
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(0);
+        model.setSharedPreferences(sharedPreferences);
+
+        // act
+        model.checkForPreexistingLogIn();
+
+        // arrange
+        Mockito.verify(presenter, never()).modelOnUserAlreadyLoggedIn();
     }
 
     @Test

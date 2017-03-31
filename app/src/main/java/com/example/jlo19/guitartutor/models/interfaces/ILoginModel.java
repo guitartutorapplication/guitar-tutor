@@ -11,4 +11,5 @@ public interface ILoginModel {
     void setPresenter(ILoginPresenter presenter);
     void login(String email, String password);
     void setSharedPreferences(SharedPreferences sharedPreferences);
+    void checkForPreexistingLogIn();
 }

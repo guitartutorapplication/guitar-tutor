@@ -53,6 +53,21 @@ public class LoginPresenterTest {
     }
 
     @Test
+    public void modelOnUserAlreadyLoggedIn_StartHomeActivityOnView() {
+        // act
+        presenter.modelOnUserAlreadyLoggedIn();
+
+        // assert
+        Mockito.verify(view).startHomeActivity();
+    }
+
+    @Test
+    public void setModel_CallsCheckForPreexistingUserOnModel() {
+        // assert
+        Mockito.verify(model).checkForPreexistingLogIn();
+    }
+
+    @Test
     public void setModel_SetsPresenterOnModel() {
         // assert
         Mockito.verify(model).setPresenter(presenter);

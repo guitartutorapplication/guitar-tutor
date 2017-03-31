@@ -13,4 +13,5 @@ public interface ILoginPresenter extends IPresenter {
     void modelOnIncorrectCredentials();
     void modelOnLoginError();
     void setSharedPreferences(SharedPreferences sharedPreferences);
+    void modelOnUserAlreadyLoggedIn();
 }

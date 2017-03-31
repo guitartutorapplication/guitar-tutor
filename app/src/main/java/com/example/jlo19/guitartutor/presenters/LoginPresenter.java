@@ -24,6 +24,7 @@ public class LoginPresenter implements ILoginPresenter {
         this.model = model;
         model.setPresenter(this);
         model.setSharedPreferences(sharedPreferences);
+        model.checkForPreexistingLogIn();
     }
 
     @Override
@@ -71,5 +72,10 @@ public class LoginPresenter implements ILoginPresenter {
     @Override
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public void modelOnUserAlreadyLoggedIn() {
+        view.startHomeActivity();
     }
 }

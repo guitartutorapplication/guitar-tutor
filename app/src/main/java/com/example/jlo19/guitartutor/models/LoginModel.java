@@ -96,4 +96,14 @@ public class LoginModel implements ILoginModel {
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
+
+    @Override
+    public void checkForPreexistingLogIn() {
+        // retrieving logged in user's id (if any) from shared preferences
+        int userId = sharedPreferences.getInt("user_id", 0);
+
+        if (userId != 0) {
+            presenter.modelOnUserAlreadyLoggedIn();
+        }
+    }
 }
