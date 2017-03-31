@@ -263,4 +263,16 @@ public class EditAccountActivityTest {
         junit.framework.Assert.assertEquals(AccountActivity.class.getName(),
                 intent.getComponent().getClassName());
     }
+
+    @Test
+    public void homeButtonClicked_StartsHomeActivity() {
+        // act
+        Button btnHome = (Button) activity.findViewById(R.id.btnHome);
+        btnHome.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        junit.framework.Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+    }
 }

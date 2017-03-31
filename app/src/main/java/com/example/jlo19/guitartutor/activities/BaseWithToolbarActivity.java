@@ -33,5 +33,14 @@ public abstract class BaseWithToolbarActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button btnHome = (Button) findViewById(R.id.btnHome);
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

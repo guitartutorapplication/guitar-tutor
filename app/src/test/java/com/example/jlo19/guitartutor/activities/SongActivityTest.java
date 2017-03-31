@@ -98,4 +98,16 @@ public class SongActivityTest {
         Assert.assertEquals((selectedSong.getContents().split("\r\n")).length,
                 textView.getMaxLines());
     }
+
+    @Test
+    public void homeButtonClicked_StartsHomeActivity() {
+        // act
+        Button btnHome = (Button) activity.findViewById(R.id.btnHome);
+        btnHome.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+    }
 }

@@ -28,4 +28,13 @@
         android:layout_height="60dp"
         android:layout_gravity="end" />
 
+    <Button
+        android:id="@+id/btnHome"
+        android:height="60dp"
+        android:width="60dp"
+        android:background="@drawable/home_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="start" />
+
 </android.support.v7.widget.Toolbar>
