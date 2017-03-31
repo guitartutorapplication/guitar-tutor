@@ -65,4 +65,12 @@ public class AccountModel implements IAccountModel {
             }
         });
     }
+
+    @Override
+    public void logout() {
+       // removing user id from shared preferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("user_id");
+        editor.apply();
+    }
 }

@@ -11,4 +11,5 @@ public interface IAccountModel {
     void setPresenter(IAccountPresenter presenter);
     void setSharedPreferences(SharedPreferences sharedPreferences);
     void getAccountDetails();
+    void logout();
 }

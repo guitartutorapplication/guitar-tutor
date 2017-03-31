@@ -11,4 +11,6 @@ public interface IAccountPresenter extends IPresenter {
     void setSharedPreferences(SharedPreferences preferences);
     void modelOnAccountDetailsRetrieved(User user);
     void modelOnError();
+    void viewOnLogout();
+    void viewOnEditAccount();
 }

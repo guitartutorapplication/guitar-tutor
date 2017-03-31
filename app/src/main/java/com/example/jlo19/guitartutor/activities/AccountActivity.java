@@ -24,6 +24,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
 
     private ProgressDialog progressDialog;
     private User user;
+    private IAccountPresenter presenter;
 
     @Override
     public int getLayout() {
@@ -46,16 +47,22 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
         btnEditAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // passing account details to next activity
-                Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
-                intent.putExtra("USER", user);
-                startActivity(intent);
+                presenter.viewOnEditAccount();
+            }
+        });
+
+        Button btnLogOut = (Button) findViewById(R.id.btnLogOut);
+        btnLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.viewOnLogout();
             }
         });
     }
 
     @Inject
     public void setPresenter(IAccountPresenter presenter) {
+        this.presenter = presenter;
         presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
@@ -84,6 +91,21 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     public void showError() {
         Toast.makeText(getApplicationContext(), R.string.account_error_message,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void startLoginActivity() {
+        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void startEditAccountActivity() {
+        // passing account details to next activity
+        Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
+        intent.putExtra("USER", user);
+        startActivity(intent);
     }
 
     @Override

@@ -18,12 +18,14 @@ public class AccountPresenter implements IAccountPresenter {
 
     private SharedPreferences sharedPreferences;
     private AccountView view;
+    private IAccountModel model;
 
     @Inject
     public void setModel(IAccountModel model) {
-        model.setPresenter(this);
-        model.setSharedPreferences(sharedPreferences);
-        model.getAccountDetails();
+        this.model = model;
+        this.model.setPresenter(this);
+        this.model.setSharedPreferences(sharedPreferences);
+        this.model.getAccountDetails();
     }
 
     @Override
@@ -50,5 +52,16 @@ public class AccountPresenter implements IAccountPresenter {
     public void modelOnError() {
         view.hideProgressBar();
         view.showError();
+    }
+
+    @Override
+    public void viewOnLogout() {
+        model.logout();
+        view.startLoginActivity();
+    }
+
+    @Override
+    public void viewOnEditAccount() {
+        view.startEditAccountActivity();
     }
 }

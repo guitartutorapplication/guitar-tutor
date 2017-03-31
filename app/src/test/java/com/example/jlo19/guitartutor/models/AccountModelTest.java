@@ -33,6 +33,7 @@ public class AccountModelTest {
     private IAccountModel model;
     private IAccountPresenter presenter;
     private int userId;
+    private SharedPreferences sharedPreferences;
 
     @Before
     public void setUp() {
@@ -46,7 +47,7 @@ public class AccountModelTest {
         model.setPresenter(presenter);
 
         userId = 1;
-        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
         model.setSharedPreferences(sharedPreferences);
     }
@@ -118,5 +119,19 @@ public class AccountModelTest {
 
         // assert
         Mockito.verify(presenter).modelOnError();
+    }
+
+    @Test
+    public void logOut_RemovesUserIdFromSharedPreferences() {
+        // arrange
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(sharedPreferences.edit()).thenReturn(editor);
+
+        // act
+        model.logout();
+
+        // assert
+        Mockito.verify(editor).remove("user_id");
+        Mockito.verify(editor).apply();
     }
 }

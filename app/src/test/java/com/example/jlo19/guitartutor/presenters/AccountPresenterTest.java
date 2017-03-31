@@ -114,4 +114,31 @@ public class AccountPresenterTest {
         // assert
         Mockito.verify(view).hideProgressBar();
     }
+
+    @Test
+    public void viewOnLogOut_CallsLogoutOnModel() {
+        // act
+        presenter.viewOnLogout();
+
+        // assert
+        Mockito.verify(model).logout();
+    }
+
+    @Test
+    public void viewOnLogout_CallsStartLoginActivityOnView() {
+        // act
+        presenter.viewOnLogout();
+
+        // assert
+        Mockito.verify(view).startLoginActivity();
+    }
+
+    @Test
+    public void viewOnEditAccount_CallsStartEditAccountActivityOnView() {
+        // act
+        presenter.viewOnEditAccount();
+
+        // assert
+        Mockito.verify(view).startEditAccountActivity();
+    }
 }

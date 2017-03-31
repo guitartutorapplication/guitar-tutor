@@ -147,15 +147,14 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void editAccountButtonClicked_EditAccountActivityIsStartedWithAccountDetails() {
+    public void startEditAccountActivity_EditAccountActivityIsStartedWithAccountDetails() {
         // arrange
         User user = new User("Kate", "katesmith@gmail.com", 2,
                 2000);
         activity.setAccountDetails(user);
 
         // act
-        Button button = (Button) activity.findViewById(R.id.btnEditAccount);
-        button.performClick();
+        activity.startEditAccountActivity();
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
@@ -163,5 +162,39 @@ public class AccountActivityTest {
         Assert.assertEquals(EditAccountActivity.class.getName(), intent.getComponent().getClassName());
         // checks correct chord is passed through
         Assert.assertEquals(user, intent.getParcelableExtra("USER"));
+    }
+
+    @Test
+    public void editAccountButtonClicked_CallsEditAccountOnPresenter() {
+        // act
+        Button button = (Button) activity.findViewById(R.id.btnEditAccount);
+        button.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnEditAccount();
+    }
+
+    @Test
+    public void logOutButtonClicked_CallsLogoutOnPresenter() {
+        // act
+        Button button = (Button) activity.findViewById(R.id.btnLogOut);
+        button.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnLogout();
+    }
+
+    @Test
+    public void startLoginActivity_LoginActivityIsStartedWithFlagsSet() {
+        // act
+        activity.startLoginActivity();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(LoginActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
     }
 }
