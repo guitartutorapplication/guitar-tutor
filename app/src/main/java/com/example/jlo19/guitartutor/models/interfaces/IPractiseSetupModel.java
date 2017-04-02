@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.models.interfaces;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 
 import java.util.ArrayList;
@@ -13,4 +15,5 @@ public interface IPractiseSetupModel {
     void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex);
     void startBeatPreview(int beatSpeedIndex);
     void stopBeatPreview();
+    void setSharedPreferences(SharedPreferences sharedPreferences);
 }

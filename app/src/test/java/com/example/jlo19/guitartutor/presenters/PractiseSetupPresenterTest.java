@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
@@ -31,6 +33,7 @@ public class PractiseSetupPresenterTest {
     private IPractiseSetupPresenter presenter;
     private IPractiseSetupModel model;
     private PractiseSetupView view;
+    private SharedPreferences sharedPreferences;
 
     @Before
     public void setUp() {
@@ -39,6 +42,9 @@ public class PractiseSetupPresenterTest {
         PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
 
         presenter = new PractiseSetupPresenter();
+
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
+        presenter.setSharedPreferences(sharedPreferences);
 
         model = Mockito.mock(IPractiseSetupModel.class);
         ((PractiseSetupPresenter) presenter).setModel(model);
@@ -60,9 +66,15 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void setView_CallsGetChordsOnModel() {
+    public void setModel_CallsGetChordsOnModel() {
         // assert
         Mockito.verify(model).getChords();
+    }
+
+    @Test
+    public void setModel_SetsSharedPreferencesOnModel() {
+        // assert
+        Mockito.verify(model).setSharedPreferences(sharedPreferences);
     }
 
     @Test

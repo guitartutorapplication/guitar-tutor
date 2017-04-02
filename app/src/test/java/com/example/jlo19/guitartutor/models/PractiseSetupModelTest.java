@@ -1,14 +1,19 @@
 package com.example.jlo19.guitartutor.models;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.helpers.FakeChordsResponseCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
+import com.example.jlo19.guitartutor.helpers.FakeUserChordsResponseCall;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.UserChord;
+import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -22,6 +27,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Response;
@@ -37,6 +43,7 @@ public class PractiseSetupModelTest {
 
     private IPractiseSetupModel model;
     private IPractiseSetupPresenter presenter;
+    private int userId;
 
     @Before
     public void setUp() {
@@ -46,24 +53,70 @@ public class PractiseSetupModelTest {
 
         model = new PractiseSetupModel();
 
+        userId = 1;
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        model.setSharedPreferences(sharedPreferences);
+
         presenter = PowerMockito.mock(IPractiseSetupPresenter.class);
         model.setPresenter(presenter);
     }
 
     @Test
-    public void getChords_OnResponse_CallsChordsRetrievedOnPresenterWithChords() {
+    public void getChords_OnResponseToGetChords_CallsGetUserChordsOnApiWithUserIdFromSharedPref() {
         // arrange
         // sets fake call with a response with chords
         List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        ChordsResponse chordsResponse = new ChordsResponse(false, chords);
+        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
 
-        Response<ChordsResponse> response = (Response<ChordsResponse>)
+        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
                 PowerMockito.mock(Response.class);
-        PowerMockito.when(response.body()).thenReturn(chordsResponse);
+        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
 
-        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(response));
+        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
+
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
+                new FakeUserChordsResponseCall(userChordsResponse)));
+        ((PractiseSetupModel) model).setApi(api);
+
+        // act
+        model.getChords();
+
+        // assert
+        Mockito.verify(api).getUserChords(userId);
+    }
+
+    @Test
+    public void getChords_OnResponseToGetChordsAndGetUserChords_CallsChordsRetrievedOnPresenter() {
+        // arrange
+        // sets fake call with a response with chords
+        List<Chord> allChords = Arrays.asList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
+        List<Chord> chords = new ArrayList<>();
+        for(int i = 0; i < userChords.size(); i++) {
+            for (int j = 0; j < allChords.size(); j++) {
+                if (allChords.get(j).getId() == userChords.get(i).getChordId()) {
+                    chords.add(allChords.get(j));
+                    break;
+                }
+            }
+        }
+        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, allChords));
+
+        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
+
+        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
+                new FakeUserChordsResponseCall(userChordsResponse));
         ((PractiseSetupModel) model).setApi(api);
 
         // act
@@ -74,7 +127,31 @@ public class PractiseSetupModelTest {
     }
 
     @Test
-    public void getChords_OnFailure_CallsErrorOnPresenter() {
+    public void getChords_OnResponseToGetChordsAndFailureToGetUserChords_CallsErrorOnPresenter() {
+        // arrange
+        // sets fake call with a response with chords for getChords and fake call with no response
+        // for getUserChords (failure)
+        List<Chord> chords = Arrays.asList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+
+        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+
+        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
+                new FakeUserChordsResponseCall(null));
+        ((PractiseSetupModel) model).setApi(api);
+
+        // act
+        model.getChords();
+
+        // assert
+        Mockito.verify(presenter).modelOnLoadChordsError();
+    }
+
+    @Test
+    public void getChords_OnFailureToGetChords_CallsErrorOnPresenter() {
         // arrange
         // sets fake call with no response (failure)
         FakeChordsResponseCall call = new FakeChordsResponseCall(null);
@@ -87,7 +164,6 @@ public class PractiseSetupModelTest {
         // assert
         Mockito.verify(presenter).modelOnLoadChordsError();
     }
-
     @Test
     public void chordsSelected_WithLessThanTwoChords_CallsLessThanTwoChordsSelectedOnPresenter() {
         // act
