@@ -18,6 +18,10 @@
         <item name="android:indeterminateTintMode">src_in</item>
     </style>
 
+    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@color/colorText</item>
         <item name="android:textAllCaps">false</item>

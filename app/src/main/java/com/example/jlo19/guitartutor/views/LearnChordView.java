@@ -15,4 +15,9 @@ public interface LearnChordView extends IProgressBarView{
     void setImage(Bitmap bitmap);
     void playVideo(String url);
     void showVideoLoadError();
+    boolean getLearntChord();
+    void enableLearntButton(boolean isEnabled);
+    void showConfirmDialog();
+    void startLearnAllChordsActivity();
+    void showAddLearntChordError();
 }

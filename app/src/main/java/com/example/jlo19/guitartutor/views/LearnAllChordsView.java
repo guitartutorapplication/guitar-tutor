@@ -8,6 +8,6 @@ import java.util.List;
  * View interface for LearnAllChordsActivity
  */
 public interface LearnAllChordsView extends IProgressBarView {
-    void setChords(List<Chord> chords);
+    void setChords(List<Chord> chords, List<Integer> userChords);
     void showError();
 }

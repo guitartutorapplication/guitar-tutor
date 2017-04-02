@@ -1,11 +1,15 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,6 +30,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     private ProgressDialog progressDialog;
     private Chord chord;
     private ILearnChordPresenter presenter;
+    private boolean learntChord;
 
     @Override
     public int getLayout() {
@@ -45,6 +50,9 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
         // retrieving selected chord
         chord = getIntent().getParcelableExtra("CHORD");
 
+        // retrieving whether selected chord has been learned or not
+        learntChord = getIntent().getBooleanExtra("LEARNT_CHORD", false);
+
         // allows injection of presenter
         App.getComponent().inject(this);
 
@@ -53,6 +61,14 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
             @Override
             public void onClick(View v) {
                 presenter.viewOnVideoRequested();
+            }
+        });
+
+        Button btnLearnt = (Button) findViewById(R.id.btnLearnt);
+        btnLearnt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.viewOnLearnt();
             }
         });
 
@@ -69,6 +85,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     @Inject
     public void setPresenter(ILearnChordPresenter presenter) {
         this.presenter = presenter;
+        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -118,6 +135,50 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     public void showVideoLoadError() {
         Toast.makeText(getApplicationContext(),
                 R.string.loading_chord_video_message_failure, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean getLearntChord() {
+        return learntChord;
+    }
+
+    @Override
+    public void enableLearntButton(boolean isEnabled) {
+        Button btnLearnt = (Button) findViewById(R.id.btnLearnt);
+        btnLearnt.setEnabled(isEnabled);
+    }
+
+    @Override
+    public void showConfirmDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_learnt_message)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearnt();
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void startLearnAllChordsActivity() {
+        Intent intent = new Intent(getBaseContext(), LearnAllChordsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showAddLearntChordError() {
+        Toast.makeText(getApplicationContext(),
+                R.string.adding_learnt_chord_error_message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

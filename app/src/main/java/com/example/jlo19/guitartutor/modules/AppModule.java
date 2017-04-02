@@ -12,7 +12,7 @@ import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
+import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
@@ -29,6 +29,7 @@ import com.example.jlo19.guitartutor.presenters.RegisterPresenter;
 import com.example.jlo19.guitartutor.presenters.SongLibraryPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
+import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
@@ -54,7 +55,7 @@ import dagger.Provides;
 public class AppModule {
     @Provides
     @Singleton
-    IPresenter provideLearnViewAllChordsPresenter() {
+    ILearnAllChordsPresenter provideLearnAllChordsPresenter() {
         return new LearnAllChordsPresenter();
     }
 
@@ -94,7 +95,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    ILearnViewAllChordsModel provideLearnViewAllChordsModel() {return new LearnAllChordsModel();}
+    ILearnAllChordsModel provideLearnViewAllChordsModel() {return new LearnAllChordsModel();}
 
     @Provides
     @Singleton

@@ -73,4 +73,8 @@
     <string name="account_error_message">An error has occurred while trying to retrieve your details</string>
     <string name="saving_changes_message">Saving changes…</string>
     <string name="saving_changes_error_message">An error has occurred while trying to save changes</string>
+    <string name="confirm_learnt_message">Are you sure you understand this chord?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="adding_learnt_chord_error_message">Failed to add chord to your learnt chords</string>
 </resources>

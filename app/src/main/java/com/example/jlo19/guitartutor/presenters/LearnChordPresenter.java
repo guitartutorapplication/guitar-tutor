@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.App;
@@ -17,11 +18,13 @@ public class LearnChordPresenter implements ILearnChordPresenter {
 
     private LearnChordView view;
     private ILearnChordModel model;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void setView(IView view) {
         this.view = (LearnChordView) view;
         this.view.showProgressBar();
+        this.view.enableLearntButton(!this.view.getLearntChord());
 
         App.getComponent().inject(this);
     }
@@ -32,6 +35,7 @@ public class LearnChordPresenter implements ILearnChordPresenter {
         model.setPresenter(this);
         model.setContext(view.getContext());
         model.getImage(view.getChord().getDiagramFilename());
+        model.setSharedPreferences(sharedPreferences);
     }
 
     @Override
@@ -62,5 +66,33 @@ public class LearnChordPresenter implements ILearnChordPresenter {
     public void modelOnVideoDownloadFailed() {
         view.hideProgressBar();
         view.showVideoLoadError();
+    }
+
+    @Override
+    public void viewOnLearnt() {
+        view.showConfirmDialog();
+    }
+
+    @Override
+    public void viewOnConfirmLearnt() {
+        view.showProgressBar();
+        model.addLearntChord(view.getChord().getId());
+    }
+
+    @Override
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public void modelOnLearntChordAdded() {
+        view.hideProgressBar();
+        view.startLearnAllChordsActivity();
+    }
+
+    @Override
+    public void modelOnAddLearntChordError() {
+        view.hideProgressBar();
+        view.showAddLearntChordError();
     }
 }

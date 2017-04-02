@@ -5,6 +5,7 @@ import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
 import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
 import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -38,4 +39,9 @@ public interface DatabaseApi {
     @FormUrlEncoded
     @POST("users/login")
     Call<LoginResponse> loginUser(@Field("email") String email, @Field("password") String password);
+    @GET("users/{id}/chords")
+    Call<UserChordsResponse> getUserChords(@Path("id") int userId);
+    @FormUrlEncoded
+    @POST("users/{id}/chords")
+    Call<PostPutResponse> addLearntChord(@Path("id") int userId, @Field("chord_id") int chordId);
 }

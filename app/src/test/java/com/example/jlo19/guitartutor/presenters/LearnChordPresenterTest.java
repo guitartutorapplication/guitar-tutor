@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.App;
@@ -18,6 +19,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.mockito.internal.verification.VerificationModeFactory.atLeast;
+
 /**
  * Testing LearnChordPresenter
  */
@@ -30,6 +33,7 @@ public class LearnChordPresenterTest {
     private ILearnChordModel model;
     private Context context;
     private Chord selectedChord;
+    private SharedPreferences sharedPreferences;
 
     @Before
     public void setUp() {
@@ -46,8 +50,41 @@ public class LearnChordPresenterTest {
         Mockito.when(view.getChord()).thenReturn(selectedChord);
         presenter.setView(view);
 
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
+        presenter.setSharedPreferences(sharedPreferences);
+
         model = Mockito.mock(ILearnChordModel.class);
         ((LearnChordPresenter) presenter).setModel(model);
+    }
+
+    @Test
+    public void setModel_SetsSharedPreferencesOnModel() {
+        // assert
+        Mockito.verify(model).setSharedPreferences(sharedPreferences);
+    }
+
+    @Test
+    public void setView_LearnChordFalse_EnablesLearntButtonOnView() {
+        // arrange
+        Mockito.when(view.getLearntChord()).thenReturn(false);
+
+        // act
+        presenter.setView(view);
+
+        // assert
+        Mockito.verify(view, atLeast(1)).enableLearntButton(true);
+    }
+
+    @Test
+    public void setView_LearnChordTrue_DisablesLearntButtonOnView() {
+        // arrange
+        Mockito.when(view.getLearntChord()).thenReturn(true);
+
+        // act
+        presenter.setView(view);
+
+        // assert
+        Mockito.verify(view).enableLearntButton(false);
     }
 
     @Test
@@ -155,5 +192,68 @@ public class LearnChordPresenterTest {
 
         // assert
         Mockito.verify(view).showVideoLoadError();
+    }
+
+    @Test
+    public void viewOnLearnt_ShowsConfirmDialogOnView() {
+        // act
+        presenter.viewOnLearnt();
+
+        // assert
+        Mockito.verify(view).showConfirmDialog();
+    }
+
+    @Test
+    public void viewOnConfirmLearnt_ShowsProgressBarOnView() {
+        // act
+        presenter.viewOnConfirmLearnt();
+
+        // assert
+        Mockito.verify(view, atLeast(1)).showProgressBar();
+    }
+
+    @Test
+    public void viewOnConfirmLearnt_CallsAddLearntChordOnModel() {
+        // act
+        presenter.viewOnConfirmLearnt();
+
+        // assert
+        Mockito.verify(model).addLearntChord(selectedChord.getId());
+    }
+
+    @Test
+    public void modelOnLearntChordAdded_CallsHideProgressBarOnView() {
+        // act
+        presenter.modelOnLearntChordAdded();
+
+        // assert
+        Mockito.verify(view).hideProgressBar();
+    }
+
+    @Test
+    public void modelOnLearntChordAdded_CallsStartLearnAllChordsActivityOnView() {
+        // act
+        presenter.modelOnLearntChordAdded();
+
+        // assert
+        Mockito.verify(view).startLearnAllChordsActivity();
+    }
+
+    @Test
+    public void modelOnAddLearntChordError_CallsHideProgressBarOnView() {
+        // act
+        presenter.modelOnAddLearntChordError();
+
+        // assert
+        Mockito.verify(view).hideProgressBar();
+    }
+
+    @Test
+    public void modelOnAddLearntChordError_ShowsAddLearntChordErrorOnView() {
+        // act
+        presenter.modelOnAddLearntChordError();
+
+        // assert
+        Mockito.verify(view).showAddLearntChordError();
     }
 }

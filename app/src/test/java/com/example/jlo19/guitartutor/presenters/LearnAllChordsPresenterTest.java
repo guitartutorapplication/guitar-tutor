@@ -1,10 +1,12 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnViewAllChordsModel;
+import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.presenters.interfaces.ILearnViewAllChordsPresenter;
+import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
 import org.junit.Before;
@@ -16,6 +18,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,8 +29,9 @@ import java.util.List;
 public class LearnAllChordsPresenterTest {
 
     private LearnAllChordsView view;
-    private ILearnViewAllChordsPresenter presenter;
-    private ILearnViewAllChordsModel model;
+    private ILearnAllChordsPresenter presenter;
+    private ILearnAllChordsModel model;
+    private SharedPreferences sharedPreferences;
 
     @Before
     public void setUp() {
@@ -37,11 +41,20 @@ public class LearnAllChordsPresenterTest {
 
         presenter = new LearnAllChordsPresenter();
 
-        model = Mockito.mock(ILearnViewAllChordsModel.class);
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
+        presenter.setSharedPreferences(sharedPreferences);
+
+        model = Mockito.mock(ILearnAllChordsModel.class);
         ((LearnAllChordsPresenter) presenter).setModel(model);
 
         view = Mockito.mock(LearnAllChordsView.class);
         presenter.setView(view);
+    }
+
+    @Test
+    public void setModel_SetsSharedPreferencesOnModel() {
+        // assert
+        Mockito.verify(model).setSharedPreferences(sharedPreferences);
     }
 
     @Test
@@ -51,7 +64,7 @@ public class LearnAllChordsPresenterTest {
     }
 
     @Test
-    public void setView_CallsGetChordsOnModel() {
+    public void setModel_CallsGetChordsOnModel() {
         // assert
         Mockito.verify(model).getChords();
     }
@@ -65,7 +78,7 @@ public class LearnAllChordsPresenterTest {
     @Test
     public void modelOnChordsRetrieved_HidesProgressBarOnView() {
         // act
-        presenter.modelOnChordsRetrieved(null);
+        presenter.modelOnChordsRetrieved(null, null);
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -77,10 +90,11 @@ public class LearnAllChordsPresenterTest {
         List<Chord> expectedChords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        presenter.modelOnChordsRetrieved(expectedChords);
+        List<Integer> expectedUserChords = Collections.singletonList(1);
+        presenter.modelOnChordsRetrieved(expectedChords, expectedUserChords);
 
         // assert
-        Mockito.verify(view).setChords(expectedChords);
+        Mockito.verify(view).setChords(expectedChords, expectedUserChords);
     }
 
     @Test

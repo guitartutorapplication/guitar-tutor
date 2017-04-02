@@ -5,6 +5,7 @@ import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
 import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
 import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
 import retrofit2.Call;
@@ -14,6 +15,7 @@ import retrofit2.Call;
  */
 public class FakeDatabaseApi implements DatabaseApi{
 
+    private FakeUserChordsResponseCall fakeUserChordsResponseCall;
     private FakeUserCall fakeUserCall;
     private FakePostPutResponseCall fakePostPutResponseCall;
     private FakeChordsResponseCall fakeChordsResponseCall;
@@ -38,6 +40,11 @@ public class FakeDatabaseApi implements DatabaseApi{
 
     public FakeDatabaseApi(FakeUserCall fakeUserCall) {
         this.fakeUserCall = fakeUserCall;
+    }
+
+    public FakeDatabaseApi(FakeChordsResponseCall fakeChordsResponseCall, FakeUserChordsResponseCall fakeUserChordsResponseCall) {
+        this.fakeChordsResponseCall = fakeChordsResponseCall;
+        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
     }
 
     @Override
@@ -68,5 +75,15 @@ public class FakeDatabaseApi implements DatabaseApi{
     @Override
     public Call<LoginResponse> loginUser(String email, String password) {
         return fakeLoginResponseCall;
+    }
+
+    @Override
+    public Call<UserChordsResponse> getUserChords(int userId) {
+        return fakeUserChordsResponseCall;
+    }
+
+    @Override
+    public Call<PostPutResponse> addLearntChord(int userId, int chordId) {
+        return fakePostPutResponseCall;
     }
 }

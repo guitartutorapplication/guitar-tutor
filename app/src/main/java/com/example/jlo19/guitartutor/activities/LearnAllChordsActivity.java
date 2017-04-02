@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -12,7 +13,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.presenters.interfaces.IPresenter;
+import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
 import java.util.List;
@@ -46,21 +47,24 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     }
 
     @Inject
-    public void setPresenter(IPresenter presenter) {
+    public void setPresenter(ILearnAllChordsPresenter presenter) {
+        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
-    public void setChords(final List<Chord> chords) {
+    public void setChords(final List<Chord> chords, final List<Integer> userChords) {
         GridView gridView = (GridView) findViewById(R.id.gridView);
         // setting buttons in grid view with on click event to start LearnChordActivity
-        gridView.setAdapter(new ChordsButtonAdapter(LearnAllChordsActivity.this, chords,
+        gridView.setAdapter(new ChordsButtonAdapter(LearnAllChordsActivity.this, chords, userChords,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         int chordId = v.getId();
                         // passing selected chord to new activity
+                        Chord chord = chords.get(chordId);
                         Intent intent = new Intent(getBaseContext(), LearnChordActivity.class);
-                        intent.putExtra("CHORD", chords.get(chordId));
+                        intent.putExtra("CHORD", chord);
+                        intent.putExtra("LEARNT_CHORD", userChords.contains(chord.getId()));
                         startActivity(intent);
                     }
                 }));
