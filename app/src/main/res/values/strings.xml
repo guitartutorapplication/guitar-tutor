@@ -77,4 +77,6 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="adding_learnt_chord_error_message">Failed to add chord to your learnt chords</string>
+    <string name="view_all_songs_option">View all songs</string>
+    <string name="view_songs_i_can_play_option">View songs I can play</string>
 </resources>

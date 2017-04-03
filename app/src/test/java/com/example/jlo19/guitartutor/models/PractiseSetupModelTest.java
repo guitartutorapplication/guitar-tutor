@@ -98,15 +98,7 @@ public class PractiseSetupModelTest {
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
         List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        List<Chord> chords = new ArrayList<>();
-        for(int i = 0; i < userChords.size(); i++) {
-            for (int j = 0; j < allChords.size(); j++) {
-                if (allChords.get(j).getId() == userChords.get(i).getChordId()) {
-                    chords.add(allChords.get(j));
-                    break;
-                }
-            }
-        }
+
         Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, allChords));
@@ -123,7 +115,7 @@ public class PractiseSetupModelTest {
         model.getChords();
 
         // assert
-        Mockito.verify(presenter).modelOnChordsRetrieved(chords);
+        Mockito.verify(presenter).modelOnChordsRetrieved(Collections.singletonList(allChords.get(0)));
     }
 
     @Test
@@ -264,8 +256,6 @@ public class PractiseSetupModelTest {
         Mockito.verify(presenter).modelOnCorrectSelectedChords(selectedChords, ChordChange.SIXTEEN_BEATS,
                 BeatSpeed.VERY_SLOW);
     }
-
-
 
     @Test
     public void chordsSelected_WithCorrectSelectedChordsAndBeatSpeedIndexZero_CallsCorrectSelectedChordsOnPresenterWithVerySlowSpeed() {

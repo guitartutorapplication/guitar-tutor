@@ -3,8 +3,10 @@ package com.example.jlo19.guitartutor.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.BuildConfig;
@@ -64,6 +66,12 @@ public class SongLibraryActivityTest {
     public void setPresenter_SetsActivityAsViewInPresenter() {
         // assert
         Mockito.verify(presenter).setView(activity);
+    }
+
+    @Test
+    public void setPresenter_SetsSharedPreferencesOnPresenter() {
+        // assert
+        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
     }
 
     @Test
@@ -172,5 +180,38 @@ public class SongLibraryActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+    }
+
+    @Test
+    public void songFilterCheckChangedToLearntSongs_CallsViewFilterChangedOnPresenterWithFalse() {
+        // act
+        RadioButton rbtnViewLearntSongs = (RadioButton) activity.findViewById(R.id.rbtnViewLearntSongs);
+        rbtnViewLearntSongs.setChecked(true);
+
+        // assert
+        Mockito.verify(presenter).viewOnSongFilterChanged(false);
+    }
+
+    @Test
+    public void songFilterCheckChangedToAllSongs_CallsViewFilterChangedOnPresenterWithTrue() {
+        // arrange
+        RadioButton rbtnViewLearntSongs = (RadioButton) activity.findViewById(R.id.rbtnViewLearntSongs);
+        rbtnViewLearntSongs.setChecked(true);
+
+        // act
+        RadioButton rbtnViewAllSongs = (RadioButton) activity.findViewById(R.id.rbtnViewAll);
+        rbtnViewAllSongs.setChecked(true);
+
+        // assert
+        Mockito.verify(presenter).viewOnSongFilterChanged(true);
+    }
+
+    @Test
+    public void onDestroy_CallsExitOnPresenter() {
+        // act
+        activity.onDestroy();
+
+        // assert
+        Mockito.verify(presenter).viewOnExit();
     }
 }

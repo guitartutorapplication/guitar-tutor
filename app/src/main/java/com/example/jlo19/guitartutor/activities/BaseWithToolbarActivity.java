@@ -40,6 +40,7 @@ public abstract class BaseWithToolbarActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), HomeActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

@@ -3,9 +3,11 @@ package com.example.jlo19.guitartutor.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
@@ -27,6 +29,7 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
     private ProgressDialog progressDialog;
     private ListView listView;
     private List<Song> songs;
+    private ISongLibraryPresenter presenter;
 
     @Override
     public int getLayout() {
@@ -42,9 +45,6 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // allows injection of presenter
-        App.getComponent().inject(this);
-
         listView = (ListView) findViewById(R.id.listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -55,10 +55,23 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
                 startActivity(intent);
             }
         });
+
+        // allows injection of presenter
+        App.getComponent().inject(this);
+
+        RadioGroup rGroupViewFilter = (RadioGroup) findViewById(R.id.rGroupViewFilter);
+        rGroupViewFilter.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                presenter.viewOnSongFilterChanged(checkedId == R.id.rbtnViewAll);
+            }
+        });
     }
 
     @Inject
     public void setPresenter(ISongLibraryPresenter presenter) {
+        this.presenter = presenter;
+        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -84,5 +97,11 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
     public void showError() {
         Toast.makeText(getApplicationContext(),
                 R.string.loading_songs_message_failure, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.viewOnExit();
     }
 }

@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
@@ -19,6 +21,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 /**
  * Testing SongLibraryPresenter
  */
@@ -29,6 +33,7 @@ public class SongLibraryPresenterTest {
     private ISongLibraryPresenter presenter;
     private SongLibraryView view;
     private ISongLibraryModel model;
+    private SharedPreferences sharedPreferences;
 
     @Before
     public void setUp() {
@@ -38,11 +43,20 @@ public class SongLibraryPresenterTest {
 
         presenter = new SongLibraryPresenter();
 
+        sharedPreferences = Mockito.mock(SharedPreferences.class);
+        presenter.setSharedPreferences(sharedPreferences);
+
         model = Mockito.mock(ISongLibraryModel.class);
         ((SongLibraryPresenter) presenter).setModel(model);
 
         view = Mockito.mock(SongLibraryView.class);
         presenter.setView(view);
+    }
+
+    @Test
+    public void setModel_SetsSharedPreferencesOnModel() {
+        // assert
+        Mockito.verify(model).setSharedPreferences(sharedPreferences);
     }
 
     @Test
@@ -52,9 +66,9 @@ public class SongLibraryPresenterTest {
     }
 
     @Test
-    public void setView_CallsGetSongsOnModel() {
+    public void setModel_CallsGetAllSongsOnModel() {
         // assert
-        Mockito.verify(model).getSongs();
+        Mockito.verify(model).getAllSongs();
     }
 
     @Test
@@ -103,5 +117,32 @@ public class SongLibraryPresenterTest {
 
         // assert
         Mockito.verify(view).showError();
+    }
+
+    @Test
+    public void viewOnSongFilterChangedWithTrue_CallsGetAllSongsOnModel() {
+        // act
+        presenter.viewOnSongFilterChanged(true);
+
+        // assert
+        Mockito.verify(model, times(2)).getAllSongs();
+    }
+
+    @Test
+    public void viewOnSongFilterChangedWithFalse_CallsGetSongsUserCanPlayOnModel() {
+        // act
+        presenter.viewOnSongFilterChanged(false);
+
+        // assert
+        Mockito.verify(model).getSongsUserCanPlay();
+    }
+
+    @Test
+    public void viewOnExit_CallsResetSongsOnModel() {
+        // act
+        presenter.viewOnExit();
+
+        // assert
+        Mockito.verify(model).resetSongs();
     }
 }
