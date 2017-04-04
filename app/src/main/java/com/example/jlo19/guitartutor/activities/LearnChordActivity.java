@@ -182,6 +182,18 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     }
 
     @Override
+    public void showAddLearntChordSuccess() {
+        Toast.makeText(getApplicationContext(),
+                R.string.add_learnt_chord_success_message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showUpdateLevelDetailsError() {
+        Toast.makeText(getApplicationContext(),
+                R.string.update_level_details_error_message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }

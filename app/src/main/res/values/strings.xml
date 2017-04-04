@@ -79,4 +79,8 @@
     <string name="adding_learnt_chord_error_message">Failed to add chord to your learnt chords</string>
     <string name="view_all_songs_option">View all songs</string>
     <string name="view_songs_i_can_play_option">View songs I can play</string>
+    <string name="add_learnt_chord_success_message">Chord successfully added to your learnt chords.
+        You have gained 100 achievement points!</string>
+    <string name="update_level_details_error_message">Chord successfully added to your learnt chords.
+        However, due to an error, failed to update your achievement points.</string>
 </resources>

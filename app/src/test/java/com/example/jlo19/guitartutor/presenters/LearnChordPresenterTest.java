@@ -240,6 +240,15 @@ public class LearnChordPresenterTest {
     }
 
     @Test
+    public void modelOnLearntChordAdded_ShowsAddLearntChordSuccessOnView() {
+        // act
+        presenter.modelOnLearntChordAdded();
+
+        // assert
+        Mockito.verify(view).showAddLearntChordSuccess();
+    }
+
+    @Test
     public void modelOnAddLearntChordError_CallsHideProgressBarOnView() {
         // act
         presenter.modelOnAddLearntChordError();
@@ -255,5 +264,14 @@ public class LearnChordPresenterTest {
 
         // assert
         Mockito.verify(view).showAddLearntChordError();
+    }
+
+    @Test
+    public void modelOnUpdateLevelDetailsError_ShowsUpdateLevelDetailsErrorOnView() {
+        // act
+        presenter.modelOnUpdateLevelDetailsError();
+
+        // assert
+        Mockito.verify(view).showUpdateLevelDetailsError();
     }
 }

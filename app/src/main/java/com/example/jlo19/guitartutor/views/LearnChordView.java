@@ -20,4 +20,6 @@ public interface LearnChordView extends IProgressBarView{
     void showConfirmDialog();
     void startLearnAllChordsActivity();
     void showAddLearntChordError();
+    void showAddLearntChordSuccess();
+    void showUpdateLevelDetailsError();
 }

@@ -87,6 +87,7 @@ public class LearnChordPresenter implements ILearnChordPresenter {
     @Override
     public void modelOnLearntChordAdded() {
         view.hideProgressBar();
+        view.showAddLearntChordSuccess();
         view.startLearnAllChordsActivity();
     }
 
@@ -94,5 +95,10 @@ public class LearnChordPresenter implements ILearnChordPresenter {
     public void modelOnAddLearntChordError() {
         view.hideProgressBar();
         view.showAddLearntChordError();
+    }
+
+    @Override
+    public void modelOnUpdateLevelDetailsError() {
+        view.showUpdateLevelDetailsError();
     }
 }

@@ -171,6 +171,28 @@ public class LearnChordActivityTest {
     }
 
     @Test
+    public void showAddLearntChordSuccess_MakesToastWithSuccessMessage() {
+        // act
+        activity.showAddLearntChordSuccess();
+
+        // assert
+        Assert.assertEquals(getApp().getResources()
+                        .getString(R.string.add_learnt_chord_success_message),
+                ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showUpdateLevelDetailsError_MakesToastWithErrorMessage() {
+        // act
+        activity.showUpdateLevelDetailsError();
+
+        // assert
+        Assert.assertEquals(getApp().getResources()
+                        .getString(R.string.update_level_details_error_message),
+                ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
     public void showAddLearntChordError_MakesToastWithErrorMessage() {
         // act
         activity.showAddLearntChordError();

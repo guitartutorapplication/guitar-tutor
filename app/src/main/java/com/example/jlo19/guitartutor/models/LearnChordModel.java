@@ -5,11 +5,16 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
 import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -96,7 +101,25 @@ public class LearnChordModel implements ILearnChordModel {
                     presenter.modelOnLearntChordAdded();
                 }
                 else {
-                    presenter.modelOnAddLearntChordError();
+                    // convert raw response when error
+                    Gson gson = new Gson();
+                    TypeAdapter<PostPutResponse> adapter = gson.getAdapter(PostPutResponse.class);
+
+                    try {
+                        PostPutResponse postPutResponse = adapter.fromJson(
+                                response.errorBody().string());
+
+                        if ((postPutResponse.getMessage().equals(ResponseError
+                                .RETRIEVE_LEVEL_DETAILS_FAILURE.toString())) || (postPutResponse
+                                .getMessage().equals(ResponseError.UPDATE_LEVEL_DETAILS_FAILURE.toString()))) {
+                            presenter.modelOnUpdateLevelDetailsError();
+                        }
+                        else {
+                            presenter.modelOnAddLearntChordError();
+                        }
+                    } catch (IOException e) {
+                        presenter.modelOnAddLearntChordError();
+                    }
                 }
             }
 
