@@ -1,34 +1,35 @@
 <resources>
     <string name="app_name">Guitar Tutor</string>
     <string name="all_chords_name">Chords</string>
+    <string name="song_library_name">Song library</string>
     <string name="diagram_help_name">Reading a chord diagram</string>
     <string name="loading_chords_message">Loading chords…</string>
+    <string name="loading_songs_message">Loading songs…</string>
     <string name="loading_chords_message_failure">Failed to load chords</string>
+    <string name="loading_songs_message_failure">Failed to load songs</string>
     <string name="loading_chord_message">Loading chord…</string>
     <string name="loading_chord_message_failure">Failed to load chord</string>
     <string name="loading_chord_image_message_failure">Failed to load chord diagram</string>
     <string name="loading_chord_video_message_failure">Failed to load video</string>
     <string name="loading_video_message">Loading video…</string>
+    <string name="loading_account_details_message">Loading account details…</string>
     <string name="watch_button_text">Watch demo</string>
     <string name="diagram_help_button_text">Diagram help</string>
     <string name="practising_chords_name">Practising chords</string>
-    <string name="learn_chords_button_text">Learn chords</string>
-    <string name="practise_chords_button_text">Practise chords</string>
     <string name="practise_instruction">Tip: try to keep your strumming in time with the beat.</string>
     <string name="practise_first_chord_instruction">Your first chord: </string>
-    <string name="stop_button_text">Stop</string>
-    <string name="start_button_text">Start</string>
     <string name="practise_setup_name">Practise setup</string>
-    <string name="practise_chord_selection_instruction">Please select between 2 and 4 chords to practise</string>
-    <string name="practise_chord_change_selection_instruction">Please select how often you want to change chords</string>
+    <string name="practise_chord_selection_instruction">Please select between 2 and 4 of your learnt chords to practise</string>
+    <string name="practise_chord_change_selection_instruction">Please select how often you want to
+        change chords</string>
     <string name="practise_beat_speed_selection_instruction">Please select the speed of your beat</string>
     <string name="select_chord_instruction">Please select a chord…</string>
     <string name="less_than_two_selected_chords_error">Please select 2 or more chords to practise</string>
     <string name="same_chord_selected_error">Please do not select the same chord multiple times</string>
-    <string name="practise_button_text">Practise!</string>
     <string name="preview_button_text">Preview</string>
     <string name="practise_error_occurred_message">An error has occurred in the practise activity</string>
-    <string name="practise_setup_information">For this activity you will practise your changes between chords.</string>
+    <string name="practise_setup_information">For this activity you will practise your changes between
+        chords.</string>
     <string name="practise_one_beat_name">every 1 beat</string>
     <string name="practise_two_beats_name">2 beats</string>
     <string name="practise_four_beats_name">4 beats</string>
@@ -39,5 +40,43 @@
     <string name="practise_medium_name">medium</string>
     <string name="practise_fast_name">fast</string>
     <string name="practise_very_fast_name">very fast</string>
-    <string name="practise_beat_preview_error_message">An error has occurred while trying to preview beat</string>
+    <string name="practise_beat_preview_error_message">An error has occurred while trying to preview
+        beat</string>
+    <string name="field_empty_error_message">Please complete all fields</string>
+    <string name="field_email_mismatch_error_message">Please make sure emails match</string>
+    <string name="field_password_mismatch_error_message">Please make sure passwords match</string>
+    <string name="invalid_email_error_message">Please enter a valid email</string>
+    <string name="password_too_short_error_message">Please make sure password is at least 8 characters
+        long</string>
+    <string name="password_no_upper_case_letter_error_message">Please make sure password has at least
+        one upper case letter</string>
+    <string name="password_no_lower_case_letter_error_message">Please make sure password has at least
+        one lower case letter</string>
+    <string name="password_no_number_error_message">Please make sure password has at least one number</string>
+    <string name="register_error_message">An error has occurred while trying to register</string>
+    <string name="already_registered_error_message">Email address already registered with an account</string>
+    <string name="registering_message">Registering…</string>
+    <string name="logging_in_message">Logging in…</string>
+    <string name="name_name">Name</string>
+    <string name="email_name">Email address</string>
+    <string name="level_name">Level</string>
+    <string name="achievements_name">Achievements</string>
+    <string name="confirm_email_name">Confirm email address</string>
+    <string name="password_name">Password</string>
+    <string name="confirm_password_name">Confirm password</string>
+    <string name="incorrect_login_credentials_error_message">Incorrect email or password</string>
+    <string name="login_error_message">An error has occurred while trying to log in</string>
+    <string name="register_here_message">Register here</string>
+    <string name="no_account_question_message">Don\'t have an account?</string>
+    <string name="account_details_name">Account details</string>
+    <string name="edit_account_details_name">Edit account details</string>
+    <string name="account_error_message">An error has occurred while trying to retrieve your details</string>
+    <string name="saving_changes_message">Saving changes…</string>
+    <string name="saving_changes_error_message">An error has occurred while trying to save changes</string>
+    <string name="confirm_learnt_message">Are you sure you understand this chord?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="adding_learnt_chord_error_message">Failed to add chord to your learnt chords</string>
+    <string name="view_all_songs_option">View all songs</string>
+    <string name="view_songs_i_can_play_option">View songs I can play</string>
 </resources>

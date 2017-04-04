@@ -60,12 +60,6 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void setView_CallsSetToolbarTitleTextOnView() {
-        // assert
-        Mockito.verify(view).setToolbarTitleText();
-    }
-
-    @Test
     public void setModel_CallsLoadSoundOnView() {
         // assert
         Mockito.verify(view).loadSounds();
@@ -255,6 +249,15 @@ public class PractisePresenterTest {
     public void viewOnStop_CallsReturnToPractiseSetupOnView() {
         // act
         presenter.viewOnStop();
+
+        // assert
+        Mockito.verify(view).returnToPractiseSetup();
+    }
+
+    @Test
+    public void viewOnPause_CallsReturnToPractiseSetupOnView() {
+        // act
+        presenter.viewOnPause();
 
         // assert
         Mockito.verify(view).returnToPractiseSetup();

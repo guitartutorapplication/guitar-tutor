@@ -1,6 +1,8 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.content.Intent;
 import android.os.Build;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.BuildConfig;
@@ -16,6 +18,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+
+import static org.robolectric.Shadows.shadowOf;
 
 /**
  * Testing LearnDiagramHelpActivity
@@ -41,7 +45,30 @@ public class LearnDiagramHelpActivityTest {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.diagram_help_name),
-                view.getText());
+                view.getText().toString());
+    }
 
+    @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
+    }
+
+    @Test
+    public void homeButtonClicked_StartsHomeActivity() {
+        // act
+        Button btnHome = (Button) activity.findViewById(R.id.btnHome);
+        btnHome.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
     }
 }

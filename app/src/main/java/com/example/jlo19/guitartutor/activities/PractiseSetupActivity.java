@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
@@ -30,7 +29,10 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class PractiseSetupActivity extends AppCompatActivity implements PractiseSetupView {
+/**
+ * Activity to decide set up for practise activity
+ */
+public class PractiseSetupActivity extends BaseWithToolbarActivity implements PractiseSetupView {
 
     private ProgressDialog progressDialog;
     private String defaultSpinnerOption;
@@ -41,9 +43,18 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
     private Button btnPreview;
 
     @Override
+    public int getLayout() {
+        return R.layout.activity_practise_setup;
+    }
+
+    @Override
+    public String getToolbarTitle() {
+        return getResources().getString(R.string.practise_setup_name);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_practise_setup);
 
         setSoundPool(new SoundPool.Builder().setMaxStreams(1).build());
 
@@ -106,6 +117,7 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
     @Inject
     public void setPresenter(IPractiseSetupPresenter presenter) {
         this.presenter = presenter;
+        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -137,12 +149,6 @@ public class PractiseSetupActivity extends AppCompatActivity implements Practise
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void setToolbarTitleText() {
-        TextView toolbarText = (TextView) findViewById(R.id.toolbarTitle);
-        toolbarText.setText(R.string.practise_setup_name);
     }
 
     @Override

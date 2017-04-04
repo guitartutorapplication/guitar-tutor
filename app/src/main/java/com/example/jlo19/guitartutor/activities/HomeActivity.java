@@ -20,7 +20,7 @@ public class HomeActivity extends AppCompatActivity {
         btnLearn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), LearnViewAllChordsActivity.class);
+                Intent intent = new Intent(getBaseContext(), LearnAllChordsActivity.class);
                 startActivity(intent);
             }
         });
@@ -30,6 +30,24 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), PractiseSetupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button btnPlay = (Button) findViewById(R.id.btnPlay);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), SongLibraryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button btnAccount = (Button) findViewById(R.id.btnAccount);
+        btnAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), AccountActivity.class);
                 startActivity(intent);
             }
         });

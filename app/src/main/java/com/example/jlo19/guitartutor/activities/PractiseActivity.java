@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -22,7 +21,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class PractiseActivity extends AppCompatActivity implements PractiseView{
+/**
+ * Activity that runs the practise activity
+ */
+public class PractiseActivity extends BaseWithToolbarActivity implements PractiseView{
 
     private List<String> selectedChords;
     private IPractisePresenter presenter;
@@ -44,9 +46,18 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     SoundPool.OnLoadCompleteListener onLoadCompleteListener;
 
     @Override
+    public int getLayout() {
+        return R.layout.activity_practise;
+    }
+
+    @Override
+    public String getToolbarTitle() {
+        return getResources().getString(R.string.practising_chords_name);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_practise);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // retrieving selected chords
@@ -105,6 +116,12 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        presenter.viewOnPause();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         presenter.viewOnStop();
@@ -113,12 +130,6 @@ public class PractiseActivity extends AppCompatActivity implements PractiseView{
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void setToolbarTitleText() {
-        TextView toolbarText = (TextView) findViewById(R.id.toolbarTitle);
-        toolbarText.setText(R.string.practising_chords_name);
     }
 
     @Override

@@ -15,4 +15,5 @@ public interface IPractisePresenter extends IPresenter {
     void viewOnSoundsLoaded();
     void viewOnDestroy();
     void viewOnStop();
+    void viewOnPause();
 }

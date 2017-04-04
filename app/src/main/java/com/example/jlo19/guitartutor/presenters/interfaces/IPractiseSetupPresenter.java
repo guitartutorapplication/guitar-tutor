@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
@@ -25,4 +27,5 @@ public interface IPractiseSetupPresenter extends IPresenter {
     void viewOnDestroy();
     void viewOnPause();
     void viewOnStop();
+    void setSharedPreferences(SharedPreferences sharedPreferences);
 }

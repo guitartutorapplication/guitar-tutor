@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
@@ -15,31 +17,29 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Presenter which provides PractiseSetupActivity with chords from database API
+ * Presenter which provides PractiseSetupActivity with chords from database API and timer capabilities
  */
 public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     private PractiseSetupView view;
     private IPractiseSetupModel model;
-
-    public PractiseSetupPresenter() {
-        App.getComponent().inject(this);
-    }
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void setView(IView view) {
         this.view = (PractiseSetupView) view;
-        this.view.setToolbarTitleText();
         this.view.showProgressBar();
         this.view.loadSound();
 
-        model.getChords();
+        App.getComponent().inject(this);
     }
 
     @Inject
     void setModel(IPractiseSetupModel model) {
         this.model = model;
         model.setPresenter(this);
+        model.setSharedPreferences(sharedPreferences);
+        model.getChords();
     }
 
     @Override
@@ -113,5 +113,10 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     @Override
     public void viewOnStop() {
         model.stopBeatPreview();
+    }
+
+    @Override
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 }

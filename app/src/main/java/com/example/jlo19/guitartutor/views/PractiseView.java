@@ -9,7 +9,6 @@ import java.util.List;
  * View interface for PractiseActivity
  */
 public interface PractiseView extends IView {
-    void setToolbarTitleText();
     List<String> getSelectedChords();
     void setChordText(String chord);
     void showStopButton();

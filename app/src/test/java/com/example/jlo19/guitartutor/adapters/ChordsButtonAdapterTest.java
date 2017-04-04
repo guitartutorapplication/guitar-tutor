@@ -1,6 +1,7 @@
 package com.example.jlo19.guitartutor.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -23,6 +24,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,8 +45,9 @@ public class ChordsButtonAdapterTest {
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
         View.OnClickListener listener = PowerMockito.mock(View.OnClickListener.class);
         context = RuntimeEnvironment.application;
+        List<Integer> userChords = Collections.singletonList(1);
 
-        adapter = new ChordsButtonAdapter(context, chords, listener);
+        adapter = new ChordsButtonAdapter(context, chords, userChords, listener);
     }
 
     @Test
@@ -57,7 +60,7 @@ public class ChordsButtonAdapterTest {
     }
 
     @Test
-    public void getItem_ReturnsChordAtSpecifiedPostion() {
+    public void getItem_ReturnsChordAtSpecifiedPosition() {
         int position = 0;
 
         // act
@@ -99,7 +102,29 @@ public class ChordsButtonAdapterTest {
         Assert.assertEquals(Gravity.TOP|Gravity.CENTER_HORIZONTAL, button.getGravity());
         Assert.assertEquals(context.getResources().getDimension(R.dimen.chord_button_text_size),
                 button.getTextSize());
-
     }
 
+    @Test
+    public void chordNotLearnt_GetView_ReturnsButtonWithNotLearntBackground() {
+        int position = 1;
+
+        // act
+        Button button = (Button) adapter.getView(position, null , null);
+
+        // assert
+        Drawable expectedBackground = context.getDrawable(R.drawable.chord_button);
+        Assert.assertEquals(expectedBackground, button.getBackground());
+    }
+
+    @Test
+    public void chordLearnt_GetView_ReturnsButtonWithLearntBackground() {
+        int position = 1;
+
+        // act
+        Button button = (Button) adapter.getView(position, null , null);
+
+        // assert
+        Drawable expectedBackground = context.getDrawable(R.drawable.chord_done_button);
+        Assert.assertEquals(expectedBackground, button.getBackground());
+    }
 }

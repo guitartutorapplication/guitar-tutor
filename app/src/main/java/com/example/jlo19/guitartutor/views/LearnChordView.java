@@ -8,13 +8,16 @@ import com.example.jlo19.guitartutor.models.retrofit.Chord;
 /**
  * View interface for ChordsActivity
  */
-public interface LearnChordView extends IView{
-    void showProgressBar();
+public interface LearnChordView extends IProgressBarView{
     Chord getChord();
     Context getContext();
     void showImageLoadError();
-    void hideProgressBar();
     void setImage(Bitmap bitmap);
     void playVideo(String url);
     void showVideoLoadError();
+    boolean getLearntChord();
+    void enableLearntButton(boolean isEnabled);
+    void showConfirmDialog();
+    void startLearnAllChordsActivity();
+    void showAddLearntChordError();
 }

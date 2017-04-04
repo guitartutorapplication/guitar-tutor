@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -69,6 +70,12 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
+    public void setPresenter_SetsSharedPreferencesOnPresenter() {
+        // assert
+        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
+    }
+
+    @Test
     public void setSelectedChordChordChangeSpeedAndBeatSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
@@ -129,14 +136,23 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void setToolbarTitleText_SetsToolbarTextToPractiseSetupName() {
-        // act
-        activity.setToolbarTitleText();
-
+    public void setsToolbarTextToPractiseSetupName() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_setup_name),
-                view.getText());
+                view.getText().toString());
+    }
+
+    @Test
+    public void accountButtonClicked_StartsAccountActivity() {
+        // act
+        Button btnAccount = (Button) activity.findViewById(R.id.btnAccount);
+        btnAccount.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivity.class.getName(), intent.getComponent().getClassName());
     }
 
     @Test
@@ -338,5 +354,17 @@ public class PractiseSetupActivityTest {
 
         // assert
         Mockito.verify(presenter).viewOnStop();
+    }
+
+    @Test
+    public void homeButtonClicked_StartsHomeActivity() {
+        // act
+        Button btnHome = (Button) activity.findViewById(R.id.btnHome);
+        btnHome.performClick();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
     }
 }
