@@ -1,17 +1,32 @@
 package com.example.jlo19.guitartutor.models;
 
+import android.content.SharedPreferences;
+
+import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
+import com.example.jlo19.guitartutor.helpers.FakePostPutResponseCall;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
+import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Response;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -19,35 +34,57 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 /**
  * Testing PractiseModel
  */
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({App.class, Response.class})
 public class PractiseModelTest {
 
     private IPractiseModel model;
     private IPractisePresenter presenter;
-    private List<String> selectedChords;
+    private List<Chord> selectedChords;
+    private int userId;
 
     @Before
     public void setUp() {
+        // stop real injection of API
+        PowerMockito.mockStatic(App.class);
+        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
+
         model = new PractiseModel();
 
         presenter = Mockito.mock(IPractisePresenter.class);
         model.setPresenter(presenter);
 
-        selectedChords = new ArrayList<String>() {{
-            add("A");
-            add("B");
-            add("C");
-            add("D");
+        selectedChords = new ArrayList<Chord>() {{
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
         }};
         model.setSelectedChords(selectedChords);
         model.setChordChange(ChordChange.ONE_BEAT);
         model.setBeatSpeed(BeatSpeed.MEDIUM);
 
         model.createPractiseTimer();
+
+        userId = 1;
+        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        model.setSharedPreferences(sharedPreferences);
     }
 
     @Test
-    public void oneBeatChordChange_StartPractiseTimer_After4Seconds_CallsNewChordOnPresenterForEachChord()
+    public void startPractiseTimer_After5Seconds_CallsFirstRoundOfChordsOnPresenter()
+            throws InterruptedException {
+        // act
+        model.startPractiseTimer();
+        Thread.sleep(5000);
+
+        // assert
+        Mockito.verify(presenter).modelOnFirstRoundOfChords();
+    }
+
+    @Test
+    public void oneBeatChordChange_StartPractiseTimer_After4Seconds_CallsNewChordOnPresenterForEachChordAndFirstRoundOfChords()
             throws InterruptedException {
         // arrange
         model.setChordChange(ChordChange.ONE_BEAT);
@@ -409,4 +446,73 @@ public class PractiseModelTest {
         Mockito.verify(presenter, never()).modelOnCountdownFinished();
     }
 
+    @Test
+    public void savePractiseSession_CallsApiWithEachChord() {
+        // arrange
+        // sets fake call with a response
+        Response<PostPutResponse> response = (Response<PostPutResponse>)
+                PowerMockito.mock(Response.class);
+
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        ((PractiseModel) model).setApi(api);
+
+        // act
+        model.savePractiseSession();
+
+        // assert
+        Mockito.verify(api).updateUserChord(userId, selectedChords.get(0).getId());
+        Mockito.verify(api).updateUserChord(userId, selectedChords.get(1).getId());
+        Mockito.verify(api).updateUserChord(userId, selectedChords.get(2).getId());
+        Mockito.verify(api).updateUserChord(userId, selectedChords.get(3).getId());
+    }
+
+    @Test
+    public void savePractiseSession_OnSuccessfulResponse_CallsPractiseSessionSavedWithSuccessOnPresenter() {
+        // arrange
+        // sets fake call with a response
+        Response<PostPutResponse> response = (Response<PostPutResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(response.isSuccessful()).thenReturn(true);
+
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        ((PractiseModel) model).setApi(api);
+
+        // act
+        model.savePractiseSession();
+
+        // assert
+        Mockito.verify(presenter).modelOnPractiseSessionSaved(true, selectedChords.size()*100);
+    }
+
+    @Test
+    public void savePractiseSession_OnUnsuccessfulResponse_CallsPractiseSessionSavedWithErrorOnPresenter() {
+        // arrange
+        // sets fake call with a response
+        Response<PostPutResponse> response = (Response<PostPutResponse>)
+                PowerMockito.mock(Response.class);
+        PowerMockito.when(response.isSuccessful()).thenReturn(false);
+
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        ((PractiseModel) model).setApi(api);
+
+        // act
+        model.savePractiseSession();
+
+        // assert
+        Mockito.verify(presenter).modelOnPractiseSessionSaved(false, 0);
+    }
+
+    @Test
+    public void savePractiseSession_OnFailure_CallsPractiseSessionSavedWithErrorOnPresenter() {
+        // arrange
+        // sets fake call with no response (failure)
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(null)));
+        ((PractiseModel) model).setApi(api);
+
+        // act
+        model.savePractiseSession();
+
+        // assert
+        Mockito.verify(presenter).modelOnPractiseSessionSaved(false, 0);
+    }
 }

@@ -97,19 +97,27 @@ public class PractiseSetupModel implements IPractiseSetupModel {
     }
 
     @Override
-    public void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
-        Set<String> uniqueChords = new HashSet<>(selectedChords);
+    public void chordsSelected(List<Chord> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
+        // removing any null values (left on default option)
+        List<Chord> chosenChords = new ArrayList<>();
+        for (Chord chord : selectedChords) {
+            if (chord != null) {
+                chosenChords.add(chord);
+            }
+        }
+
+        Set<Chord> uniqueChords = new HashSet<>(chosenChords);
 
         // if the user has selected less than two chords
-        if (selectedChords.size() < 2) {
+        if (chosenChords.size() < 2) {
             presenter.modelOnLessThanTwoChordsSelected();
         }
         // if the user has selected the same chord more than once
-        else if (uniqueChords.size() < selectedChords.size()) {
+        else if (uniqueChords.size() < chosenChords.size()) {
             presenter.modelOnSameSelectedChord();
         }
         else {
-            presenter.modelOnCorrectSelectedChords(selectedChords,
+            presenter.modelOnCorrectSelectedChords(chosenChords,
                     ChordChange.values()[chordChangeIndex], BeatSpeed.values()[beatSpeedIndex]);
         }
     }

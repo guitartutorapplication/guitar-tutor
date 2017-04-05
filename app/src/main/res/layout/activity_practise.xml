@@ -10,11 +10,11 @@
         layout="@layout/toolbar"/>
 
     <TextView
-        android:text="@string/practise_instruction"
+        android:text="@string/practise_tips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:id="@+id/txtInstruction"
+        android:id="@+id/txtTip"
         android:textSize="@dimen/practise_setup_small_text"
         android:textColor="@color/colorText"
         android:gravity="center"
@@ -77,7 +77,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true">
 
-
         <Button
             android:layout_centerHorizontal="true"
             android:id="@+id/btnStop"
@@ -86,7 +85,7 @@
             android:background="@drawable/stop_button"
             android:layout_width="@dimen/main_buttons_width"
             android:layout_height="@dimen/main_buttons_height"
-            android:visibility="visible"
+            android:visibility="invisible"
             />
 
     </RelativeLayout>

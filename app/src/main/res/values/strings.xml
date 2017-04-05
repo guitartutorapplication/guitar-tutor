@@ -16,7 +16,8 @@
     <string name="watch_button_text">Watch demo</string>
     <string name="diagram_help_button_text">Diagram help</string>
     <string name="practising_chords_name">Practising chords</string>
-    <string name="practise_instruction">Tip: try to keep your strumming in time with the beat.</string>
+    <string name="practise_tips">- Try to keep your strumming in time with the beat. \n- Make sure you exit
+        via the stop button, else your practise session will not be saved.</string>
     <string name="practise_first_chord_instruction">Your first chord: </string>
     <string name="practise_setup_name">Practise setup</string>
     <string name="practise_chord_selection_instruction">Please select between 2 and 4 of your learnt chords to practise</string>
@@ -83,4 +84,7 @@
         You have gained 100 achievement points!</string>
     <string name="update_level_details_error_message">Chord successfully added to your learnt chords.
         However, due to an error, failed to update your achievement points.</string>
+    <string name="save_practise_session_success">Your practise session has been saved. You have gained
+        %1$d achievement points!</string>
+    <string name="save_practise_session_error_message">Failed to save your practise session</string>
 </resources>

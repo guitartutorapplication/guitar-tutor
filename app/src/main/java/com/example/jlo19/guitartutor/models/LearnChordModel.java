@@ -91,7 +91,7 @@ public class LearnChordModel implements ILearnChordModel {
     public void addLearntChord(int chordId) {
         // retrieving logged in user's id from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
-        Call<PostPutResponse> call = api.addLearntChord(userId, chordId);
+        Call<PostPutResponse> call = api.addUserChord(userId, chordId);
 
         // asynchronously executing call
         call.enqueue(new Callback<PostPutResponse>() {

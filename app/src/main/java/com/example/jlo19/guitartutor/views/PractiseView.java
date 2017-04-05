@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.views;
 
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * View interface for PractiseActivity
  */
 public interface PractiseView extends IView {
-    List<String> getSelectedChords();
+    List<Chord> getSelectedChords();
     void setChordText(String chord);
     void showStopButton();
     void playMetronomeSound();
@@ -26,4 +27,6 @@ public interface PractiseView extends IView {
     void playCountdownTwoSound();
     void playCountdownThreeSound();
     void playCountdownGoSound();
+    void showPractiseSessionSaveSuccess(int achievements);
+    void showPractiseSessionSaveError();
 }

@@ -3,6 +3,7 @@ package com.example.jlo19.guitartutor.activities;
 import android.content.res.Configuration;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,6 +15,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
@@ -26,7 +28,7 @@ import javax.inject.Inject;
  */
 public class PractiseActivity extends BaseWithToolbarActivity implements PractiseView{
 
-    private List<String> selectedChords;
+    private List<Chord> selectedChords;
     private IPractisePresenter presenter;
     private Button btnStop;
     private SoundPool soundPool;
@@ -61,7 +63,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // retrieving selected chords
-        selectedChords = getIntent().getExtras().getStringArrayList("CHORDS");
+        selectedChords = getIntent().getExtras().getParcelableArrayList("CHORDS");
         // retrieving chord change
         chordChange = (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
         // retrieving beat speed
@@ -104,6 +106,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Inject
     public void setPresenter(IPractisePresenter presenter) {
         this.presenter = presenter;
+        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -133,7 +136,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     }
 
     @Override
-    public List<String> getSelectedChords() {
+    public List<Chord> getSelectedChords() {
         return selectedChords;
     }
 
@@ -247,5 +250,20 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Override
     public void playCountdownGoSound() {
         soundPool.play(countdownGoSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    }
+
+    @Override
+    public void showPractiseSessionSaveSuccess(int achievements) {
+        String messageFormat = getResources().getString(R.string.save_practise_session_success);
+        String message = String.format(messageFormat, achievements);
+
+        Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showPractiseSessionSaveError() {
+        Toast.makeText(getApplicationContext(), getResources().getString(
+                R.string.save_practise_session_error_message), Toast.LENGTH_SHORT).show();
     }
 }

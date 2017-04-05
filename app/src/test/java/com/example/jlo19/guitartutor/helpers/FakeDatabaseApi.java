@@ -92,7 +92,12 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<PostPutResponse> addLearntChord(int userId, int chordId) {
+    public Call<PostPutResponse> addUserChord(int userId, int chordId) {
+        return fakePostPutResponseCall;
+    }
+
+    @Override
+    public Call<PostPutResponse> updateUserChord(int userId, int chordId) {
         return fakePostPutResponseCall;
     }
 }

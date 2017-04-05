@@ -125,10 +125,10 @@ public class PractiseSetupPresenterTest {
     @Test
     public void viewOnPractise_CallsChordsSelectedOnModel() {
         // act
-        ArrayList<String> selectedChords = new ArrayList<String>() {{
-            add("A");
-            add("C");
-            add("B");
+        ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
         }};
         int selectedChordChangeIndex = 1;
         int selectedBeatSpeedIndex = 1;
@@ -159,10 +159,10 @@ public class PractiseSetupPresenterTest {
     @Test
     public void modelOnCorrectSelectedChords_CallsStartPractiseActivityOnView() {
         // act
-        ArrayList<String> selectedChords = new ArrayList<String>() {{
-            add("A");
-            add("C");
-            add("B");
+        ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
         }};
         presenter.modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
 

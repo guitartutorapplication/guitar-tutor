@@ -149,7 +149,7 @@ public class LearnChordModelTest {
         model.addLearntChord(chordId);
 
         // assert
-        Mockito.verify(api).addLearntChord(userId, chordId);
+        Mockito.verify(api).addUserChord(userId, chordId);
     }
 
     @Test

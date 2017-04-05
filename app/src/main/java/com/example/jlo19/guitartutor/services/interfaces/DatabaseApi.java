@@ -43,5 +43,7 @@ public interface DatabaseApi {
     Call<UserChordsResponse> getUserChords(@Path("id") int userId);
     @FormUrlEncoded
     @POST("users/{id}/chords")
-    Call<PostPutResponse> addLearntChord(@Path("id") int userId, @Field("chord_id") int chordId);
+    Call<PostPutResponse> addUserChord(@Path("id") int userId, @Field("chord_id") int chordId);
+    @PUT("users/{user_id}/chords/{chord_id}")
+    Call<PostPutResponse> updateUserChord(@Path("user_id") int userId, @Path("chord_id") int chordId);
 }

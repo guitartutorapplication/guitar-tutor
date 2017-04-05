@@ -8,13 +8,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
+import com.example.jlo19.guitartutor.adapters.ChordsListAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
@@ -25,7 +25,6 @@ import com.example.jlo19.guitartutor.views.PractiseSetupView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -35,7 +34,6 @@ import javax.inject.Inject;
 public class PractiseSetupActivity extends BaseWithToolbarActivity implements PractiseSetupView {
 
     private ProgressDialog progressDialog;
-    private String defaultSpinnerOption;
     private List<Spinner> spnChords;
     private IPractiseSetupPresenter presenter;
     private SoundPool soundPool;
@@ -64,8 +62,6 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
         Spinner spnChord4 = (Spinner) findViewById(R.id.spnChord4);
         spnChords = Arrays.asList(spnChord1, spnChord2, spnChord3, spnChord4);
 
-        defaultSpinnerOption = getResources().getString(R.string.select_chord_instruction);
-
         // allows injection of presenter
         App.getComponent().inject(this);
 
@@ -93,13 +89,11 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
         btnPractise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // retrieving selected chords (non default option)
-                ArrayList<String> selectedChords = new ArrayList<>();
+                // retrieving selected chords
+                List<Chord> selectedChords = new ArrayList<>();
                 for(int i = 0; i < spnChords.size(); i++) {
-                    String selectedChord = spnChords.get(i).getSelectedItem().toString();
-                    if (!Objects.equals(selectedChord, defaultSpinnerOption)) {
-                        selectedChords.add(selectedChord);
-                    }
+                    Chord selectedChord = (Chord) spnChords.get(i).getSelectedItem();
+                    selectedChords.add(selectedChord);
                 }
 
                 RadioGroup rGroupChordChange = (RadioGroup) findViewById(R.id.rGroupChordChange);
@@ -165,16 +159,7 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
 
     @Override
     public void setChords(List<Chord> chords) {
-        // setting chords in spinners
-        String[] spnItems = new String[chords.size()+1];
-        spnItems[0] = defaultSpinnerOption;
-
-        for(int i = 0; i < chords.size(); i++) {
-            spnItems[i+1] = chords.get(i).toString();
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, spnItems);
+        ChordsListAdapter adapter = new ChordsListAdapter(this, chords);
 
         for(int i = 0; i < spnChords.size(); i++) {
             spnChords.get(i).setAdapter(adapter);
@@ -200,11 +185,11 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
     }
 
     @Override
-    public void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange,
+    public void startPractiseActivity(List<Chord> selectedChords, ChordChange chordChange,
                                       BeatSpeed beatSpeed) {
         // passing through selected chords and chord change to new activity
         Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
-        intent.putExtra("CHORDS", selectedChords);
+        intent.putParcelableArrayListExtra("CHORDS", (ArrayList<Chord>) selectedChords);
         intent.putExtra("CHORD_CHANGE", chordChange);
         intent.putExtra("BEAT_SPEED", beatSpeed);
         startActivity(intent);

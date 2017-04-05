@@ -1,8 +1,11 @@
 package com.example.jlo19.guitartutor.presenters;
 
+import android.content.SharedPreferences;
+
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.PractiseView;
@@ -16,11 +19,12 @@ public class PractisePresenter implements IPractisePresenter {
 
     private PractiseView view;
     private IPractiseModel model;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void setView(IView view) {
         this.view = (PractiseView) view;
-        this.view.setFirstChordText(this.view.getSelectedChords().get(0));
+        this.view.setFirstChordText(this.view.getSelectedChords().get(0).toString());
 
         App.getComponent().inject(this);
     }
@@ -30,6 +34,7 @@ public class PractisePresenter implements IPractisePresenter {
         this.model = model;
         model.setPresenter(this);
         model.setSelectedChords(view.getSelectedChords());
+        model.setSharedPreferences(sharedPreferences);
         model.setChordChange(view.getChordChange());
         model.setBeatSpeed(view.getBeatSpeed());
         model.createPractiseTimer();
@@ -38,13 +43,13 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void modelOnNewChord(String chord) {
-        view.setChordText(chord);
+    public void modelOnNewChord(Chord chord) {
+        view.setChordText(chord.toString());
     }
 
     @Override
     public void viewOnStopPractising() {
-        view.returnToPractiseSetup();
+        model.savePractiseSession();
     }
 
     @Override
@@ -83,7 +88,6 @@ public class PractisePresenter implements IPractisePresenter {
         model.startPractiseTimer();
         view.hideCountdown();
         view.hideFirstChordInstruction();
-        view.showStopButton();
     }
 
     @Override
@@ -104,5 +108,28 @@ public class PractisePresenter implements IPractisePresenter {
     @Override
     public void viewOnPause() {
         view.returnToPractiseSetup();
+    }
+
+    @Override
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public void modelOnPractiseSessionSaved(boolean result, int achievements) {
+        if (result) {
+            view.showPractiseSessionSaveSuccess(achievements);
+        }
+        else {
+            view.showPractiseSessionSaveError();
+        }
+
+        view.returnToPractiseSetup();
+    }
+
+    @Override
+    public void modelOnFirstRoundOfChords() {
+        // stop button is only enabled once the user has completed one round of chords
+        view.showStopButton();
     }
 }

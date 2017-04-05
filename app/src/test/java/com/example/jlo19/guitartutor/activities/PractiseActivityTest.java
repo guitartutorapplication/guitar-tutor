@@ -3,6 +3,7 @@ package com.example.jlo19.guitartutor.activities;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
 import junit.framework.Assert;
@@ -43,7 +45,7 @@ public class PractiseActivityTest {
     private PractiseActivity activity;
     private IPractisePresenter presenter;
     private SoundPool soundPool;
-    private ArrayList<String> selectedChords;
+    private ArrayList<Chord> selectedChords;
     private ChordChange chordChange;
     private BeatSpeed beatSpeed;
 
@@ -58,16 +60,15 @@ public class PractiseActivityTest {
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
         // giving activity selected chords, chord change and beat speed
-        selectedChords = new ArrayList<String>(){
+        selectedChords = new ArrayList<Chord>(){
             {
-                add("A");
-                add("B");
-                add("C");
+                add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
+                add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
             }};
         chordChange = ChordChange.EIGHT_BEATS;
         beatSpeed = BeatSpeed.FAST;
         Intent intent = new Intent();
-        intent.putExtra("CHORDS", selectedChords);
+        intent.putParcelableArrayListExtra("CHORDS", selectedChords);
         intent.putExtra("CHORD_CHANGE", chordChange);
         intent.putExtra("BEAT_SPEED", beatSpeed);
 
@@ -84,6 +85,12 @@ public class PractiseActivityTest {
     public void setSoundPool_SetsLoadCompleteListener() {
         // assert
         Mockito.verify(soundPool).setOnLoadCompleteListener((SoundPool.OnLoadCompleteListener) Mockito.any());
+    }
+
+    @Test
+    public void setPresenter_SetsSharedPreferencesOnPresenter() {
+        // assert
+        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
     }
 
     @Test
@@ -176,7 +183,7 @@ public class PractiseActivityTest {
     @Test
     public void getSelectedChords_ReturnsSelectedChordsFromIntent() {
         // act
-        List<String> actualSelectedChords = activity.getSelectedChords();
+        List<Chord> actualSelectedChords = activity.getSelectedChords();
 
         // assert
         Assert.assertEquals(selectedChords, actualSelectedChords);
@@ -257,6 +264,28 @@ public class PractiseActivityTest {
 
         // arrange
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_error_occurred_message),
+                ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccess_MakesToastWithSuccessMessageAndAchievements() {
+        // act
+        int achievements = 300;
+        activity.showPractiseSessionSaveSuccess(achievements);
+
+        // assert
+        String messageFormat = getApp().getResources().getString(R.string.save_practise_session_success);
+        String message = String.format(messageFormat, achievements);
+        Assert.assertEquals(message, ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showPractiseSessionSaveError_MakesToastWithErrorMessage() {
+        // act
+        activity.showPractiseSessionSaveError();
+
+        // assert
+        Assert.assertEquals(getApp().getResources().getString(R.string.save_practise_session_error_message),
                 ShadowToast.getTextOfLatestToast());
     }
 

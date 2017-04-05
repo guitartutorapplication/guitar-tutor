@@ -4,7 +4,6 @@ import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +14,7 @@ public interface PractiseSetupView extends IProgressBarView {
     void showLoadChordsError();
     void showLessThanTwoChordsSelectedError();
     void showSameSelectedChordError();
-    void startPractiseActivity(ArrayList<String> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed);
+    void startPractiseActivity(List<Chord> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed);
     void playSound();
     void loadSound();
     void showPreviewBeatError();
