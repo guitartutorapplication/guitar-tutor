@@ -19,13 +19,17 @@ public class Chord implements Parcelable {
     private String type;
     @SerializedName("video_filename")
     private String videoFilename;
+    @SerializedName("level_required")
+    private int levelRequired;
 
-    public Chord(int id, String name, String type, String diagramFilename, String videoFilename) {
+    public Chord(int id, String name, String type, String diagramFilename, String videoFilename,
+                 int levelRequired) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.diagramFilename = diagramFilename;
         this.videoFilename = videoFilename;
+        this.levelRequired = levelRequired;
     }
 
     private Chord(Parcel in) {
@@ -95,4 +99,6 @@ public class Chord implements Parcelable {
     public String getVideoFilename() {
         return videoFilename;
     }
+
+    public int getLevelRequired() {return levelRequired;}
 }

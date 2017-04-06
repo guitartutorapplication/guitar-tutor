@@ -55,10 +55,10 @@ public class PractiseModelTest {
         model.setPresenter(presenter);
 
         selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
-            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
+            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4", 1));
         }};
         model.setSelectedChords(selectedChords);
         model.setChordChange(ChordChange.ONE_BEAT);

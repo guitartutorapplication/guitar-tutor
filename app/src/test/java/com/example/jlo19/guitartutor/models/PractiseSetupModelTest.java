@@ -67,8 +67,8 @@ public class PractiseSetupModelTest {
         // arrange
         // sets fake call with a response with chords
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         List<UserChord> userChords = Collections.singletonList(new UserChord(1));
 
         Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
@@ -95,8 +95,8 @@ public class PractiseSetupModelTest {
         // arrange
         // sets fake call with a response with chords
         List<Chord> allChords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         List<UserChord> userChords = Collections.singletonList(new UserChord(1));
 
         Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
@@ -124,8 +124,8 @@ public class PractiseSetupModelTest {
         // sets fake call with a response with chords for getChords and fake call with no response
         // for getUserChords (failure)
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
 
         Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
                 PowerMockito.mock(Response.class);
@@ -160,7 +160,7 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithLessThanTwoChords_CallsLessThanTwoChordsSelectedOnPresenter() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
             add(null);
             add(null);
             add(null);
@@ -174,11 +174,11 @@ public class PractiseSetupModelTest {
     @Test
     public void chordsSelected_WithTwoOfTheSameChord_CallsSameSelectedChordOnPresenter() {
         // act
-        final Chord repeatedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4");
+        final Chord repeatedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1);
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
             add(repeatedChord);
             add(repeatedChord);
-            add(new Chord(1, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "C", "MAJOR", "C.png", "C.mp4", 1));
             add(null);
         }};
         model.chordsSelected(selectedChords, 0, 0);
@@ -191,9 +191,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexZero_CallsCorrectSelectedChordsOnPresenterWithOneBeat() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 0, 0);
 
@@ -206,9 +206,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexOne_CallsCorrectSelectedChordsOnPresenterWithTwoBeats() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 1, 0);
 
@@ -221,9 +221,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexTwo_CallsCorrectSelectedChordsOnPresenterWithFourBeats() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 2, 0);
 
@@ -236,9 +236,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexThree_CallsCorrectSelectedChordsOnPresenterWithEightBeats() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 3, 0);
 
@@ -251,9 +251,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndChordChangeIndexFour_CallsCorrectSelectedChordsOnPresenterWithSixteenBeats() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 4, 0);
 
@@ -266,9 +266,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndBeatSpeedIndexZero_CallsCorrectSelectedChordsOnPresenterWithVerySlowSpeed() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 0, 0);
 
@@ -281,9 +281,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndBeatSpeedIndexOne_CallsCorrectSelectedChordsOnPresenterWithSlowSpeed() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 0, 1);
 
@@ -296,9 +296,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndBeatSpeedIndexTwo_CallsCorrectSelectedChordsOnPresenterWithMediumSpeed() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 0, 2);
 
@@ -311,9 +311,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndBeatSpeedIndexThree_CallsCorrectSelectedChordsOnPresenterWithFastSpeed() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 0, 3);
 
@@ -326,9 +326,9 @@ public class PractiseSetupModelTest {
     public void chordsSelected_WithCorrectSelectedChordsAndBeatSpeedIndexFour_CallsCorrectSelectedChordsOnPresenterWithVeryFastSpeed() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
         }};
         model.chordsSelected(selectedChords, 0, 4);
 

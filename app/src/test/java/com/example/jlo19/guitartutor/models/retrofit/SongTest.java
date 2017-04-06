@@ -28,8 +28,8 @@ public class SongTest {
         artist = "Coldplay";
         contents = "contents";
         chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         song = new Song(title, artist, contents, chords);
     }
 

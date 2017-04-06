@@ -46,7 +46,7 @@ public class LearnChordPresenterTest {
         view = Mockito.mock(LearnChordView.class);
         context = Mockito.mock(Context.class);
         Mockito.when(view.getContext()).thenReturn(context);
-        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4");
+        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1);
         Mockito.when(view.getChord()).thenReturn(selectedChord);
         presenter.setView(view);
 

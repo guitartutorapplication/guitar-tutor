@@ -56,6 +56,12 @@ public class FakeDatabaseApi implements DatabaseApi{
         this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
     }
 
+    public FakeDatabaseApi(FakeChordsResponseCall fakeChordsResponseCall, FakeUserChordsResponseCall fakeUserChordsResponseCall, FakeUserCall fakeUserCall) {
+        this.fakeChordsResponseCall = fakeChordsResponseCall;
+        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
+        this.fakeUserCall = fakeUserCall;
+    }
+
     @Override
     public Call<ChordsResponse> getChords() {
         return fakeChordsResponseCall;

@@ -79,10 +79,10 @@ public class PractiseSetupActivityTest {
     public void setSelectedChordChordChangeSpeedAndBeatSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1),
+                new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1),
+                new Chord(4, "D", "MAJOR", "D.png", "D.mp4", 1));
         activity.setChords(chords);
         Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
         // index 1 as default option will be at index 0
@@ -187,8 +187,8 @@ public class PractiseSetupActivityTest {
     public void setChords_SetsSpinnersWithChordsAndDefaultOption() {
         // act
         final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         activity.setChords(chords);
 
         // assert
@@ -257,8 +257,8 @@ public class PractiseSetupActivityTest {
     public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChordsChordChangeAndBeatSpeed() {
         // act
         ArrayList<Chord> chords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4"));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         }};
         ChordChange chordChange = ChordChange.ONE_BEAT;
         BeatSpeed beatSpeed = BeatSpeed.VERY_SLOW;

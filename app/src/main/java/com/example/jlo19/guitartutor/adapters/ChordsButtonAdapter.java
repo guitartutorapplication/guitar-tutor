@@ -9,8 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,27 +18,24 @@ import java.util.List;
  */
 public class ChordsButtonAdapter extends BaseAdapter {
 
-    private List<Chord> chords;
-    private List<Integer> userChords;
+    private final List<Button> buttons;
     private View.OnClickListener listener;
     private Context context;
 
-    public ChordsButtonAdapter(Context context, List<Chord> chords, List<Integer> userChords,
-                               View.OnClickListener listener) {
+    public ChordsButtonAdapter(Context context, View.OnClickListener listener) {
         this.context = context;
-        this.chords = chords;
-        this.userChords = userChords;
         this.listener = listener;
+        this.buttons = new ArrayList<>();
     }
 
     @Override
     public int getCount() {
-        return chords.size();
+        return buttons.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return chords.get(position);
+        return buttons.get(position);
     }
 
     @Override
@@ -47,32 +44,18 @@ public class ChordsButtonAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Button button;
-        if (convertView == null) {
-            button = new Button(context);
-        }
-        else {
-            button = (Button) convertView;
-        }
-        Chord chord = chords.get(position);
+        return buttons.get(position);
+    }
 
-        float textSize = context.getResources().getDimension(
-                R.dimen.chord_button_text_size);
-        button.setTextSize(textSize);
-        button.setText(chord.toString());
+    public void addButton(int id) {
+        Button button = new Button(context);
 
-        button.setId(position);
+        // setting button properties that aren't determined by its chord state
+        button.setTextSize(context.getResources().getDimension(
+                R.dimen.chord_button_text_size));
+        button.setId(id);
         button.setOnClickListener(listener);
         button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
-
-        // setting drawable based on whether chord has already been learnt or not
-        if (userChords.contains(chord.getId())) {
-            button.setBackground(context.getDrawable(R.drawable.chord_done_button));
-        }
-        else {
-            button.setBackground(context.getDrawable(R.drawable.chord_button));
-        }
-
         // getting width/height of button in pixels to set
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float widthHeightDp = context.getResources().getDimension(
@@ -80,6 +63,22 @@ public class ChordsButtonAdapter extends BaseAdapter {
         int widthHeightPx = (int) ((widthHeightDp * displayMetrics.density) + 0.5);
         button.setLayoutParams(new ViewGroup.LayoutParams(widthHeightPx, widthHeightPx));
 
-        return button;
+        buttons.add(button);
+    }
+
+    public void setButtonText(int id, String text) {
+        buttons.get(id).setText(text);
+    }
+
+    public void enableButton(int id, boolean isEnabled) {
+        buttons.get(id).setEnabled(isEnabled);
+    }
+
+    public void setButtonBackground(int id, String doneIdentifier, String levelNumberIdentifier) {
+        String backgroundIdentifier = "chord_" + doneIdentifier + "level_" + levelNumberIdentifier
+                + "_button";
+
+        buttons.get(id).setBackground(context.getDrawable(context.getResources().getIdentifier(
+                backgroundIdentifier, "drawable", context.getPackageName())));
     }
 }

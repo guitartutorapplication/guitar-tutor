@@ -65,8 +65,8 @@ public class SongLibraryModelTest {
         // arrange
         // sets fake call with a response with songs
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
@@ -91,8 +91,8 @@ public class SongLibraryModelTest {
         // arrange
         // sets fake call with a response with songs
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
@@ -119,8 +119,8 @@ public class SongLibraryModelTest {
         // arrange
         // sets fake call with a response with songs
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
@@ -164,11 +164,11 @@ public class SongLibraryModelTest {
         // sets fake call with a response with songs
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
+                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
+                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))));
         Response<SongsResponse> songsResponse = (Response<SongsResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
@@ -197,11 +197,11 @@ public class SongLibraryModelTest {
         // sets fake call with a response with songs
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
+                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
+                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))));
         Response<SongsResponse> songsResponse = (Response<SongsResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
@@ -230,11 +230,11 @@ public class SongLibraryModelTest {
         // sets fake call with a response with songs
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
+                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
+                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))));
         Response<SongsResponse> songsResponse = (Response<SongsResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
@@ -266,11 +266,11 @@ public class SongLibraryModelTest {
         // sets fake call with a response with songs
         List<Song> songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
+                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
+                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1),
+                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1))));
         Response<SongsResponse> songsResponse = (Response<SongsResponse>)
                 PowerMockito.mock(Response.class);
         PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));

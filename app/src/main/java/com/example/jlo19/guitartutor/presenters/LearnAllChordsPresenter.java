@@ -20,6 +20,7 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
 
     private LearnAllChordsView view;
     private SharedPreferences sharedPreferences;
+    private ILearnAllChordsModel model;
 
     @Override
     public void setView(IView view) {
@@ -31,15 +32,57 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
 
     @Inject
     void setModel(ILearnAllChordsModel model) {
+        this.model = model;
         model.setPresenter(this);
         model.setSharedPreferences(sharedPreferences);
         model.getChords();
     }
 
     @Override
-    public void modelOnChordsRetrieved(List<Chord> chords, List<Integer> userChords) {
+    public void modelOnChordsAndDetailsRetrieved() {
         view.hideProgressBar();
-        view.setChords(chords, userChords);
+
+        List<Chord> allChords = model.getAllChords();
+        int userLevel = model.getUserLevel();
+        List<Integer> userChords = model.getUserChords();
+
+        for (int i = 0; i < allChords.size(); i++) {
+            view.addChordButton(i);
+            view.setChordButtonText(i, allChords.get(i).toString());
+            // button is only enabled if chord's level is than or equal to user's level
+            view.enableChordButton(i, allChords.get(i).getLevelRequired() <= userLevel);
+            // setting background based on level of chord/whether the user has learnt the chord
+            boolean userHasLearntChord = userChords.contains(allChords.get(i).getId());
+
+            String doneIdentifier = "";
+            String levelNumberIdentifier;
+            if (userHasLearntChord) {
+                doneIdentifier = "done_";
+            }
+
+            if (allChords.get(i).getLevelRequired() == 1) {
+                levelNumberIdentifier = "one";
+            }
+            else if (allChords.get(i).getLevelRequired() == 2) {
+                levelNumberIdentifier = "two";
+            }
+            else if (allChords.get(i).getLevelRequired() == 3) {
+                levelNumberIdentifier = "three";
+            }
+            else if (allChords.get(i).getLevelRequired() == 4) {
+                levelNumberIdentifier = "four";
+            }
+            else if (allChords.get(i).getLevelRequired() == 5) {
+                levelNumberIdentifier = "five";
+            }
+            else {
+                levelNumberIdentifier = "six";
+            }
+
+            view.setChordButtonBackground(i, doneIdentifier, levelNumberIdentifier);
+        }
+
+        view.setChordButtons();
     }
 
     @Override
@@ -51,5 +94,11 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
     @Override
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public void viewOnChordRequested(int chordPos) {
+        Chord chord = model.getAllChords().get(chordPos);
+        view.startLearnChordActivity(chord, model.getUserChords().contains(chord.getId()));
     }
 }

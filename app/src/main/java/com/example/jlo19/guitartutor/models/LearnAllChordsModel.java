@@ -4,7 +4,9 @@ import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
+import com.example.jlo19.guitartutor.models.retrofit.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.User;
 import com.example.jlo19.guitartutor.models.retrofit.UserChord;
 import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
@@ -27,6 +29,9 @@ public class LearnAllChordsModel implements ILearnAllChordsModel {
     private ILearnAllChordsPresenter presenter;
     private DatabaseApi api;
     private SharedPreferences sharedPreferences;
+    private List<Chord> allChords;
+    private List<Integer> userChordsId;
+    private int userLevel;
 
     public LearnAllChordsModel() {
         App.getComponent().inject(this);
@@ -44,31 +49,46 @@ public class LearnAllChordsModel implements ILearnAllChordsModel {
 
     @Override
     public void getChords() {
+        // retrieving all chords
         Call<ChordsResponse> chordsCall = api.getChords();
 
-        // asynchronously executing call
         chordsCall.enqueue(new Callback<ChordsResponse>() {
             @Override
             public void onResponse(Call<ChordsResponse> call, final Response<ChordsResponse>
                     chordsResponse) {
+                allChords = chordsResponse.body().getChords();
+
                 // retrieving logged in user's id from shared preferences
                 final int userId = sharedPreferences.getInt("user_id", 0);
+                // retrieving chords that user has learnt
                 Call<UserChordsResponse> userChordsCall = api.getUserChords(userId);
 
-                // asynchronously executing call
                 userChordsCall.enqueue(new Callback<UserChordsResponse>() {
                     @Override
                     public void onResponse(Call<UserChordsResponse> call, Response<UserChordsResponse>
                             userChordsResponse) {
-                        // sending both all the chords and chords that user has already learnt
-                        List<UserChord> userChords = userChordsResponse.body().getUserChords();
-                        List<Integer> userChordsId = new ArrayList<>();
-                        for (int i = 0; i < userChords.size(); i++) {
-                            userChordsId.add(userChords.get(i).getChordId());
-                        }
+                        setUserChords(userChordsResponse.body().getUserChords());
+                        // retrieving user's level (so know which chords are unlocked)
+                        Call<User> userCall = api.getAccountDetails(userId);
 
-                        presenter.modelOnChordsRetrieved(chordsResponse.body().getChords(),
-                                userChordsId);
+                        userCall.enqueue(new Callback<User>() {
+                            @Override
+                            public void onResponse(Call<User> call, Response<User> response) {
+                                if (response.isSuccessful()) {
+                                    userLevel = response.body().getLevel();
+                                    // only successful if all 3 calls to API are a success
+                                    presenter.modelOnChordsAndDetailsRetrieved();
+                                }
+                                else {
+                                    presenter.modelOnError();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<User> call, Throwable t) {
+                                presenter.modelOnError();
+                            }
+                        });
                     }
 
                     @Override
@@ -88,5 +108,27 @@ public class LearnAllChordsModel implements ILearnAllChordsModel {
     @Override
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public List<Chord> getAllChords() {
+        return allChords;
+    }
+
+    @Override
+    public int getUserLevel() {
+        return userLevel;
+    }
+
+    @Override
+    public List<Integer> getUserChords() {
+        return userChordsId;
+    }
+
+    private void setUserChords(List<UserChord> userChords) {
+        userChordsId = new ArrayList<>();
+        for (int i = 0; i < userChords.size(); i++) {
+            userChordsId.add(userChords.get(i).getChordId());
+        }
     }
 }

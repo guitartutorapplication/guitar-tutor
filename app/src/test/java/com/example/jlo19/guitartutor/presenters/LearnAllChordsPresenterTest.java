@@ -18,7 +18,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,6 +31,9 @@ public class LearnAllChordsPresenterTest {
     private ILearnAllChordsPresenter presenter;
     private ILearnAllChordsModel model;
     private SharedPreferences sharedPreferences;
+    private List<Chord> chords;
+    private List<Integer> userChords;
+    private int userLevel;
 
     @Before
     public void setUp() {
@@ -49,6 +51,27 @@ public class LearnAllChordsPresenterTest {
 
         view = Mockito.mock(LearnAllChordsView.class);
         presenter.setView(view);
+
+        chords = Arrays.asList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1),
+                new Chord(3, "A", "MINOR", "Am.png", "Am.mp4", 2),
+                new Chord(4, "B", "MINOR", "Bm.png", "Bm.mp4", 2),
+                new Chord(5, "A", "SEVEN", "A7.png", "A7.mp4", 3),
+                new Chord(6, "B", "SEVEN", "B7.png", "B7.mp4", 3),
+                new Chord(7, "B", "FLAT", "Bb.png", "Bb.mp4", 4),
+                new Chord(8, "D", "FLAT", "Db.png", "Db.mp4", 4),
+                new Chord(9, "F", "SHARP", "F#.png", "F#.mp4", 5),
+                new Chord(10, "C", "SHARP", "C#.png", "C#.mp4", 5),
+                new Chord(11, "C", "SHARP_MINOR", "C#m.png", "C#m.mp4", 6),
+                new Chord(12, "F", "SHARP_MINOR", "F#m.png", "F#m.mp4", 6));
+        Mockito.when(model.getAllChords()).thenReturn(chords);
+
+        userChords = Arrays.asList(1, 3, 5, 7, 9, 11);
+        Mockito.when(model.getUserChords()).thenReturn(userChords);
+
+        userLevel = 3;
+        Mockito.when(model.getUserLevel()).thenReturn(userLevel);
     }
 
     @Test
@@ -76,25 +99,12 @@ public class LearnAllChordsPresenterTest {
     }
 
     @Test
-    public void modelOnChordsRetrieved_HidesProgressBarOnView() {
+    public void modelOnChordsAndDetailsRetrieved_HidesProgressBarOnView() {
         // act
-        presenter.modelOnChordsRetrieved(null, null);
+        presenter.modelOnChordsAndDetailsRetrieved();
 
         // assert
         Mockito.verify(view).hideProgressBar();
-    }
-
-    @Test
-    public void modelOnChordsRetrieved_SetsChordsOnView() {
-        // act
-        List<Chord> expectedChords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        List<Integer> expectedUserChords = Collections.singletonList(1);
-        presenter.modelOnChordsRetrieved(expectedChords, expectedUserChords);
-
-        // assert
-        Mockito.verify(view).setChords(expectedChords, expectedUserChords);
     }
 
     @Test
@@ -113,5 +123,96 @@ public class LearnAllChordsPresenterTest {
 
         // assert
         Mockito.verify(view).showError();
+    }
+
+    @Test
+    public void modelOnChordsAndDetailsRetrieved_CallsAddChordButtonOnViewForEachChord() {
+        // act
+        presenter.modelOnChordsAndDetailsRetrieved();
+
+        // assert
+        for (int i = 0; i < chords.size(); i++) {
+            Mockito.verify(view).addChordButton(i);
+        }
+    }
+
+    @Test
+    public void modelOnChordsAndDetailsRetrieved_CallsSetButtonTextOnViewForEachChord() {
+        // act
+        presenter.modelOnChordsAndDetailsRetrieved();
+
+        // assert
+        for (int i = 0; i < chords.size(); i++) {
+            Mockito.verify(view).setChordButtonText(i, chords.get(i).toString());
+        }
+    }
+
+    @Test
+    public void modelOnChordsAndDetailsRetrieved_CallsEnableButtonOnViewForEachChord() {
+        // act
+        presenter.modelOnChordsAndDetailsRetrieved();
+
+        // assert
+        for (int i = 0; i < chords.size(); i++) {
+            Mockito.verify(view).enableChordButton(i, chords.get(i).getLevelRequired() <= userLevel);
+        }
+    }
+
+    @Test
+    public void modelOnChordsAndDetailsRetrieved_CallsSetButtonBackgroundOnViewForEachChord() {
+        // act
+        presenter.modelOnChordsAndDetailsRetrieved();
+
+        // assert
+        for (int i = 0; i < chords.size(); i++) {
+            boolean userHasLearntChord = userChords.contains(chords.get(i).getId());
+
+            String doneIdentifier = "";
+            String levelNumberIdentifier;
+            if (userHasLearntChord) {
+                doneIdentifier = "done_";
+            }
+
+            if (chords.get(i).getLevelRequired() == 1) {
+                levelNumberIdentifier = "one";
+            }
+            else if (chords.get(i).getLevelRequired() == 2) {
+                levelNumberIdentifier = "two";
+            }
+            else if (chords.get(i).getLevelRequired() == 3) {
+                levelNumberIdentifier = "three";
+            }
+            else if (chords.get(i).getLevelRequired() == 4) {
+                levelNumberIdentifier = "four";
+            }
+            else if (chords.get(i).getLevelRequired() == 5) {
+                levelNumberIdentifier = "five";
+            }
+            else {
+                levelNumberIdentifier = "six";
+            }
+
+            Mockito.verify(view).setChordButtonBackground(i, doneIdentifier, levelNumberIdentifier);
+        }
+    }
+
+    @Test
+    public void modelOnChordsAndDetailsRetrieved_CallsSetChordButtonsOnView() {
+        // act
+        presenter.modelOnChordsAndDetailsRetrieved();
+
+        // assert
+        Mockito.verify(view).setChordButtons();
+    }
+
+    @Test
+    public void viewOnChordRequested_StartsLearnChordActivity() {
+        // act
+        int pos = 3;
+        presenter.viewOnChordRequested(pos);
+
+        // assert
+        Chord chord = chords.get(pos);
+        Mockito.verify(view).startLearnChordActivity(chord, userChords.contains(chord.getId()));
     }
 }

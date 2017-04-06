@@ -16,8 +16,8 @@ public class ChordsResponseTest {
     public void getChords_ReturnsChords() {
         // arrange
         List<Chord> expectedChords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
         ChordsResponse response = new ChordsResponse(false, expectedChords);
 
         // act
