@@ -4,16 +4,14 @@ import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.helpers.FakeChordsResponseCall;
+import com.example.jlo19.guitartutor.helpers.AwaitConditionCreator;
+import com.example.jlo19.guitartutor.helpers.FakeChordsCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
 import com.example.jlo19.guitartutor.helpers.FakeUserCall;
-import com.example.jlo19.guitartutor.helpers.FakeUserChordsResponseCall;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.User;
-import com.example.jlo19.guitartutor.models.retrofit.UserChord;
-import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -33,6 +31,13 @@ import java.util.List;
 
 import retrofit2.Response;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.to;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+
 /**
  * Testing LearnAllChordsModel
  */
@@ -43,6 +48,10 @@ public class LearnAllChordsModelTest {
     private ILearnAllChordsModel model;
     private ILearnAllChordsPresenter presenter;
     private int userId;
+    private List<Chord> chords;
+    private List<Chord> userChords;
+    private List<Integer> userChordIds;
+    private User user;
 
     @Before
     public void setUp() {
@@ -59,189 +68,125 @@ public class LearnAllChordsModelTest {
 
         presenter = PowerMockito.mock(ILearnAllChordsPresenter.class);
         model.setPresenter(presenter);
+
+        chords = Arrays.asList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+        userChords = Collections.singletonList(
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+        userChordIds = Collections.singletonList(1);
+        user = new User(1, "Kate", "katesmith@gmail.com", 2, 2000);
     }
 
     @Test
-    public void getChords_OnResponseToGetChords_CallsGetUserChordsOnApiWithUserIdFromSharedPref() {
+    public void getChordsAndDetails_CallsGetChordsOnApi() {
         // arrange
-        // sets mock calls (so not null error)
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
-
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-                Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse)));
+        final DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(null),
+                new FakeChordsCall(null), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(api).getUserChords(userId);
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getChordsCalledOnApi(api));
     }
 
     @Test
-    public void getChordsAndOnResponse_GetAllChords_ReturnsAllChords() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsOnApi_GetAllChords_ReturnsAllChords() {
         // arrange
-        // sets getChords response with chords
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
 
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse)));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(null), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
-        model.getChords();
+
+        model.getChordsAndDetails();
 
         // act
-        List<Chord> actualChords = model.getAllChords();
+        // allows time for thread
+        await().atMost(1000, MILLISECONDS).untilCall(to(model).getAllChords(), is(not(nullValue())));
+        final List<Chord> actualChords = model.getAllChords();
 
         // assert
         Assert.assertEquals(chords, actualChords);
     }
 
     @Test
-    public void getChords_OnResponseToGetUserChords_CallsGetAccountDetailsOnApiWithUserIdFromSharedPref() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsOnApi_CallsGetUserChordsOnApiWithUserIdFromSharedPref() {
         // arrange
-        // sets mock calls (so not null error)
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
 
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse)));
+        final DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(null), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(api).getAccountDetails(userId);
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getUserChordsCalledOnApi(
+                api, userId));
     }
 
     @Test
-    public void getChordsAndOnResponse_GetUserChords_ReturnsUserChords() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsAndGetUserChordsOnApi_GetUserChordsId_ReturnsUserChords() {
         // arrange
-        // sets mock calls (so not null error)
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
 
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse)));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
-        model.getChords();
+
+        model.getChordsAndDetails();
 
         // act
-        List<Integer> actualUserChords = model.getUserChords();
+        // allows time for thread
+        await().atMost(1000, MILLISECONDS).untilCall(to(model).getUserChordIds(), is(not(nullValue())));
+        List<Integer> actualUserChords = model.getUserChordIds();
 
         // assert
-        Assert.assertEquals(Collections.singletonList(1), actualUserChords);
+        Assert.assertEquals(userChordIds, actualUserChords);
     }
 
     @Test
-    public void getChords_OnSuccessfulResponseToGetChordsGetUserChordsAndGetAccountDetails_CallsChordsRetrievedOnPresenter() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsAndGetUserChordsOnApi_CallsGetAccountDetailsOnApiWithUserIdFromSharedPref() {
         // arrange
-        // sets fake call with a response with chords
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
 
-        // sets fake call with a response with user chords
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        // sets fake call with a response with user details
-        User user = new User("Kate", "katesmith@gmail.com", 1, 300);
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-        PowerMockito.when(userResponse.body()).thenReturn(user);
-        PowerMockito.when(userResponse.isSuccessful()).thenReturn(true);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse));
+        final DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(presenter).modelOnChordsAndDetailsRetrieved();
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getAccountDetailsCalledOnApi(
+                api, userId));
     }
 
     @Test
-    public void getChordsAndOnResponse_GetUserLevel_ReturnsUsersLevel() {
+    public void getChordsAndDetailsWithSuccessfulResponseToAllApiCalls_GetUserLevel_ReturnsUsersLevel() {
         // arrange
-        // sets fake call with a response with chords
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        Response<User> userResponse = FakeResponseCreator.getUserResponse(true, user);
 
-        // sets fake call with a response with user chords
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        // sets fake call with a response with user details
-        User user = new User("Kate", "katesmith@gmail.com", 1, 300);
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-        PowerMockito.when(userResponse.body()).thenReturn(user);
-        PowerMockito.when(userResponse.isSuccessful()).thenReturn(true);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(userResponse)));
         ((LearnAllChordsModel) model).setApi(api);
-        model.getChords();
+
+        model.getChordsAndDetails();
 
         // act
+        // allows time for thread
+        await().atMost(1000, MILLISECONDS).untilCall(to(model).getUserLevel(), is(not(nullValue())));
         int actualUserLevel = model.getUserLevel();
 
         // assert
@@ -249,100 +194,125 @@ public class LearnAllChordsModelTest {
     }
 
     @Test
-    public void getChords_OnResponseToGetChordsAndGetUserChordsAndUnsuccessfulResponseToGetAccountDetails_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithSuccessfulResponseToAllApiCalls_CallsChordsRetrievedOnPresenter() {
         // arrange
-        // sets response for getChords call and getUserChords call and unsuccessful response for
-        // getAccountDetails call
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        Response<User> userResponse = FakeResponseCreator.getUserResponse(true, user);
 
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        Response<User> userResponse = (Response<User>) PowerMockito.mock(Response.class);
-        PowerMockito.when(userResponse.isSuccessful()).thenReturn(false);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(userResponse));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(userResponse)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(presenter).modelOnError();
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.
+                chordsAndDetailsRetrievedCalledOnPresenter(presenter));
     }
 
     @Test
-    public void getChords_OnResponseToGetChordsAndGetUserChordsAndOnFailureToGetAccountDetails_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithUnsuccessfulGetAccountDetailsOnApi_CallsErrorOnPresenter() {
         // arrange
-        // sets response for getChords call and getUserChords call and no response (failure)
-        // for getAccountDetails
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        Response<User> userResponse = FakeResponseCreator.getUserResponse(false, null);
 
-        List<UserChord> userChords = Collections.singletonList(new UserChord(1));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse), new FakeUserCall(null));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(userResponse)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(presenter).modelOnError();
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
     }
 
     @Test
-    public void getChords_OnResponseToGetChordsAndFailureToGetUserChords_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithFailureOnGetAccountDetailsOnApi_CallsErrorOnPresenter() {
         // arrange
-        // sets fake call with a response with chords for getChords and fake call with no response
-        // for getUserChords (failure)
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-
-        Response<ChordsResponse> chordsResponse = (Response<ChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(chordsResponse.body()).thenReturn(new ChordsResponse(false, chords));
-
-        DatabaseApi api = new FakeDatabaseApi(new FakeChordsResponseCall(chordsResponse),
-                new FakeUserChordsResponseCall(null));
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(presenter).modelOnError();
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
     }
 
     @Test
-    public void getChords_OnFailureToGetChords_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithUnsuccessfulGetUserChordsOnApi_CallsErrorOnPresenter() {
         // arrange
-        // sets fake call with no response (failure)
-        FakeChordsResponseCall call = new FakeChordsResponseCall(null);
-        DatabaseApi api = new FakeDatabaseApi(call);
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(false,
+                null);
+
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
         ((LearnAllChordsModel) model).setApi(api);
 
         // act
-        model.getChords();
+        model.getChordsAndDetails();
 
         // assert
-        Mockito.verify(presenter).modelOnError();
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+    }
+
+    @Test
+    public void getChordsAndDetailsWithFailureOnGetUserChordsOnApi_CallsErrorOnPresenter() {
+        // arrange
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
+
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(null), new FakeUserCall(null)));
+        ((LearnAllChordsModel) model).setApi(api);
+
+        // act
+        model.getChordsAndDetails();
+
+        // assert
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+    }
+
+    @Test
+    public void getChordsAndDetailsWithUnsuccessfulGetChordsOnApi_CallsErrorOnPresenter() {
+        // arrange
+        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(false, null);
+
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
+                new FakeChordsCall(null), new FakeUserCall(null)));
+        ((LearnAllChordsModel) model).setApi(api);
+
+        // act
+        model.getChordsAndDetails();
+
+        // assert
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+    }
+
+    @Test
+    public void getChordsAndDetailsWithFailureOnGetChordsOnApi_CallsErrorOnPresenter() {
+        // arrange
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(null),
+                new FakeChordsCall(null), new FakeUserCall(null)));
+        ((LearnAllChordsModel) model).setApi(api);
+
+        // act
+        model.getChordsAndDetails();
+
+        // assert
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
     }
 }

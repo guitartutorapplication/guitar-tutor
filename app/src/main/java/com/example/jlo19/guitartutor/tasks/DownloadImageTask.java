@@ -17,9 +17,9 @@ import java.io.IOException;
  */
 public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-    private AmazonS3 client;
-    private String filename;
-    private DownloadImageTaskListener listener;
+    private final AmazonS3 client;
+    private final String filename;
+    private final DownloadImageTaskListener listener;
 
     public DownloadImageTask(AmazonS3 client, String filename, DownloadImageTaskListener listener) {
         this.client = client;

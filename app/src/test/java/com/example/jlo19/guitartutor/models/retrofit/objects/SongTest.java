@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models.retrofit;
+package com.example.jlo19.guitartutor.models.retrofit.objects;
 
 import android.os.Parcel;
 

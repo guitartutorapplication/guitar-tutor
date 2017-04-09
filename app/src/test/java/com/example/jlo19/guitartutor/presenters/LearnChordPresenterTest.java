@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.views.LearnChordView;
 
@@ -224,7 +224,7 @@ public class LearnChordPresenterTest {
     @Test
     public void modelOnLearntChordAdded_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnLearntChordAdded();
+        presenter.modelOnLearntChordAdded(0, 0);
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -233,19 +233,40 @@ public class LearnChordPresenterTest {
     @Test
     public void modelOnLearntChordAdded_CallsStartLearnAllChordsActivityOnView() {
         // act
-        presenter.modelOnLearntChordAdded();
+        presenter.modelOnLearntChordAdded(0, 0);
 
         // assert
         Mockito.verify(view).startLearnAllChordsActivity();
     }
 
     @Test
-    public void modelOnLearntChordAdded_ShowsAddLearntChordSuccessOnView() {
+    public void modelOnLearntChordAddedWithZeroLevelAndAchievements_ShowsAddLearntChordSuccessOnView() {
         // act
-        presenter.modelOnLearntChordAdded();
+        presenter.modelOnLearntChordAdded(0, 0);
 
         // assert
         Mockito.verify(view).showAddLearntChordSuccess();
+    }
+
+    @Test
+    public void modelOnLearntChordAddedWithNonZeroAchievements_ShowsAddLearntChordSuccessWithAchievementsOnView() {
+        // act
+        int achievements = 100;
+        presenter.modelOnLearntChordAdded(0, achievements);
+
+        // assert
+        Mockito.verify(view).showAddLearntChordSuccess(achievements);
+    }
+
+    @Test
+    public void modelOnLearntChordAddedWithNonZeroAchievementsAndLevel_ShowsAddLearntChordSuccessWithAchievementsAndLevelOnView() {
+        // act
+        int achievements = 1000;
+        int level = 2;
+        presenter.modelOnLearntChordAdded(level, achievements);
+
+        // assert
+        Mockito.verify(view).showAddLearntChordSuccess(level, achievements);
     }
 
     @Test
@@ -264,14 +285,5 @@ public class LearnChordPresenterTest {
 
         // assert
         Mockito.verify(view).showAddLearntChordError();
-    }
-
-    @Test
-    public void modelOnUpdateLevelDetailsError_ShowsUpdateLevelDetailsErrorOnView() {
-        // act
-        presenter.modelOnUpdateLevelDetailsError();
-
-        // assert
-        Mockito.verify(view).showUpdateLevelDetailsError();
     }
 }

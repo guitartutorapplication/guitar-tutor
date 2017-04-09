@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.jlo19.guitartutor.listeners.DownloadVideoTaskListener;
 
 import java.net.URL;
+import java.util.Date;
 
 /**
  * Asynchronous task to retrieve video from Amazon S3
@@ -15,9 +16,9 @@ import java.net.URL;
 
 public class DownloadVideoTask extends AsyncTask<Void, Void, String> {
 
-    private DownloadVideoTaskListener listener;
-    private String filename;
-    private AmazonS3 client;
+    private final DownloadVideoTaskListener listener;
+    private final String filename;
+    private final AmazonS3 client;
     GeneratePresignedUrlRequest request;
 
     public DownloadVideoTask(AmazonS3 client, String filename, DownloadVideoTaskListener listener) {
@@ -32,6 +33,14 @@ public class DownloadVideoTask extends AsyncTask<Void, Void, String> {
             // retrieves URL from S3
             request = new GeneratePresignedUrlRequest("guitar.tutor.data",
                     filename);
+            // setting the expiring time for pre-signed url
+            Date expiration = new Date();
+            long milliSeconds = expiration.getTime();
+            // add one hour
+            milliSeconds += 1000 * 60 * 60;
+            expiration.setTime(milliSeconds);
+            request.setExpiration(expiration);
+
             URL url = client.generatePresignedUrl(request);
 
             return url.toString();

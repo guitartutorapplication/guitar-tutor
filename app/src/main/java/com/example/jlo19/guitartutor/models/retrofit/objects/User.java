@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models.retrofit;
+package com.example.jlo19.guitartutor.models.retrofit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,16 +9,26 @@ import com.google.gson.annotations.SerializedName;
  * Object that stores details of a User
  */
 public class User implements Parcelable {
+    @SerializedName("user_id")
+    private int id;
     @SerializedName("name")
-    private String name;
+    private final String name;
     @SerializedName("email")
-    private String email;
+    private final String email;
     @SerializedName("level")
-    private int level;
+    private final int level;
     @SerializedName("achievements")
-    private int achievements;
+    private final int achievements;
 
     public User(String name, String email, int level, int achievements) {
+        this.name = name;
+        this.email = email;
+        this.level = level;
+        this.achievements = achievements;
+    }
+
+    public User(int id, String name, String email, int level, int achievements) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.level = level;
@@ -46,6 +56,10 @@ public class User implements Parcelable {
 
     public int getAchievements() {
         return achievements;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

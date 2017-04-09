@@ -5,7 +5,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 
 public class SongActivity extends BaseWithToolbarActivity {
 

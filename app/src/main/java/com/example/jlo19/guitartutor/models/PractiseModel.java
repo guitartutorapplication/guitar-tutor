@@ -7,11 +7,12 @@ import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,8 +34,6 @@ public class PractiseModel implements IPractiseModel {
     private BeatSpeed beatSpeed;
     private DatabaseApi api;
     private SharedPreferences sharedPreferences;
-    private int numUpdateUserChordCalls;
-    private boolean updateUserChordCallsSuccess;
 
     public PractiseModel(){
         App.getComponent().inject(this);
@@ -130,13 +129,11 @@ public class PractiseModel implements IPractiseModel {
                         presenter.modelOnNewSecondOfCountdown(Countdown.values()[i]);
                         if (i == 3) {
                             Thread.sleep(3000);
-                        }
-                        else {
+                        } else {
                             Thread.sleep(1500);
                         }
                     }
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     presenter.modelOnError();
                 }
                 presenter.modelOnCountdownFinished();
@@ -150,49 +147,32 @@ public class PractiseModel implements IPractiseModel {
     public void savePractiseSession() {
         // retrieving logged in user's id from shared preferences
         int userId = sharedPreferences.getInt("user_id", 0);
-
-        numUpdateUserChordCalls = 0;
-        updateUserChordCallsSuccess = true;
-
-        for (Chord chord : selectedChords) {
-            Call<PostPutResponse> call = api.updateUserChord(userId, chord.getId());
-
-            call.enqueue(new Callback<PostPutResponse>() {
-                @Override
-                public void onResponse(Call<PostPutResponse> call, Response<PostPutResponse> response) {
-                    if (response.isSuccessful()) {
-                        onUpdateUserChordCall(true);
-                    }
-                    else
-                    {
-                        onUpdateUserChordCall(false);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<PostPutResponse> call, Throwable t) {
-                    onUpdateUserChordCall(false);
-                }
-            });
-        }
-    }
-
-    private void onUpdateUserChordCall(boolean success) {
-        numUpdateUserChordCalls++;
-
-        // if call is not successfully, overall success is false
-        if (!success) {
-            updateUserChordCallsSuccess = false;
+        ArrayList<Integer> chordIds = new ArrayList<>();
+        for (Chord chord : selectedChords){
+            chordIds.add(chord.getId());
         }
 
-        // if calls have been executed for all chords, notify presenter
-        if (numUpdateUserChordCalls == selectedChords.size()) {
-            int achievements = 0;
-            if (updateUserChordCallsSuccess) {
-                achievements = 100 * selectedChords.size();
+        Call<User> call = api.updateUserChords(userId, chordIds);
+        // asynchronously executing call
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    int level = response.body().getLevel();
+                    int achievements = response.body().getAchievements();
+                    presenter.modelOnPractiseSessionSaved(level, achievements);
+                }
+                else {
+                    presenter.modelOnPractiseSessionSaveError();
+                }
             }
-            presenter.modelOnPractiseSessionSaved(updateUserChordCallsSuccess, achievements);
-        }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                presenter.modelOnPractiseSessionSaveError();
+            }
+        });
+
     }
 
     @Override

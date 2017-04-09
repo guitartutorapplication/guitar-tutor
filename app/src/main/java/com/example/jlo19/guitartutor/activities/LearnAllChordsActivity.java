@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
@@ -13,7 +12,7 @@ import android.widget.Toast;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
@@ -62,8 +61,13 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     }
 
     public void showError(){
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(),
+                        R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -76,29 +80,55 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     }
 
     @Override
-    public void addChordButton(int buttonId) {
-        chordsButtonAdapter.addButton(buttonId);
+    public void addChordButton(final int buttonId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chordsButtonAdapter.addButton(buttonId);
+            }
+        });
     }
 
     @Override
-    public void setChordButtonText(int buttonId, String text) {
-        chordsButtonAdapter.setButtonText(buttonId, text);
+    public void setChordButtonText(final int buttonId, final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chordsButtonAdapter.setButtonText(buttonId, text);
+            }
+        });
     }
 
     @Override
-    public void enableChordButton(int buttonId, boolean isEnabled) {
-        chordsButtonAdapter.enableButton(buttonId, isEnabled);
+    public void enableChordButton(final int buttonId, final boolean isEnabled) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chordsButtonAdapter.enableButton(buttonId, isEnabled);
+            }
+        });
     }
 
     @Override
-    public void setChordButtonBackground(int buttonId, String doneIdentifier, String levelNumberIdentifier) {
-        chordsButtonAdapter.setButtonBackground(buttonId, doneIdentifier, levelNumberIdentifier);
+    public void setChordButtonBackground(final int buttonId, final String doneIdentifier, final
+    String levelNumberIdentifier) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chordsButtonAdapter.setButtonBackground(buttonId, doneIdentifier, levelNumberIdentifier);
+            }
+        });
     }
 
     @Override
     public void setChordButtons() {
-        GridView gridView = (GridView) findViewById(R.id.gridView);
-        gridView.setAdapter(chordsButtonAdapter);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                GridView gridView = (GridView) findViewById(R.id.gridView);
+                gridView.setAdapter(chordsButtonAdapter);
+            }
+        });
     }
 
     public void showProgressBar() {
@@ -109,11 +139,6 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
 
     public void hideProgressBar(){
         progressDialog.dismiss();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
     }
 
     @VisibleForTesting

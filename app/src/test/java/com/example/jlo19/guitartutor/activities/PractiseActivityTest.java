@@ -14,7 +14,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
 import junit.framework.Assert;
@@ -268,18 +268,6 @@ public class PractiseActivityTest {
     }
 
     @Test
-    public void showPractiseSessionSaveSuccess_MakesToastWithSuccessMessageAndAchievements() {
-        // act
-        int achievements = 300;
-        activity.showPractiseSessionSaveSuccess(achievements);
-
-        // assert
-        String messageFormat = getApp().getResources().getString(R.string.save_practise_session_success);
-        String message = String.format(messageFormat, achievements);
-        Assert.assertEquals(message, ShadowToast.getTextOfLatestToast());
-    }
-
-    @Test
     public void showPractiseSessionSaveError_MakesToastWithErrorMessage() {
         // act
         activity.showPractiseSessionSaveError();
@@ -287,6 +275,46 @@ public class PractiseActivityTest {
         // assert
         Assert.assertEquals(getApp().getResources().getString(R.string.save_practise_session_error_message),
                 ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccess_MakesToastWithSuccessMessage() {
+        // act
+        activity.showPractiseSessionSaveSuccess();
+
+        // assert
+        String expectedText = getApp().getResources().getString(
+                R.string.save_practise_session_success_message) + "\n" + getApp().getResources()
+                .getString(R.string.maximum_achievements_message);
+        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccessWithAchievements_MakesToastWithSuccessMessage() {
+        // act
+        int achievements = 2100;
+        activity.showPractiseSessionSaveSuccess(achievements);
+
+        // assert
+        String expectedText = getApp().getResources().getString(
+                R.string.save_practise_session_success_message) + "\n" + getApp().getResources().
+                getString(R.string.gained_15_achievements_message, achievements);
+        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccessWithLevel_MakesToastWithSuccessMessage() {
+        // act
+        int achievements = 2000;
+        int level = 3;
+        activity.showPractiseSessionSaveSuccess(level, achievements);
+
+        // assert
+        String expectedText = getApp().getResources().getString(
+                R.string.save_practise_session_success_message) + "\n" + getApp().getResources().
+                getString(R.string.gained_15_achievements_message, achievements) + "\n" + getApp()
+                .getResources().getString(R.string.new_level_message, level);
+        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
     }
 
     @Test

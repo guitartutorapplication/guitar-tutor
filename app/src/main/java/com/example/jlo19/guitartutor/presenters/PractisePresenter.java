@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.PractiseView;
@@ -116,14 +116,16 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void modelOnPractiseSessionSaved(boolean result, int achievements) {
-        if (result) {
-            view.showPractiseSessionSaveSuccess(achievements);
+    public void modelOnPractiseSessionSaved(int level, int achievements) {
+        if (level == 0 && achievements == 0) {
+            view.showPractiseSessionSaveSuccess();
+        }
+        else if (level != 0 && achievements != 0) {
+            view.showPractiseSessionSaveSuccess(level, achievements);
         }
         else {
-            view.showPractiseSessionSaveError();
+            view.showPractiseSessionSaveSuccess(achievements);
         }
-
         view.returnToPractiseSetup();
     }
 
@@ -131,5 +133,11 @@ public class PractisePresenter implements IPractisePresenter {
     public void modelOnFirstRoundOfChords() {
         // stop button is only enabled once the user has completed one round of chords
         view.showStopButton();
+    }
+
+    @Override
+    public void modelOnPractiseSessionSaveError() {
+        view.showPractiseSessionSaveError();
+        view.returnToPractiseSetup();
     }
 }

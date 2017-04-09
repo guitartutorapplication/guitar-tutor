@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
@@ -68,7 +68,7 @@ public class LearnAllChordsPresenterTest {
         Mockito.when(model.getAllChords()).thenReturn(chords);
 
         userChords = Arrays.asList(1, 3, 5, 7, 9, 11);
-        Mockito.when(model.getUserChords()).thenReturn(userChords);
+        Mockito.when(model.getUserChordIds()).thenReturn(userChords);
 
         userLevel = 3;
         Mockito.when(model.getUserLevel()).thenReturn(userLevel);
@@ -87,9 +87,9 @@ public class LearnAllChordsPresenterTest {
     }
 
     @Test
-    public void setModel_CallsGetChordsOnModel() {
+    public void setModel_CallsGetChordsAndDetailsOnModel() {
         // assert
-        Mockito.verify(model).getChords();
+        Mockito.verify(model).getChordsAndDetails();
     }
 
     @Test

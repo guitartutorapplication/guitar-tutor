@@ -1,8 +1,5 @@
 package com.example.jlo19.guitartutor.activities;
 
-import android.content.res.Configuration;
-import android.os.Bundle;
-
 import com.example.jlo19.guitartutor.R;
 
 /**
@@ -20,13 +17,4 @@ public class LearnDiagramHelpActivity extends BaseWithToolbarActivity {
         return getResources().getString(R.string.diagram_help_name);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
 }

@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
@@ -35,7 +35,7 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
         this.model = model;
         model.setPresenter(this);
         model.setSharedPreferences(sharedPreferences);
-        model.getChords();
+        model.getChordsAndDetails();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
 
         List<Chord> allChords = model.getAllChords();
         int userLevel = model.getUserLevel();
-        List<Integer> userChords = model.getUserChords();
+        List<Integer> userChords = model.getUserChordIds();
 
         for (int i = 0; i < allChords.size(); i++) {
             view.addChordButton(i);
@@ -99,6 +99,6 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
     @Override
     public void viewOnChordRequested(int chordPos) {
         Chord chord = model.getAllChords().get(chordPos);
-        view.startLearnChordActivity(chord, model.getUserChords().contains(chord.getId()));
+        view.startLearnChordActivity(chord, model.getUserChordIds().contains(chord.getId()));
     }
 }

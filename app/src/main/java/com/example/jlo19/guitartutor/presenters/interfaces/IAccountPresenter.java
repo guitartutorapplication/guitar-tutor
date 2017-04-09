@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.presenters.interfaces;
 
 import android.content.SharedPreferences;
 
-import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 
 /**
  * Interface for AccountPresenter

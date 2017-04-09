@@ -4,11 +4,8 @@ import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
-import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.UserChord;
-import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -49,18 +46,23 @@ public class SongLibraryModel implements ISongLibraryModel {
     @Override
     public void getAllSongs() {
         if (allSongs == null) {
-            Call<SongsResponse> call = api.getSongs();
+            Call<List<Song>> call = api.getSongs();
 
             // asynchronously executing call
-            call.enqueue(new Callback<SongsResponse>() {
+            call.enqueue(new Callback<List<Song>>() {
                 @Override
-                public void onResponse(Call<SongsResponse> call, Response<SongsResponse> response) {
-                    allSongs = response.body().getSongs();
-                    presenter.modelOnSongsRetrieved(allSongs);
+                public void onResponse(Call<List<Song>> call, Response<List<Song>> response) {
+                    if (response.isSuccessful()) {
+                        allSongs = response.body();
+                        presenter.modelOnSongsRetrieved(allSongs);
+                    }
+                    else {
+                        presenter.modelOnError();
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<SongsResponse> call, Throwable t) {
+                public void onFailure(Call<List<Song>> call, Throwable t) {
                     presenter.modelOnError();
                 }
             });
@@ -79,42 +81,25 @@ public class SongLibraryModel implements ISongLibraryModel {
         if (songsUserCanPlay == null) {
             // retrieving logged in user's id from shared preferences
             final int userId = sharedPreferences.getInt("user_id", 0);
-            Call<UserChordsResponse> userChordsCall = api.getUserChords(userId);
+            Call<List<Chord>> userChordsCall = api.getUserChords(userId);
 
             // asynchronously executing call
-            userChordsCall.enqueue(new Callback<UserChordsResponse>() {
+            userChordsCall.enqueue(new Callback<List<Chord>>() {
                 @Override
-                public void onResponse(Call<UserChordsResponse> call, Response<UserChordsResponse>
+                public void onResponse(Call<List<Chord>> call, Response<List<Chord>>
                         userChordsResponse) {
-                    // using the user chords to find which songs that user can play
-                    List<UserChord> userChords = userChordsResponse.body().getUserChords();
-                    songsUserCanPlay = new ArrayList<>();
-                    for (Song song : allSongs) {
-                        List<Chord> songChords = song.getChords();
-                        boolean hasOnlyUserChords = true;
-                        // comparing chords in song to chords the user knows
-                        for (Chord songChord : songChords) {
-                            boolean isAUserChord = false;
-                            for (UserChord userChord : userChords) {
-                                if (userChord.getChordId() == songChord.getId()) {
-                                    isAUserChord = true;
-                                    break;
-                                }
-                            }
-                            if (!isAUserChord) {
-                                hasOnlyUserChords = false;
-                                break;
-                            }
-                        }
-                        if (hasOnlyUserChords) {
-                            songsUserCanPlay.add(song);
-                        }
+                    if (userChordsResponse.isSuccessful()) {
+                        List<Chord> userChords = userChordsResponse.body();
+                        setSongsUserCanPlay(userChords);
+                        presenter.modelOnSongsRetrieved(songsUserCanPlay);
                     }
-                    presenter.modelOnSongsRetrieved(songsUserCanPlay);
+                    else {
+                        presenter.modelOnError();
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<UserChordsResponse> call, Throwable t) {
+                public void onFailure(Call<List<Chord>> call, Throwable t) {
                     presenter.modelOnError();
                 }
             });
@@ -128,5 +113,31 @@ public class SongLibraryModel implements ISongLibraryModel {
     public void resetSongs() {
         songsUserCanPlay = null;
         allSongs = null;
+    }
+
+    private void setSongsUserCanPlay(List<Chord> userChords) {
+        // using the user chords to find which songs that user can play
+        songsUserCanPlay = new ArrayList<>();
+        for (Song song : allSongs) {
+            List<Chord> songChords = song.getChords();
+            boolean hasOnlyUserChords = true;
+            // comparing chords in song to chords the user knows
+            for (Chord songChord : songChords) {
+                boolean isAUserChord = false;
+                for (Chord userChord : userChords) {
+                    if (userChord.getId() == songChord.getId()) {
+                        isAUserChord = true;
+                        break;
+                    }
+                }
+                if (!isAUserChord) {
+                    hasOnlyUserChords = false;
+                    break;
+                }
+            }
+            if (hasOnlyUserChords) {
+                songsUserCanPlay.add(song);
+            }
+        }
     }
 }

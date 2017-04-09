@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.presenters.interfaces;
 
 import android.content.SharedPreferences;
 
-import com.example.jlo19.guitartutor.models.retrofit.Song;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 
 import java.util.List;
 

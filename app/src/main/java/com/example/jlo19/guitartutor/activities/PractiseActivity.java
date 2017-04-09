@@ -1,6 +1,5 @@
 package com.example.jlo19.guitartutor.activities;
 
-import android.content.res.Configuration;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,7 +14,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
@@ -128,11 +127,6 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     public void onStop() {
         super.onStop();
         presenter.viewOnStop();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -254,16 +248,35 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showPractiseSessionSaveSuccess(int achievements) {
-        String messageFormat = getResources().getString(R.string.save_practise_session_success);
-        String message = String.format(messageFormat, achievements);
+        String text = getString(R.string.save_practise_session_success_message) + "\n" +
+                getString(R.string.gained_15_achievements_message, achievements);
 
         Toast.makeText(getApplicationContext(),
-                message, Toast.LENGTH_SHORT).show();
+                text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showPractiseSessionSaveError() {
         Toast.makeText(getApplicationContext(), getResources().getString(
                 R.string.save_practise_session_error_message), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showPractiseSessionSaveSuccess(int level, int achievements) {
+        String text = getString(R.string.save_practise_session_success_message) + "\n" +
+                getString(R.string.gained_15_achievements_message, achievements) + "\n" +
+                getString(R.string.new_level_message, level);
+
+        Toast.makeText(getApplicationContext(),
+                text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showPractiseSessionSaveSuccess() {
+        String text = getString(R.string.save_practise_session_success_message) + "\n" +
+                getString(R.string.maximum_achievements_message);
+
+        Toast.makeText(getApplicationContext(),
+                text, Toast.LENGTH_SHORT).show();
     }
 }

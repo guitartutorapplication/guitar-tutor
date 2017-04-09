@@ -5,16 +5,11 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-
-import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -91,40 +86,24 @@ public class LearnChordModel implements ILearnChordModel {
     public void addLearntChord(int chordId) {
         // retrieving logged in user's id from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
-        Call<PostPutResponse> call = api.addUserChord(userId, chordId);
+        Call<User> call = api.addUserChord(userId, chordId);
 
         // asynchronously executing call
-        call.enqueue(new Callback<PostPutResponse>() {
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<PostPutResponse> call, Response<PostPutResponse> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
-                    presenter.modelOnLearntChordAdded();
+                    int level = response.body().getLevel();
+                    int achievements = response.body().getAchievements();
+                    presenter.modelOnLearntChordAdded(level, achievements);
                 }
                 else {
-                    // convert raw response when error
-                    Gson gson = new Gson();
-                    TypeAdapter<PostPutResponse> adapter = gson.getAdapter(PostPutResponse.class);
-
-                    try {
-                        PostPutResponse postPutResponse = adapter.fromJson(
-                                response.errorBody().string());
-
-                        if ((postPutResponse.getMessage().equals(ResponseError
-                                .RETRIEVE_LEVEL_DETAILS_FAILURE.toString())) || (postPutResponse
-                                .getMessage().equals(ResponseError.UPDATE_LEVEL_DETAILS_FAILURE.toString()))) {
-                            presenter.modelOnUpdateLevelDetailsError();
-                        }
-                        else {
-                            presenter.modelOnAddLearntChordError();
-                        }
-                    } catch (IOException e) {
-                        presenter.modelOnAddLearntChordError();
-                    }
+                    presenter.modelOnAddLearntChordError();
                 }
             }
 
             @Override
-            public void onFailure(Call<PostPutResponse> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 presenter.modelOnAddLearntChordError();
             }
         });

@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 
 import org.junit.Before;
 import org.junit.Test;

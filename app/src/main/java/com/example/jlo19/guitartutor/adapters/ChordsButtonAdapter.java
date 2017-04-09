@@ -19,8 +19,8 @@ import java.util.List;
 public class ChordsButtonAdapter extends BaseAdapter {
 
     private final List<Button> buttons;
-    private View.OnClickListener listener;
-    private Context context;
+    private final View.OnClickListener listener;
+    private final Context context;
 
     public ChordsButtonAdapter(Context context, View.OnClickListener listener) {
         this.context = context;

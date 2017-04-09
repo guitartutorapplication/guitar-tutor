@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.views.LearnChordView;
 
@@ -183,18 +182,29 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showAddLearntChordSuccess() {
+        String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
+                getString(R.string.maximum_achievements_message);
+
         Toast.makeText(getApplicationContext(),
-                R.string.add_learnt_chord_success_message, Toast.LENGTH_SHORT).show();
+                text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showUpdateLevelDetailsError() {
+    public void showAddLearntChordSuccess(int level, int achievements) {
+        String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
+                getString(R.string.gained_100_achievements_message, achievements) + "\n" +
+                getString(R.string.new_level_message, level);
+
         Toast.makeText(getApplicationContext(),
-                R.string.update_level_details_error_message, Toast.LENGTH_SHORT).show();
+                text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    public void showAddLearntChordSuccess(int achievements) {
+        String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
+                getString(R.string.gained_100_achievements_message, achievements);
+
+        Toast.makeText(getApplicationContext(),
+                text, Toast.LENGTH_SHORT).show();
     }
 }

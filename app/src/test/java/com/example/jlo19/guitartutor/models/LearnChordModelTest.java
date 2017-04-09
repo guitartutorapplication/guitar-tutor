@@ -6,15 +6,14 @@ import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
-import com.example.jlo19.guitartutor.helpers.FakePostPutResponseCall;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
+import com.example.jlo19.guitartutor.helpers.FakeUserCall;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
-import com.google.gson.Gson;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +22,6 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -40,6 +37,7 @@ public class LearnChordModelTest {
     private ILearnChordPresenter presenter;
     private IAmazonS3Service service;
     private int userId;
+    private User user;
 
     @Before
     public void setUp() {
@@ -59,6 +57,8 @@ public class LearnChordModelTest {
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
         model.setSharedPreferences(sharedPreferences);
+
+        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 2000);
     }
 
     @Test
@@ -130,19 +130,10 @@ public class LearnChordModelTest {
     }
 
     @Test
-    public void addLearntChord_CallsAddLearntChordOnApiWithIdFromSharedPreferences() throws IOException {
+    public void addLearntChord_CallsAddLearntChordOnApiWithIdFromSharedPreferences() {
         // arrange
         int chordId = 3;
-        // sets fake call with a response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true, "another error");
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeUserCall(null)));
         ((LearnChordModel) model).setDatabaseApi(api);
 
         // act
@@ -155,35 +146,24 @@ public class LearnChordModelTest {
     @Test
     public void addLearntChord_OnSuccessfulResponse_CallsLearntChordAddedOnPresenter() {
         // arrange
-        // sets fake call with a successful response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        Mockito.when(response.isSuccessful()).thenReturn(true);
+        Response<User> userResponse = FakeResponseCreator.getUserResponse(true, user);
 
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(userResponse));
         ((LearnChordModel) model).setDatabaseApi(api);
 
         // act
         model.addLearntChord(3);
 
         // arrange
-        Mockito.verify(presenter).modelOnLearntChordAdded();
+        Mockito.verify(presenter).modelOnLearntChordAdded(user.getLevel(), user.getAchievements());
     }
 
     @Test
-    public void addLearntChord_OnErrorResponse_CallsLearntChordErrorOnPresenter() throws IOException {
+    public void addLearntChord_OnUnsuccessfulResponse_CallsLearntChordErrorOnPresenter() {
         // arrange
-        // sets fake call with a error response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        Mockito.when(response.isSuccessful()).thenReturn(false);
+        Response<User> userResponse = FakeResponseCreator.getUserResponse(false, null);
 
-        PostPutResponse postPutResponse = new PostPutResponse(true, "another error");
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(userResponse));
         ((LearnChordModel) model).setDatabaseApi(api);
 
         // act
@@ -194,59 +174,10 @@ public class LearnChordModelTest {
     }
 
     @Test
-    public void addLearntChord_OnRetrieveLevelDetailsFailureResponse_CallsUpdateLevelDetailsErrorOnPresenter()
-            throws IOException {
-        // arrange
-        // sets fake call with a error response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        Mockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
-                ResponseError.RETRIEVE_LEVEL_DETAILS_FAILURE.toString());
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
-        ((LearnChordModel) model).setDatabaseApi(api);
-
-        // act
-        model.addLearntChord(3);
-
-        // assert
-        Mockito.verify(presenter).modelOnUpdateLevelDetailsError();
-    }
-
-    @Test
-    public void addLearntChord_OnUpdateLevelDetailsFailureResponse_CallsUpdateLevelDetailsErrorOnPresenter()
-            throws IOException {
-        // arrange
-        // sets fake call with a error response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        Mockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
-                ResponseError.UPDATE_LEVEL_DETAILS_FAILURE.toString());
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
-        ((LearnChordModel) model).setDatabaseApi(api);
-
-        // act
-        model.addLearntChord(3);
-
-        // assert
-        Mockito.verify(presenter).modelOnUpdateLevelDetailsError();
-    }
-
-    @Test
     public void addLearntChord_OnFailure_CallsLearntChordErrorOnPresenter() {
         // arrange
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(null));
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(null));
         ((LearnChordModel) model).setDatabaseApi(api);
 
         // act

@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 

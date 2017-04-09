@@ -1,8 +1,9 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Request;
 import retrofit2.Call;
@@ -10,23 +11,28 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Fakes retrofit call with LoginResponse
+ * Fakes retrofit call with ChordsResponse
  */
-public class FakeLoginResponseCall implements Call<LoginResponse> {
+public class FakeChordsCall implements Call<List<Chord>> {
 
-    private final Response<LoginResponse> response;
+    private final Response<List<Chord>> response;
 
-    public FakeLoginResponseCall(Response<LoginResponse> response) {
+    public FakeChordsCall(Response<List<Chord>> response) {
         this.response = response;
     }
 
     @Override
-    public Response<LoginResponse> execute() throws IOException {
-        return null;
+    public Response<List<Chord>> execute() throws IOException {
+        if (response != null) {
+            return response;
+        }
+        else {
+            throw new IOException();
+        }
     }
 
     @Override
-    public void enqueue(Callback<LoginResponse> callback) {
+    public void enqueue(Callback<List<Chord>> callback) {
         if (response != null) {
             callback.onResponse(this, response);
         }
@@ -51,7 +57,7 @@ public class FakeLoginResponseCall implements Call<LoginResponse> {
     }
 
     @Override
-    public Call<LoginResponse> clone() {
+    public Call<List<Chord>> clone() {
         return null;
     }
 

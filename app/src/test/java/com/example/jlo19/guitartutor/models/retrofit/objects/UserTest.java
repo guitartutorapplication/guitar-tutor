@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models.retrofit;
+package com.example.jlo19.guitartutor.models.retrofit.objects;
 
 import android.os.Parcel;
 
@@ -19,6 +19,7 @@ public class UserTest {
     private String email;
     private int level;
     private int achievements;
+    private int id;
 
     @Before
     public void setUp() {
@@ -26,7 +27,8 @@ public class UserTest {
         email = "katesmith@gmail.com";
         level = 2;
         achievements = 400;
-        user = new User(name, email, level, achievements);
+        id = 1;
+        user = new User(id, name, email, level, achievements);
     }
 
     @Test
@@ -100,5 +102,14 @@ public class UserTest {
 
         // assert
         Assert.assertEquals(expected, users.length);
+    }
+
+    @Test
+    public void getId_ReturnsId() {
+        // act
+        int actualId = user.getId();
+
+        // assert
+        Assert.assertEquals(id, actualId);
     }
 }

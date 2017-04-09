@@ -3,7 +3,7 @@ package com.example.jlo19.guitartutor.presenters.interfaces;
 import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.enums.Countdown;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 
 /**
  * Interface for PractisePresenter
@@ -20,6 +20,7 @@ public interface IPractisePresenter extends IPresenter {
     void viewOnStop();
     void viewOnPause();
     void setSharedPreferences(SharedPreferences sharedPreferences);
-    void modelOnPractiseSessionSaved(boolean result, int achievements);
+    void modelOnPractiseSessionSaved(int level, int achievements);
     void modelOnFirstRoundOfChords();
+    void modelOnPractiseSessionSaveError();
 }

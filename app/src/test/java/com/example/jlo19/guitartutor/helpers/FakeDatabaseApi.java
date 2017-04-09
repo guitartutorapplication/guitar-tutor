@@ -1,12 +1,13 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
-import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.User;
-import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 
@@ -15,66 +16,54 @@ import retrofit2.Call;
  */
 public class FakeDatabaseApi implements DatabaseApi{
 
-    private FakeUserChordsResponseCall fakeUserChordsResponseCall;
+    private FakeChordsCall fakeUserChordsResponseCall;
     private FakeUserCall fakeUserCall;
-    private FakePostPutResponseCall fakePostPutResponseCall;
-    private FakeChordsResponseCall fakeChordsResponseCall;
-    private FakeSongsResponseCall fakeSongsResponseCall;
-    private FakeLoginResponseCall fakeLoginResponseCall;
+    private FakeResponseWithMessageCall fakeResponseWithMessageCall;
+    private FakeChordsCall fakeChordsCall;
+    private FakeSongsCall fakeSongsCall;
 
-    public FakeDatabaseApi(FakeChordsResponseCall fakeChordsResponseCall) {
-        this.fakeChordsResponseCall = fakeChordsResponseCall;
+    public FakeDatabaseApi(FakeChordsCall fakeChordsCall) {
+        this.fakeChordsCall = fakeChordsCall;
     }
 
-    public FakeDatabaseApi(FakeSongsResponseCall fakeSongsResponseCall) {
-        this.fakeSongsResponseCall = fakeSongsResponseCall;
+    public FakeDatabaseApi(FakeSongsCall fakeSongsCall) {
+        this.fakeSongsCall = fakeSongsCall;
     }
 
-    public FakeDatabaseApi(FakePostPutResponseCall fakePostPutResponseCall) {
-        this.fakePostPutResponseCall = fakePostPutResponseCall;
-    }
-
-    public FakeDatabaseApi(FakeLoginResponseCall fakeLoginResponseCall) {
-        this.fakeLoginResponseCall = fakeLoginResponseCall;
+    public FakeDatabaseApi(FakeResponseWithMessageCall fakeResponseWithMessageCall) {
+        this.fakeResponseWithMessageCall = fakeResponseWithMessageCall;
     }
 
     public FakeDatabaseApi(FakeUserCall fakeUserCall) {
         this.fakeUserCall = fakeUserCall;
     }
 
-    public FakeDatabaseApi(FakeChordsResponseCall fakeChordsResponseCall, FakeUserChordsResponseCall fakeUserChordsResponseCall) {
-        this.fakeChordsResponseCall = fakeChordsResponseCall;
+    public FakeDatabaseApi(FakeSongsCall fakeSongsCall, FakeChordsCall
+            fakeUserChordsResponseCall) {
+        this.fakeSongsCall = fakeSongsCall;
         this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
     }
 
-    public FakeDatabaseApi(FakeSongsResponseCall fakeSongsResponseCall, FakeUserChordsResponseCall fakeUserChordsResponseCall) {
-        this.fakeSongsResponseCall = fakeSongsResponseCall;
-        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
-    }
-
-    public FakeDatabaseApi(FakeUserChordsResponseCall fakeUserChordsResponseCall) {
-        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
-    }
-
-    public FakeDatabaseApi(FakeChordsResponseCall fakeChordsResponseCall, FakeUserChordsResponseCall fakeUserChordsResponseCall, FakeUserCall fakeUserCall) {
-        this.fakeChordsResponseCall = fakeChordsResponseCall;
+    public FakeDatabaseApi(FakeChordsCall fakeChordsCall, FakeChordsCall
+            fakeUserChordsResponseCall, FakeUserCall fakeUserCall) {
+        this.fakeChordsCall = fakeChordsCall;
         this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
         this.fakeUserCall = fakeUserCall;
     }
 
     @Override
-    public Call<ChordsResponse> getChords() {
-        return fakeChordsResponseCall;
+    public Call<List<Chord>> getChords() {
+        return fakeChordsCall;
     }
 
     @Override
-    public Call<SongsResponse> getSongs() {
-        return fakeSongsResponseCall;
+    public Call<List<Song>> getSongs() {
+        return fakeSongsCall;
     }
 
     @Override
-    public Call<PostPutResponse> registerUser(String name, String email, String password) {
-        return fakePostPutResponseCall;
+    public Call<ResponseWithMessage> registerUser(String name, String email, String password) {
+        return fakeResponseWithMessageCall;
     }
 
     @Override
@@ -83,27 +72,32 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<PostPutResponse> editAccountDetails(int userId, String name, String email, String password) {
-        return fakePostPutResponseCall;
+    public Call<ResponseWithMessage> editAccountDetails(int userId, String name, String email, String password) {
+        return fakeResponseWithMessageCall;
     }
 
     @Override
-    public Call<LoginResponse> loginUser(String email, String password) {
-        return fakeLoginResponseCall;
+    public Call<User> loginUser(String email, String password) {
+        return fakeUserCall;
     }
 
     @Override
-    public Call<UserChordsResponse> getUserChords(int userId) {
-        return fakeUserChordsResponseCall;
+    public Call<List<Chord>> getUserChords(int userId) {
+        if (fakeUserChordsResponseCall == null) {
+            return fakeChordsCall;
+        }
+        else {
+            return fakeUserChordsResponseCall;
+        }
     }
 
     @Override
-    public Call<PostPutResponse> addUserChord(int userId, int chordId) {
-        return fakePostPutResponseCall;
+    public Call<User> addUserChord(int userId, int chordId) {
+        return fakeUserCall;
     }
 
     @Override
-    public Call<PostPutResponse> updateUserChord(int userId, int chordId) {
-        return fakePostPutResponseCall;
+    public Call<User> updateUserChords(int userId, ArrayList<Integer> chordIds) {
+        return fakeUserCall;
     }
 }

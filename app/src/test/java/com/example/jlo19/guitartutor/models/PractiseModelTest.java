@@ -7,11 +7,13 @@ import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.helpers.AwaitConditionCreator;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
-import com.example.jlo19.guitartutor.helpers.FakePostPutResponseCall;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
+import com.example.jlo19.guitartutor.helpers.FakeUserCall;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -28,6 +30,8 @@ import java.util.List;
 
 import retrofit2.Response;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.never;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -42,6 +46,7 @@ public class PractiseModelTest {
     private IPractisePresenter presenter;
     private List<Chord> selectedChords;
     private int userId;
+    private User user;
 
     @Before
     public void setUp() {
@@ -70,356 +75,376 @@ public class PractiseModelTest {
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
         model.setSharedPreferences(sharedPreferences);
+
+        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 1000);
     }
 
     @Test
-    public void startPractiseTimer_After5Seconds_CallsFirstRoundOfChordsOnPresenter()
-            throws InterruptedException {
+    public void startPractiseTimer_CallsFirstRoundOfChordsOnPresenterAfter5Seconds() {
         // act
         model.startPractiseTimer();
-        Thread.sleep(5000);
 
         // assert
-        Mockito.verify(presenter).modelOnFirstRoundOfChords();
+        await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.
+                firstRoundOfChordsCalledOnPresenter(presenter));
     }
 
     @Test
-    public void oneBeatChordChange_StartPractiseTimer_After4Seconds_CallsNewChordOnPresenterForEachChordAndFirstRoundOfChords()
-            throws InterruptedException {
+    public void oneBeatChordChange_StartPractiseTimer_CallsNewChordOnPresenterForEachChordAfter4Seconds() {
         // arrange
         model.setChordChange(ChordChange.ONE_BEAT);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(4000);
 
         // assert
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+        await().atMost(4000, MILLISECONDS).until(AwaitConditionCreator.
+                newChordCalledOnPresenterForEachChord(presenter, selectedChords));
     }
 
     @Test
-    public void twoBeatsChordChange_StartPractiseTimer_After8Seconds_CallsNewChordOnPresenterForEachChord()
-            throws InterruptedException {
+    public void twoBeatsChordChange_StartPractiseTimer_CallsNewChordOnPresenterForEachChordAfter8Seconds() {
         // arrange
         model.setChordChange(ChordChange.TWO_BEATS);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(8000);
 
         // assert
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+        await().atMost(8000, MILLISECONDS).until(AwaitConditionCreator.
+                newChordCalledOnPresenterForEachChord(presenter, selectedChords));
     }
 
     @Test
-    public void fourBeatsChordChange_StartPractiseTimer_After16Seconds_CallsNewChordOnPresenterForEachChord()
-            throws InterruptedException {
+    public void fourBeatsChordChange_StartPractiseTimer_CallsNewChordOnPresenterForEachChordAfter16Seconds() {
         // arrange
         model.setChordChange(ChordChange.FOUR_BEATS);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(16000);
 
         // assert
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+        await().atMost(16000, MILLISECONDS).until(AwaitConditionCreator
+                .newChordCalledOnPresenterForEachChord(presenter, selectedChords));
     }
 
     @Test
-    public void eightBeatsChordChange_StartPractiseTimer_After32Seconds_CallsNewChordOnPresenterForEachChord()
-            throws InterruptedException {
+    public void eightBeatsChordChange_StartPractiseTimer_CallsNewChordOnPresenterForEachChordAfter32Seconds() {
         // arrange
         model.setChordChange(ChordChange.EIGHT_BEATS);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(32000);
 
         // assert
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+        await().atMost(32000, MILLISECONDS).until(AwaitConditionCreator
+                .newChordCalledOnPresenterForEachChord(presenter, selectedChords));
     }
 
     @Test
-    public void sixteenBeatsChordChange_StartPractiseTimer_After64Seconds_CallsNewChordOnPresenterForEachChord()
-            throws InterruptedException {
+    public void sixteenBeatsChordChange_StartPractiseTimer_CallsNewChordOnPresenterForEachChordAfter64Seconds() {
         // arrange
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(64000);
 
         // assert
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(0));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(1));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(2));
-        Mockito.verify(presenter).modelOnNewChord(selectedChords.get(3));
+        await().atMost(64000, MILLISECONDS).until(AwaitConditionCreator.
+                newChordCalledOnPresenterForEachChord(presenter, selectedChords));
     }
 
     @Test
-    public void verySlowBeatSpeed_StartPractiseTimer_After3Seconds_CallsNewBeatOnPresenterTwice()
-            throws InterruptedException {
+    public void verySlowBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwice_After3Seconds() {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(3000);
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnNewBeat();
+        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
     }
 
     @Test
-    public void slowBeatSpeed_StartPractiseTimer_After5Seconds_CallsNewBeatOnPresenterFourTimes()
-            throws InterruptedException {
+    public void slowBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterFourTimesAfter5Seconds() {
         // arrange
         model.setBeatSpeed(BeatSpeed.SLOW);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(5000);
 
         // assert
-        Mockito.verify(presenter, times(4)).modelOnNewBeat();
+        await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
     }
 
     @Test
-    public void mediumBeatSpeed_StartPractiseTimer_After2Seconds_CallsNewBeatOnPresenterTwice()
-            throws InterruptedException {
+    public void mediumBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwice_After2Seconds() {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(2000);
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnNewBeat();
+        await().atMost(2000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
     }
 
     @Test
-    public void fastBeatSpeed_StartPractiseTimer_After3Seconds_CallsNewBeatOnPresenterFourTimes()
-            throws InterruptedException {
+    public void fastBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterFourTimesAfter3Seconds() {
         // arrange
         model.setBeatSpeed(BeatSpeed.FAST);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(3000);
 
         // assert
-        Mockito.verify(presenter, times(4)).modelOnNewBeat();
+        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
     }
 
     @Test
-    public void veryFastBeatSpeed_StartPractiseTimer_After1Second_CallsNewBeatOnPresenterTwice()
-            throws InterruptedException {
+    public void veryFastBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwiceAfter1Seconds() {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
 
         // act
         model.startPractiseTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnNewBeat();
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
     }
 
     @Test
-    public void verySlowBeatSpeed_StartPractiseTimerAndRunFor3Seconds_Stop_After2Seconds_CallsNewSecondOnPresenterOnlyTwice()
-            throws InterruptedException {
+    public void verySlowBeatSpeed_StartPractiseTimerAndRunFor3Seconds_Stop_NewSecondOnPresenterNotCalledAfterStop() {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
         model.startPractiseTimer();
-        Thread.sleep(3000);
+        // waits until new beat is called twice (which is running for 3 seconds)
+        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
 
         // act
         model.stopTimer();
-        Thread.sleep(2000);
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnNewBeat();
+        // waits at least 2 seconds to prove new beat is never called
+        await().atLeast(2000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new beat
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, never()));
     }
 
     @Test
-    public void slowBeatSpeed_StartPractiseTimerAndRunFor5Seconds_Stop_After2Seconds_CallsNewSecondOnPresenterOnlyFourTimes()
-            throws InterruptedException {
+    public void slowBeatSpeed_StartPractiseTimerAndRunFor5Seconds_Stop_NewSecondOnPresenterNotCalledAfterStop() {
         // arrange
         model.setBeatSpeed(BeatSpeed.SLOW);
         model.startPractiseTimer();
-        Thread.sleep(5000);
+        // waits until new beat is called four times (which is running for 5 seconds)
+        await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(4)));
 
         // act
         model.stopTimer();
-        Thread.sleep(2000);
 
         // assert
-        Mockito.verify(presenter, times(4)).modelOnNewBeat();
+        // waits at least 2 seconds to prove new beat is never called
+        await().atLeast(2000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new beat
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, never()));
     }
 
     @Test
-    public void mediumBeatSpeed_StartPractiseTimerAndRunFor2Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnlyTwice()
-            throws InterruptedException {
+    public void mediumBeatSpeed_StartPractiseTimerAndRunFor2Seconds_Stop_NewSecondOnPresenterNotCalledAfterStop() {
         // arrange
         model.setBeatSpeed(BeatSpeed.MEDIUM);
         model.startPractiseTimer();
-        Thread.sleep(2000);
+        // waits until new beat is called twice (which is running for 2 seconds)
+        await().atMost(2000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnNewBeat();
+        // waits at least 1 second to prove new beat is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new beat
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, never()));
     }
 
     @Test
-    public void fastBeatSpeed_StartPractiseTimerAndRunFor3Seconds_Stop_After1Second_CallsNewSecondOnPresenterOnlyFourTimes()
-            throws InterruptedException {
+    public void fastBeatSpeed_StartPractiseTimerAndRunFor3Seconds_Stop_NewSecondOnPresenterNotCalledAfterStop() {
         // arrange
         model.setBeatSpeed(BeatSpeed.FAST);
         model.startPractiseTimer();
-        Thread.sleep(3000);
+        // waits until new beat is called four times (which is running for 3 seconds)
+        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(4)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, times(4)).modelOnNewBeat();
+        // waits at least 1 second to prove new beat is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new beat
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, never()));
     }
 
     @Test
-    public void veryFastBeatSpeed_StartPractiseTimerAndRunFor1Second_Stop_After1Second_CallsNewSecondOnPresenterOnlyTwice()
-            throws InterruptedException {
+    public void veryFastBeatSpeed_StartPractiseTimerAndRunFor1Second_Stop_NewSecondOnPresenterNotCalledAfterStop() {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
         model.startPractiseTimer();
-        Thread.sleep(1000);
+        // waits until new beat is called twice (which is running for 1 second)
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(2)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnNewBeat();
+        // waits at least 1 second to prove new beat is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new beat
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, never()));
     }
 
     @Test
-    public void oneBeatChordChange_StartPractiseTimer_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
-            throws InterruptedException {
+    public void oneBeatChordChange_StartPractiseTimer_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord() {
         // arrange
         model.setChordChange(ChordChange.ONE_BEAT);
         model.startPractiseTimer();
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+        // waits at least 1 second to prove new chord is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new chord
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.
+                newChordNotCalledOnPresenterForChord(presenter, selectedChords.get(1)));
     }
 
     @Test
-    public void twoBeatsChordChange_StartPractiseTimerAndRunFor1Second_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
-            throws InterruptedException {
+    public void twoBeatsChordChange_StartPractiseTimerAndRunFor1Second_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord() {
         // arrange
         model.setChordChange(ChordChange.TWO_BEATS);
         model.startPractiseTimer();
-        Thread.sleep(1000);
+        // waits until new beat is called once (which is running for 1 seconds)
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(1)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+        // waits at least 1 second to prove new chord is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new chord
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
+                selectedChords.get(1)));
     }
 
     @Test
-    public void fourBeatsChordChange_StartPractiseTimerAndRunFor3Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
-            throws InterruptedException {
+    public void fourBeatsChordChange_StartPractiseTimerAndRunFor3Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord() {
         // arrange
         model.setChordChange(ChordChange.FOUR_BEATS);
         model.startPractiseTimer();
-        Thread.sleep(3000);
+        // waits until new beat is called once (which is running for 3 seconds)
+        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(3)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+        // waits at least 1 second to prove new chord is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new chord
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
+                selectedChords.get(1)));
     }
 
     @Test
-    public void eightBeatsChordChange_StartPractiseTimerAndRunFor7Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
-            throws InterruptedException {
+    public void eightBeatsChordChange_StartPractiseTimerAndRunFor7Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord() {
         // arrange
         model.setChordChange(ChordChange.EIGHT_BEATS);
         model.startPractiseTimer();
-        Thread.sleep(7000);
+        // waits until new beat is called seven times (which is running for 7 seconds)
+        await().atMost(7000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(7)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+        // waits at least 1 second to prove new chord is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new chord
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
+                selectedChords.get(1)));
     }
 
     @Test
-    public void sixteenBeatsChordChange_StartPractiseTimerAndRunFor15Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord()
-            throws InterruptedException {
+    public void sixteenBeatsChordChange_StartPractiseTimerAndRunFor15Seconds_Stop_After1Second_DoesNotCallNewChordOnPresenterWithSecondChord() {
         // arrange
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
         model.startPractiseTimer();
-        Thread.sleep(15000);
+        // waits until new beat is called 15 times (which is running for 15 seconds)
+        await().atMost(15000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
+                presenter, times(15)));
 
         // act
         model.stopTimer();
-        Thread.sleep(1000);
 
         // assert
-        Mockito.verify(presenter, never()).modelOnNewChord(selectedChords.get(1));
+        // waits at least 1 second to prove new chord is never called
+        await().atLeast(1000, MILLISECONDS);
+        // resets presenter so doesn't count previous calls to new chord
+        Mockito.reset(presenter);
+        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
+                selectedChords.get(1)));
     }
 
     @Test
-    public void startCountdown_After6Seconds_CallsNewSecondOfCountdownForEachOnPresenter()
-            throws InterruptedException {
+    public void startCountdown_CallsNewSecondOfCountdownForEachOnPresenterAfter6Seconds() {
         // act
         model.startCountdown();
-        Thread.sleep(6000);
 
         // assert
-        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.THREE);
-        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.TWO);
-        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.ONE);
-        Mockito.verify(presenter).modelOnNewSecondOfCountdown(Countdown.GO);
+        await().atMost(6000, MILLISECONDS).until(AwaitConditionCreator
+                .newSecondOfCountdownCalledOnPresenterForEach(presenter));
     }
 
     @Test
-    public void startCountdown_After8Seconds_CallsCountdownFinishedOnPresenter()
+    public void startCountdown_CallsCountdownFinishedOnPresenterAfter8Seconds()
             throws InterruptedException {
         // act
         model.startCountdown();
-        Thread.sleep(8000);
 
         // assert
-        Mockito.verify(presenter).modelOnCountdownFinished();
+        await().atMost(8000, MILLISECONDS).until(AwaitConditionCreator
+                .countdownFinishedCalledOnPresenter(presenter));
     }
 
     @Test
@@ -447,72 +472,61 @@ public class PractiseModelTest {
     }
 
     @Test
-    public void savePractiseSession_CallsApiWithEachChord() {
+    public void savePractiseSession_CallsUpdateUserChordOnApi() {
         // arrange
-        // sets fake call with a response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeUserCall(null)));
         ((PractiseModel) model).setApi(api);
 
         // act
         model.savePractiseSession();
 
         // assert
-        Mockito.verify(api).updateUserChord(userId, selectedChords.get(0).getId());
-        Mockito.verify(api).updateUserChord(userId, selectedChords.get(1).getId());
-        Mockito.verify(api).updateUserChord(userId, selectedChords.get(2).getId());
-        Mockito.verify(api).updateUserChord(userId, selectedChords.get(3).getId());
+        ArrayList<Integer> chordIds = new ArrayList<>();
+        for (Chord chord : selectedChords) {
+            chordIds.add(chord.getId());
+        }
+        Mockito.verify(api).updateUserChords(userId, chordIds);
     }
 
     @Test
     public void savePractiseSession_OnSuccessfulResponse_CallsPractiseSessionSavedWithSuccessOnPresenter() {
         // arrange
-        // sets fake call with a response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(true);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        Response<User> response = FakeResponseCreator.getUserResponse(true, user);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeUserCall(response)));
         ((PractiseModel) model).setApi(api);
 
         // act
         model.savePractiseSession();
 
         // assert
-        Mockito.verify(presenter).modelOnPractiseSessionSaved(true, selectedChords.size()*100);
+        Mockito.verify(presenter).modelOnPractiseSessionSaved(user.getLevel(), user.getAchievements());
     }
 
     @Test
     public void savePractiseSession_OnUnsuccessfulResponse_CallsPractiseSessionSavedWithErrorOnPresenter() {
         // arrange
-        // sets fake call with a response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(response)));
+        Response<User> response = FakeResponseCreator.getUserResponse(false, null);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeUserCall(response)));
         ((PractiseModel) model).setApi(api);
 
         // act
         model.savePractiseSession();
 
         // assert
-        Mockito.verify(presenter).modelOnPractiseSessionSaved(false, 0);
+        Mockito.verify(presenter).modelOnPractiseSessionSaveError();
     }
 
     @Test
     public void savePractiseSession_OnFailure_CallsPractiseSessionSavedWithErrorOnPresenter() {
         // arrange
-        // sets fake call with no response (failure)
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakePostPutResponseCall(null)));
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeUserCall(null)));
         ((PractiseModel) model).setApi(api);
 
         // act
         model.savePractiseSession();
 
         // assert
-        Mockito.verify(presenter).modelOnPractiseSessionSaved(false, 0);
+        Mockito.verify(presenter).modelOnPractiseSessionSaveError();
     }
 }

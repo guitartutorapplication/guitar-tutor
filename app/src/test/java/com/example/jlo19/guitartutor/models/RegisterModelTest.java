@@ -5,12 +5,12 @@ import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
-import com.example.jlo19.guitartutor.helpers.FakePostPutResponseCall;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
+import com.example.jlo19.guitartutor.helpers.FakeResponseWithMessageCall;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
-import com.google.gson.Gson;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -175,14 +175,11 @@ public class RegisterModelTest {
     }
 
     @Test
-    public void registerWithCorrectCredentials_OnSuccessfulResponse_CallsRegisterSuccessOnPresenter() {
+    public void registerWithCorrectCredentials_OnSuccessfulResponse_CallsRegisterSuccessOnPresenter()
+            throws IOException {
         // arrange
-        // sets fake call with a successful response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(true);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(true, null);
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((RegisterModel) model).setApi(api);
 
         // act
@@ -196,18 +193,9 @@ public class RegisterModelTest {
     public void registerWithCorrectCredentials_OnInvalidEmailResponse_CallsInvalidEmailOnPresenter()
             throws IOException {
         // arrange
-        // sets fake call with a invalid email response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
                 ResponseError.INVALID_EMAIL.toString());
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((RegisterModel) model).setApi(api);
 
         // act
@@ -221,18 +209,9 @@ public class RegisterModelTest {
     public void registerWithCorrectCredentials_OnAlreadyRegisteredResponse_CallsAlreadyRegisterOnPresenter()
             throws IOException {
         // arrange
-        // sets fake call with an already registered response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
                 ResponseError.ALREADY_REGISTERED.toString());
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((RegisterModel) model).setApi(api);
 
         // act
@@ -246,18 +225,9 @@ public class RegisterModelTest {
     public void registerWithCorrectCredentials_OnErrorResponse_CallsRegisterErrorOnPresenter()
             throws IOException {
         // arrange
-        // sets fake call with a different error response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
                 "another error");
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((RegisterModel) model).setApi(api);
 
         // act
@@ -270,9 +240,8 @@ public class RegisterModelTest {
     @Test
     public void registerWithCorrectCredentials_OnFailure_CallsRegisterErrorOnPresenter() {
         // arrange
-        // sets fake call with no response (failure)
-        FakePostPutResponseCall call = new FakePostPutResponseCall(null);
-        DatabaseApi api = new FakeDatabaseApi(call);
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(null));
         ((RegisterModel) model).setApi(api);
 
         // act

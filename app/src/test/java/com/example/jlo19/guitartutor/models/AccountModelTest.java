@@ -5,9 +5,10 @@ import android.content.SharedPreferences;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
 import com.example.jlo19.guitartutor.helpers.FakeUserCall;
 import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
-import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -70,14 +71,8 @@ public class AccountModelTest {
     @Test
     public void getAccountDetails_OnSuccessfulResponse_CallsAccountDetailsRetrievedOnPresenter() {
         // arrange
-        // sets fake call with a successful response and user details
         User user = new User("Kate", "katesmith@gmail.com", 2, 2000);
-
-        Response<User> response = (Response<User>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.body()).thenReturn(user);
-        PowerMockito.when(response.isSuccessful()).thenReturn(true);
-
+        Response<User> response = FakeResponseCreator.getUserResponse(true, user);
         DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(response));
         ((AccountModel) model).setApi(api);
 
@@ -91,11 +86,7 @@ public class AccountModelTest {
     @Test
     public void getAccountDetails_OnUnsuccessfulResponse_CallsErrorOnPresenter() {
         // arrange
-        // sets fake call with a unsuccessful response
-        Response<User> response = (Response<User>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
+        Response<User> response = FakeResponseCreator.getUserResponse(false, null);
         DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(response));
         ((AccountModel) model).setApi(api);
 
@@ -109,9 +100,8 @@ public class AccountModelTest {
     @Test
     public void getAccountDetails_OnFailure_CallsErrorOnPresenter() {
         // arrange
-        // sets fake call with no response (failure)
-        FakeUserCall call = new FakeUserCall(null);
-        DatabaseApi api = new FakeDatabaseApi(call);
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(null));
         ((AccountModel) model).setApi(api);
 
         // act

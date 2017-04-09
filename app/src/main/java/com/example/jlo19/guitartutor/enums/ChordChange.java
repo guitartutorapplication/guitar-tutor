@@ -12,7 +12,7 @@ public enum ChordChange {
     EIGHT_BEATS(8),
     SIXTEEN_BEATS(16);
 
-    private int value;
+    private final int value;
 
     ChordChange(int value) {
         this.value = value;

@@ -8,7 +8,7 @@ import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.enums.Countdown;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
@@ -277,28 +277,57 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void modelOnPractiseSessionSavedWithSuccess_CallsShowPractiseSessionSaveSuccessOnView() {
+    public void modelOnPractiseSessionSavedWithZeroLevelAndAchievements_CallsShowPractiseSessionSaveSuccessOnView() {
         // act
-        int achievements = 100;
-        presenter.modelOnPractiseSessionSaved(true, achievements);
+        presenter.modelOnPractiseSessionSaved(0, 0);
+
+        // assert
+        Mockito.verify(view).showPractiseSessionSaveSuccess();
+    }
+
+    @Test
+    public void modelOnPractiseSessionSavedWithNonZeroAchievements_CallsShowPractiseSessionSaveSuccessWithAchievementsOnView() {
+        // act
+        int achievements = 2800;
+        presenter.modelOnPractiseSessionSaved(0, achievements);
 
         // assert
         Mockito.verify(view).showPractiseSessionSaveSuccess(achievements);
     }
 
     @Test
-    public void modelOnPractiseSessionSavedWithError_CallsShowPractiseSessionSaveErrorOnView() {
+    public void modelOnPractiseSessionSavedWithNonZeroLevelAndAchievements_CallsShowPractiseSessionSaveWithAchievementsAndLevelOnView() {
         // act
-        presenter.modelOnPractiseSessionSaved(false, 0);
+        int achievements = 2000;
+        int level = 3;
+        presenter.modelOnPractiseSessionSaved(level, achievements);
+
+        // assert
+        Mockito.verify(view).showPractiseSessionSaveSuccess(level, achievements);
+    }
+
+    @Test
+    public void modelOnPractiseSessionSaved_CallsReturnToPractiseSetupOnView() {
+        // act
+        presenter.modelOnPractiseSessionSaved(0, 0);
+
+        // assert
+        Mockito.verify(view).returnToPractiseSetup();
+    }
+
+    @Test
+    public void modelOnPractiseSessionSaveError_CallsShowPractiseSessionSaveErrorOnView() {
+        // act
+        presenter.modelOnPractiseSessionSaveError();
 
         // assert
         Mockito.verify(view).showPractiseSessionSaveError();
     }
 
     @Test
-    public void modelOnPractiseSessionSaved_CallsReturnToPractiseSetupOnView() {
+    public void modelOnPractiseSessionSaveError_CallsReturnToPractiseSetupOnView() {
         // act
-        presenter.modelOnPractiseSessionSaved(true, 0);
+        presenter.modelOnPractiseSessionSaveError();
 
         // assert
         Mockito.verify(view).returnToPractiseSetup();

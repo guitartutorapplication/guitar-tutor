@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,7 +17,7 @@ import com.example.jlo19.guitartutor.adapters.ChordsListAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
 
@@ -138,11 +137,6 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
     public void onStop() {
         super.onStop();
         presenter.viewOnStop();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override

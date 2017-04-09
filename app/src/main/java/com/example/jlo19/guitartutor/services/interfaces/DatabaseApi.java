@@ -1,11 +1,12 @@
 package com.example.jlo19.guitartutor.services.interfaces;
 
-import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
-import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.User;
-import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -20,30 +21,32 @@ import retrofit2.http.Path;
  */
 public interface DatabaseApi {
     @GET("chords")
-    Call<ChordsResponse> getChords();
+    Call<List<Chord>> getChords();
 
     @GET("songs")
-    Call<SongsResponse> getSongs();
+    Call<List<Song>> getSongs();
 
     @FormUrlEncoded
     @POST("users")
-    Call<PostPutResponse> registerUser(@Field("name") String name, @Field("email") String email,
-                                       @Field("password") String password);
+    Call<ResponseWithMessage> registerUser(@Field("name") String name, @Field("email") String email,
+                                           @Field("password") String password);
     @GET("users/{id}")
     Call<User> getAccountDetails(@Path("id") int userId);
     @FormUrlEncoded
     @PUT("users/{id}")
-    Call<PostPutResponse> editAccountDetails(@Path("id") int userId, @Field("name") String name,
-                                             @Field("email") String email, @Field("password")
+    Call<ResponseWithMessage> editAccountDetails(@Path("id") int userId, @Field("name") String name,
+                                                 @Field("email") String email, @Field("password")
                                                      String password);
     @FormUrlEncoded
     @POST("users/login")
-    Call<LoginResponse> loginUser(@Field("email") String email, @Field("password") String password);
+    Call<User> loginUser(@Field("email") String email, @Field("password") String password);
     @GET("users/{id}/chords")
-    Call<UserChordsResponse> getUserChords(@Path("id") int userId);
+    Call<List<Chord>> getUserChords(@Path("id") int userId);
     @FormUrlEncoded
     @POST("users/{id}/chords")
-    Call<PostPutResponse> addUserChord(@Path("id") int userId, @Field("chord_id") int chordId);
-    @PUT("users/{user_id}/chords/{chord_id}")
-    Call<PostPutResponse> updateUserChord(@Path("user_id") int userId, @Path("chord_id") int chordId);
+    Call<User> addUserChord(@Path("id") int userId, @Field("chord_id") int chordId);
+    @FormUrlEncoded
+    @PUT("users/{id}/chords")
+    Call<User> updateUserChords(@Path("id") int userId, @Field("chord_ids[]")
+            ArrayList<Integer> chordIds);
 }

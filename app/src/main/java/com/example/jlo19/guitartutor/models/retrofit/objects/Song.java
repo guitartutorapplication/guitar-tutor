@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models.retrofit;
+package com.example.jlo19.guitartutor.models.retrofit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class Song implements Parcelable {
     @SerializedName("title")
-    private String title;
+    private final String title;
     @SerializedName("artist")
-    private String artist;
+    private final String artist;
     @SerializedName("contents")
-    private String contents;
+    private final String contents;
     @SerializedName("chords")
-    private List<Chord> chords;
+    private final List<Chord> chords;
 
     public Song(String title, String artist, String contents, List<Chord> chords) {
         this.title = title;

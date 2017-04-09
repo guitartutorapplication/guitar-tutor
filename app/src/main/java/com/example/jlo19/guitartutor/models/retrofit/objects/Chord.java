@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models.retrofit;
+package com.example.jlo19.guitartutor.models.retrofit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,15 +10,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Chord implements Parcelable {
     @SerializedName("diagram_filename")
-    private String diagramFilename;
+    private final String diagramFilename;
     @SerializedName("chord_id")
-    private int id;
+    private final int id;
     @SerializedName("name")
-    private String name;
+    private final String name;
     @SerializedName("type")
-    private String type;
+    private final String type;
     @SerializedName("video_filename")
-    private String videoFilename;
+    private final String videoFilename;
     @SerializedName("level_required")
     private int levelRequired;
 
