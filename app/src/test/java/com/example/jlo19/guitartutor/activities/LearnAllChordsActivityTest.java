@@ -157,7 +157,7 @@ public class LearnAllChordsActivityTest {
     @Test
     public void startLearnChordActivity_LearnChordActivityIsStarted() {
         // act
-        Chord chord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1);
+        Chord chord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
         boolean isLearntChord = true;
         activity.startLearnChordActivity(chord, true);
 

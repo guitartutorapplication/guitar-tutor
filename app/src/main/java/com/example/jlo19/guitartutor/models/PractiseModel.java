@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
@@ -61,7 +61,7 @@ public class PractiseModel implements IPractiseModel {
                     try {
                         for (int i = 0; i < selectedChords.size(); i++) {
                             // inform presenter that on the next chord in sequence
-                            presenter.modelOnNewChord(selectedChords.get(i));
+                            presenter.modelOnNewPractiseState(PractiseActivityState.NEW_CHORD, i);
 
                             // play sound for number of beats in chord change
                             for (int j = 0; j < chordChange.getValue(); j++) {
@@ -69,7 +69,7 @@ public class PractiseModel implements IPractiseModel {
                                     return;
                                 }
                                 // inform presenter every beat
-                                presenter.modelOnNewBeat();
+                                presenter.modelOnNewPractiseState(PractiseActivityState.NEW_BEAT, i);
                                 Thread.sleep(beatSpeed.getValue());
                             }
                         }
@@ -126,7 +126,7 @@ public class PractiseModel implements IPractiseModel {
                         }
 
                         // inform presenter every second of countdown
-                        presenter.modelOnNewSecondOfCountdown(Countdown.values()[i]);
+                        presenter.modelOnNewPractiseState(PractiseActivityState.values()[i], 0);
                         if (i == 3) {
                             Thread.sleep(3000);
                         } else {
@@ -178,5 +178,21 @@ public class PractiseModel implements IPractiseModel {
     @Override
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public List<String> getAudioFilenames() {
+        List<String> filenames = new ArrayList<>();
+        for (PractiseActivityState state : PractiseActivityState.values()) {
+            if (state == PractiseActivityState.NEW_CHORD) {
+                for (Chord chord : selectedChords) {
+                    filenames.add(chord.getAudioFilename());
+                }
+            }
+            else {
+                filenames.add(state.getFilename());
+            }
+        }
+        return filenames;
     }
 }

@@ -34,8 +34,8 @@ public class ChordsListAdapterTest {
     @Before
     public void setUp() {
         chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
 
         context = RuntimeEnvironment.application;
 

@@ -59,12 +59,12 @@ public class SongLibraryModelTest {
         presenter = PowerMockito.mock(ISongLibraryPresenter.class);
         model.setPresenter(presenter);
 
-        userChords = Arrays.asList(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+        userChords = Arrays.asList(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1))),
+                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1))),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", userChords));
     }
 

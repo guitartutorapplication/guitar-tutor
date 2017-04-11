@@ -36,8 +36,8 @@ public class SongsListAdapterTest {
     @Before
     public void setUp() {
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         songs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));

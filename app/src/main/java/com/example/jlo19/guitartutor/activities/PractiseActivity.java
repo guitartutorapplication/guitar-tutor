@@ -18,6 +18,7 @@ import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,17 +32,12 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     private IPractisePresenter presenter;
     private Button btnStop;
     private SoundPool soundPool;
-    private int metronomeSoundId;
     private ChordChange chordChange;
     private BeatSpeed beatSpeed;
     private TextView txtCountdown;
     private TextView txtFirstChordInstruction;
     private TextView txtFirstChord;
-    private int countdown1SoundId;
-    private int countdown2SoundId;
-    private int countdown3SoundId;
-    private int countdownGoSoundId;
-    private int numSoundsLoaded;
+    private List<Integer> soundIds;
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     SoundPool.OnLoadCompleteListener onLoadCompleteListener;
@@ -68,8 +64,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
         // retrieving beat speed
         beatSpeed = (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
 
-        numSoundsLoaded = 0;
-        setSoundPool(new SoundPool.Builder().setMaxStreams(1).build());
+        setSoundPool(new SoundPool.Builder().setMaxStreams(2).build());
 
         txtCountdown = (TextView) findViewById(R.id.txtCountdown);
         txtFirstChordInstruction = (TextView) findViewById(R.id.txtFirstChordInstruction);
@@ -93,10 +88,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
         onLoadCompleteListener = new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                numSoundsLoaded++;
-                if (numSoundsLoaded == 5) {
-                    presenter.viewOnSoundsLoaded();
-                }
+                presenter.viewOnSoundLoaded(status);
             }
         };
         soundPool.setOnLoadCompleteListener(onLoadCompleteListener);
@@ -156,8 +148,10 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     }
 
     @Override
-    public void playMetronomeSound() {
-        soundPool.play(metronomeSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+    public void playSound(int index) {
+        if (soundPool != null) {
+            soundPool.play(soundIds.get(index), 1.0f, 1.0f, 1, 0, 1f);
+        }
     }
 
     @Override
@@ -172,12 +166,13 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     }
 
     @Override
-    public void loadSounds() {
-        countdown3SoundId = soundPool.load(this, R.raw.countdown_3, 1);
-        countdown2SoundId = soundPool.load(this, R.raw.countdown_2, 1);
-        countdown1SoundId = soundPool.load(this, R.raw.countdown_1, 1);
-        countdownGoSoundId = soundPool.load(this, R.raw.countdown_go, 1);
-        metronomeSoundId = soundPool.load(this, R.raw.metronome_sound, 1);
+    public void loadSounds(List<String> filenames) {
+        soundIds = new ArrayList<>();
+        for (String filename : filenames) {
+            int resource = getResources().getIdentifier(
+                    filename, "raw", getPackageName());
+            soundIds.add(soundPool.load(this, resource, 1));
+        }
     }
 
     @Override
@@ -224,26 +219,6 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Override
     public void setFirstChordText(String firstChord) {
         txtFirstChord.setText(firstChord);
-    }
-
-    @Override
-    public void playCountdownOneSound() {
-        soundPool.play(countdown1SoundId, 1.0f, 1.0f, 1, 0, 0.75f);
-    }
-
-    @Override
-    public void playCountdownTwoSound() {
-        soundPool.play(countdown2SoundId, 1.0f, 1.0f, 1, 0, 0.75f);
-    }
-
-    @Override
-    public void playCountdownThreeSound() {
-        soundPool.play(countdown3SoundId, 1.0f, 1.0f, 1, 0, 0.75f);
-    }
-
-    @Override
-    public void playCountdownGoSound() {
-        soundPool.play(countdownGoSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
     }
 
     @Override

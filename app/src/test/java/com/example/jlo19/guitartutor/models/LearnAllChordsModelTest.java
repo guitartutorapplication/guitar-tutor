@@ -70,10 +70,10 @@ public class LearnAllChordsModelTest {
         model.setPresenter(presenter);
 
         chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         userChords = Collections.singletonList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
         userChordIds = Collections.singletonList(1);
         user = new User(1, "Kate", "katesmith@gmail.com", 2, 2000);
     }

@@ -96,8 +96,8 @@ public class PractiseSetupPresenterTest {
     public void modelOnChordsRetrieved_SetsChordsOnView() {
         // act
         List<Chord> expectedChords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         presenter.modelOnChordsRetrieved(expectedChords);
 
         // assert
@@ -126,9 +126,9 @@ public class PractiseSetupPresenterTest {
     public void viewOnPractise_CallsChordsSelectedOnModel() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1));
         }};
         int selectedChordChangeIndex = 1;
         int selectedBeatSpeedIndex = 1;
@@ -160,9 +160,9 @@ public class PractiseSetupPresenterTest {
     public void modelOnCorrectSelectedChords_CallsStartPractiseActivityOnView() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1));
         }};
         presenter.modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
 

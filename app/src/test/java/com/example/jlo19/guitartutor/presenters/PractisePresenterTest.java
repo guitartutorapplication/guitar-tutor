@@ -6,7 +6,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
@@ -21,6 +21,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Testing PractisePresenter
@@ -36,6 +38,7 @@ public class PractisePresenterTest {
     private ChordChange chordChange;
     private BeatSpeed beatSpeed;
     private SharedPreferences sharedPreferences;
+    private List<String> audioFilenames;
 
     @Before
     public void setUp() {
@@ -46,10 +49,10 @@ public class PractisePresenterTest {
         presenter = new PractisePresenter();
 
         selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
-            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4", 1));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1));
+            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4", "D.wav", 1));
         }};
         chordChange = ChordChange.EIGHT_BEATS;
         beatSpeed = BeatSpeed.FAST;
@@ -63,13 +66,16 @@ public class PractisePresenterTest {
         presenter.setSharedPreferences(sharedPreferences);
 
         model = Mockito.mock(IPractiseModel.class);
+        audioFilenames = Arrays.asList("countdown_3", "countdown_2", "countdown_1",
+                "countdown_go", "metronome_sound", "A.wav", "B.wav", "C.wav", "D.wav");
+        Mockito.when(model.getAudioFilenames()).thenReturn(audioFilenames);
         ((PractisePresenter) presenter).setModel(model);
     }
 
     @Test
     public void setModel_CallsLoadSoundOnView() {
         // assert
-        Mockito.verify(view).loadSounds();
+        Mockito.verify(view).loadSounds(audioFilenames);
     }
 
     @Test
@@ -117,19 +123,30 @@ public class PractisePresenterTest {
     @Test
     public void modelOnNewChord_CallsSetChordTextOnViewWithChord() {
         // act
-        presenter.modelOnNewChord(selectedChords.get(1));
+        int chordIndex = 1;
+        presenter.modelOnNewPractiseState(PractiseActivityState.NEW_CHORD, chordIndex);
 
         // assert
-        Mockito.verify(view).setChordText(selectedChords.get(1).toString());
+        Mockito.verify(view).setChordText(selectedChords.get(chordIndex).toString());
     }
 
     @Test
-    public void modelOnNewBeat_CallsPlayMetronomeSoundOnView() {
+    public void modelOnNewChord_CallPlaySoundOnView() {
         // act
-        presenter.modelOnNewBeat();
+        int chordIndex = 1;
+        presenter.modelOnNewPractiseState(PractiseActivityState.NEW_CHORD, chordIndex);
 
         // assert
-        Mockito.verify(view).playMetronomeSound();
+        Mockito.verify(view).playSound(PractiseActivityState.NEW_CHORD.ordinal() + chordIndex);
+    }
+
+    @Test
+    public void modelOnNewBeat_CallsPlaySoundOnView() {
+        // act
+        presenter.modelOnNewPractiseState(PractiseActivityState.NEW_BEAT, 0);
+
+        // assert
+        Mockito.verify(view).playSound(PractiseActivityState.NEW_BEAT.ordinal());
     }
 
     @Test
@@ -151,48 +168,83 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void modelOnNewSecondOfCountdown_CallsSetCountdownText() {
+    public void modelOnCountdownStage3_CallsSetCountdownText() {
         // act
-        presenter.modelOnNewSecondOfCountdown(Countdown.THREE);
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_3;
+        presenter.modelOnNewPractiseState(state, 0);
 
         // assert
-        Mockito.verify(view).setCountdownText(Countdown.THREE.toString());
+        Mockito.verify(view).setCountdownText(state.toString());
     }
 
     @Test
-    public void modelOnNewSecondOfCountdownWith3_CallsPlayCountdownThreeSoundOnView() {
+    public void modelOnCountdownStage2_CallsSetCountdownText() {
         // act
-        presenter.modelOnNewSecondOfCountdown(Countdown.THREE);
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_2;
+        presenter.modelOnNewPractiseState(state, 0);
 
         // assert
-        Mockito.verify(view).playCountdownThreeSound();
+        Mockito.verify(view).setCountdownText(state.toString());
     }
 
     @Test
-    public void modelOnNewSecondOfCountdownWith2_CallsPlayCountdownTwoSoundOnView() {
+    public void modelOnCountdownStage1_CallsSetCountdownText() {
         // act
-        presenter.modelOnNewSecondOfCountdown(Countdown.TWO);
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_1;
+        presenter.modelOnNewPractiseState(state, 0);
 
         // assert
-        Mockito.verify(view).playCountdownTwoSound();
+        Mockito.verify(view).setCountdownText(state.toString());
     }
 
     @Test
-    public void modelOnNewSecondOfCountdownWith1_CallsPlayCountdownOneSoundOnView() {
+    public void modelOnCountdownStageGo_CallsSetCountdownText() {
         // act
-        presenter.modelOnNewSecondOfCountdown(Countdown.ONE);
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_GO;
+        presenter.modelOnNewPractiseState(state, 0);
 
         // assert
-        Mockito.verify(view).playCountdownOneSound();
+        Mockito.verify(view).setCountdownText(state.toString());
     }
 
     @Test
-    public void modelOnNewSecondOfCountdownWithGo_CallsPlayCountdownGoSoundOnView() {
+    public void modelOnCountdownStage3_CallsPlaySoundOnView() {
         // act
-        presenter.modelOnNewSecondOfCountdown(Countdown.GO);
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_3;
+        presenter.modelOnNewPractiseState(state, 0);
 
         // assert
-        Mockito.verify(view).playCountdownGoSound();
+        Mockito.verify(view).playSound(state.ordinal());
+    }
+
+    @Test
+    public void modelOnCountdownStage2_CallsPlaySoundOnView() {
+        // act
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_2;
+        presenter.modelOnNewPractiseState(state, 0);
+
+        // assert
+        Mockito.verify(view).playSound(state.ordinal());
+    }
+
+    @Test
+    public void modelOnCountdownStage1_CallsPlaySoundOnView() {
+        // act
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_1;
+        presenter.modelOnNewPractiseState(state, 0);
+
+        // assert
+        Mockito.verify(view).playSound(state.ordinal());
+    }
+
+    @Test
+    public void modelOnCountdownStageGo_CallsPlaySoundOnView() {
+        // act
+        PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_GO;
+        presenter.modelOnNewPractiseState(state, 0);
+
+        // assert
+        Mockito.verify(view).playSound(state.ordinal());
     }
 
     @Test
@@ -229,15 +281,6 @@ public class PractisePresenterTest {
 
         // assert
         Mockito.verify(view).showStopButton();
-    }
-
-    @Test
-    public void viewOnSoundsLoaded_StartCountdownOnModel() {
-        // act
-        presenter.viewOnSoundsLoaded();
-
-        // assert
-        Mockito.verify(model).startCountdown();
     }
 
     @Test
@@ -331,5 +374,28 @@ public class PractisePresenterTest {
 
         // assert
         Mockito.verify(view).returnToPractiseSetup();
+    }
+
+    @Test
+    public void viewOnSoundLoadedForEachFilenameSuccessfully_CallsStartCountdownOnModel() {
+        // act
+        for (String ignored : audioFilenames) {
+            presenter.viewOnSoundLoaded(0);
+        }
+
+        // assert
+        Mockito.verify(model).startCountdown();
+    }
+
+    @Test
+    public void viewOnSoundLoadedForEachFilenameWithOneUnsuccessful_CallsErrorOnView() {
+        // act
+        for (int i = 0; i < audioFilenames.size()-1; i++) {
+            presenter.viewOnSoundLoaded(0);
+        }
+        presenter.viewOnSoundLoaded(1);
+
+        // assert
+        Mockito.verify(view).showError();
     }
 }

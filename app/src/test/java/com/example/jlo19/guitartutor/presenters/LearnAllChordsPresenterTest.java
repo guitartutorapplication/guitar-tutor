@@ -53,18 +53,18 @@ public class LearnAllChordsPresenterTest {
         presenter.setView(view);
 
         chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1),
-                new Chord(3, "A", "MINOR", "Am.png", "Am.mp4", 2),
-                new Chord(4, "B", "MINOR", "Bm.png", "Bm.mp4", 2),
-                new Chord(5, "A", "SEVEN", "A7.png", "A7.mp4", 3),
-                new Chord(6, "B", "SEVEN", "B7.png", "B7.mp4", 3),
-                new Chord(7, "B", "FLAT", "Bb.png", "Bb.mp4", 4),
-                new Chord(8, "D", "FLAT", "Db.png", "Db.mp4", 4),
-                new Chord(9, "F", "SHARP", "F#.png", "F#.mp4", 5),
-                new Chord(10, "C", "SHARP", "C#.png", "C#.mp4", 5),
-                new Chord(11, "C", "SHARP_MINOR", "C#m.png", "C#m.mp4", 6),
-                new Chord(12, "F", "SHARP_MINOR", "F#m.png", "F#m.mp4", 6));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1),
+                new Chord(3, "A", "MINOR", "Am.png", "Am.mp4", "Am.wav", 2),
+                new Chord(4, "B", "MINOR", "Bm.png", "Bm.mp4", "Bm.wav", 2),
+                new Chord(5, "A", "SEVEN", "A7.png", "A7.mp4", "A7.wav", 3),
+                new Chord(6, "B", "SEVEN", "B7.png", "B7.mp4", "B7.wav", 3),
+                new Chord(7, "B", "FLAT", "Bb.png", "Bb.mp4", "Bb.wav", 4),
+                new Chord(8, "D", "FLAT", "Db.png", "Db.mp4", "Db.wav", 4),
+                new Chord(9, "F", "SHARP", "F#.png", "F#.mp4", "F#.wav", 5),
+                new Chord(10, "C", "SHARP", "C#.png", "C#.mp4", "C#.wav", 5),
+                new Chord(11, "C", "SHARP_MINOR", "C#m.png", "C#m.mp4", "C#m.wav", 6),
+                new Chord(12, "F", "SHARP_MINOR", "F#m.png", "F#m.mp4", "F#m.wav", 6));
         Mockito.when(model.getAllChords()).thenReturn(chords);
 
         userChords = Arrays.asList(1, 3, 5, 7, 9, 11);

@@ -59,7 +59,7 @@ public class LearnChordActivityTest {
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
         // giving activity a selected chord
-        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1);
+        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
         learntChord = true;
         Intent intent = new Intent();
         intent.putExtra("CHORD", selectedChord);

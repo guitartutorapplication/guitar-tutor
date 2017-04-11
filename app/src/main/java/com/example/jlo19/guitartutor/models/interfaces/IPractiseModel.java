@@ -23,4 +23,5 @@ public interface IPractiseModel {
     void startCountdown();
     void savePractiseSession();
     void setSharedPreferences(SharedPreferences sharedPreferences);
+    List<String> getAudioFilenames();
 }

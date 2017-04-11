@@ -31,6 +31,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.robolectric.Shadows.shadowOf;
@@ -48,6 +49,8 @@ public class PractiseActivityTest {
     private ArrayList<Chord> selectedChords;
     private ChordChange chordChange;
     private BeatSpeed beatSpeed;
+    private List<String> audioFilenames;
+    private ArrayList<Integer> audioResources;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -62,8 +65,8 @@ public class PractiseActivityTest {
         // giving activity selected chords, chord change and beat speed
         selectedChords = new ArrayList<Chord>(){
             {
-                add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
-                add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+                add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+                add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
             }};
         chordChange = ChordChange.EIGHT_BEATS;
         beatSpeed = BeatSpeed.FAST;
@@ -79,6 +82,15 @@ public class PractiseActivityTest {
         activity.setPresenter(presenter);
         soundPool = PowerMockito.mock(SoundPool.class);
         activity.setSoundPool(soundPool);
+
+        audioFilenames = Arrays.asList("countdown_3", "countdown_2", "countdown_1",
+                "countdown_go", "metronome_sound", "a", "b", "c");
+        audioResources = new ArrayList<>();
+        for (int i = 0; i < audioFilenames.size(); i++) {
+            audioResources.add(getApp().getResources().getIdentifier(
+                    audioFilenames.get(i), "raw", getApp().getPackageName()));
+            Mockito.when(soundPool.load(activity, audioResources.get(i), 1)).thenReturn(i);
+        }
     }
 
     @Test
@@ -94,18 +106,13 @@ public class PractiseActivityTest {
     }
 
     @Test
-    public void onLoadCompleteFiveTimes_CallsSoundsLoadedOnPresenter() {
-        // arrange
-        activity.onLoadCompleteListener.onLoadComplete(soundPool, 1, 1);
-        activity.onLoadCompleteListener.onLoadComplete(soundPool, 1, 1);
-        activity.onLoadCompleteListener.onLoadComplete(soundPool, 1, 1);
-        activity.onLoadCompleteListener.onLoadComplete(soundPool, 1, 1);
-
+    public void onLoadComplete_CallsSoundLoadedOnPresenter() {
         // act
-        activity.onLoadCompleteListener.onLoadComplete(soundPool, 1, 1);
+        int success = 0;
+        activity.onLoadCompleteListener.onLoadComplete(soundPool, 1, success);
 
         // assert
-        Mockito.verify(presenter).viewOnSoundsLoaded();
+        Mockito.verify(presenter).viewOnSoundLoaded(success);
     }
 
     @Test
@@ -231,30 +238,28 @@ public class PractiseActivityTest {
     }
 
     @Test
-    public void loadSounds_CallsLoadOnSoundPoolWith5SoundClips() {
+    public void loadSounds_CallsLoadOnSoundPoolWithFilenames() {
         // act
-        activity.loadSounds();
+        activity.loadSounds(audioFilenames);
 
         // assert
-        Mockito.verify(soundPool).load(activity, R.raw.metronome_sound, 1);
-        Mockito.verify(soundPool).load(activity, R.raw.countdown_3, 1);
-        Mockito.verify(soundPool).load(activity, R.raw.countdown_2, 1);
-        Mockito.verify(soundPool).load(activity, R.raw.countdown_1, 1);
-        Mockito.verify(soundPool).load(activity, R.raw.countdown_go, 1);
+        for (int resource : audioResources) {
+            Mockito.verify(soundPool).load(activity, resource, 1);
+        }
     }
 
     @Test
-    public void playMetronomeSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
+    public void playSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
         // arrange
-        int expectedSoundId = 1;
-        Mockito.when(soundPool.load(activity, R.raw.metronome_sound, 1)).thenReturn(expectedSoundId);
-        activity.loadSounds();
+        activity.loadSounds(audioFilenames);
 
-        // act
-        activity.playMetronomeSound();
+        for (int i = 0; i < audioResources.size(); i++) {
+            // act
+            activity.playSound(i);
 
-        // assert
-        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
+            // assert
+            Mockito.verify(soundPool).play(i, 1.0f, 1.0f, 1, 0, 1f);
+        }
     }
 
     @Test
@@ -359,62 +364,6 @@ public class PractiseActivityTest {
         // assert
         TextView txtFirstChord = (TextView) activity.findViewById(R.id.txtFirstChord);
         Assert.assertEquals(expectedText, txtFirstChord.getText());
-    }
-
-    @Test
-    public void playCountdownOneSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
-        // arrange
-        int expectedSoundId = 2;
-        Mockito.when(soundPool.load(activity, R.raw.countdown_1, 1)).thenReturn(expectedSoundId);
-        activity.loadSounds();
-
-        // act
-        activity.playCountdownOneSound();
-
-        // assert
-        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
-    }
-
-    @Test
-    public void playCountdownTwoSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
-        // arrange
-        int expectedSoundId = 3;
-        Mockito.when(soundPool.load(activity, R.raw.countdown_2, 1)).thenReturn(expectedSoundId);
-        activity.loadSounds();
-
-        // act
-        activity.playCountdownTwoSound();
-
-        // assert
-        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
-    }
-
-    @Test
-    public void playCountdownThreeSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
-        // arrange
-        int expectedSoundId = 4;
-        Mockito.when(soundPool.load(activity, R.raw.countdown_3, 1)).thenReturn(expectedSoundId);
-        activity.loadSounds();
-
-        // act
-        activity.playCountdownThreeSound();
-
-        // assert
-        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
-    }
-
-    @Test
-    public void playCountdownGoSound_CallsPlayOnSoundPoolWithLoadedSoundId() {
-        // arrange
-        int expectedSoundId = 5;
-        Mockito.when(soundPool.load(activity, R.raw.countdown_go, 1)).thenReturn(expectedSoundId);
-        activity.loadSounds();
-
-        // act
-        activity.playCountdownGoSound();
-
-        // assert
-        Mockito.verify(soundPool).play(expectedSoundId, 1.0f, 1.0f, 1, 0, 0.75f);
     }
 
     @Test

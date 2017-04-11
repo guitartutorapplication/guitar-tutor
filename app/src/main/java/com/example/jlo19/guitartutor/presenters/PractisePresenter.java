@@ -3,9 +3,8 @@ package com.example.jlo19.guitartutor.presenters;
 import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.PractiseView;
@@ -20,6 +19,8 @@ public class PractisePresenter implements IPractisePresenter {
     private PractiseView view;
     private IPractiseModel model;
     private SharedPreferences sharedPreferences;
+    private int numSoundsLoaded;
+    private int numSoundsLoadedSuccess;
 
     @Override
     public void setView(IView view) {
@@ -39,12 +40,9 @@ public class PractisePresenter implements IPractisePresenter {
         model.setBeatSpeed(view.getBeatSpeed());
         model.createPractiseTimer();
 
-        view.loadSounds();
-    }
-
-    @Override
-    public void modelOnNewChord(Chord chord) {
-        view.setChordText(chord.toString());
+        numSoundsLoaded = 0;
+        numSoundsLoadedSuccess = 0;
+        view.loadSounds(model.getAudioFilenames());
     }
 
     @Override
@@ -53,34 +51,9 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void modelOnNewBeat() {
-        view.playMetronomeSound();
-    }
-
-    @Override
     public void modelOnError() {
         view.showError();
         view.returnToPractiseSetup();
-    }
-
-    @Override
-    public void modelOnNewSecondOfCountdown(Countdown countdownStage) {
-        view.setCountdownText(countdownStage.toString());
-
-        switch (countdownStage) {
-            case ONE:
-                view.playCountdownOneSound();
-                break;
-            case TWO:
-                view.playCountdownTwoSound();
-                break;
-            case THREE:
-                view.playCountdownThreeSound();
-                break;
-            case GO:
-                view.playCountdownGoSound();
-                break;
-        }
     }
 
     @Override
@@ -91,8 +64,23 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void viewOnSoundsLoaded() {
-        model.startCountdown();
+    public void viewOnSoundLoaded(int status) {
+        numSoundsLoaded++;
+        // this means load was a success
+        if (status == 0) {
+            numSoundsLoadedSuccess++;
+        }
+
+        if (numSoundsLoaded == model.getAudioFilenames().size()) {
+            // start countdown only if all sounds are successfully loaded
+            if (numSoundsLoaded == numSoundsLoadedSuccess) {
+                model.startCountdown();
+            }
+            // show error is not all sounds were successfully loaded
+            else {
+                view.showError();
+            }
+        }
     }
 
     @Override
@@ -139,5 +127,23 @@ public class PractisePresenter implements IPractisePresenter {
     public void modelOnPractiseSessionSaveError() {
         view.showPractiseSessionSaveError();
         view.returnToPractiseSetup();
+    }
+
+    @Override
+    public void modelOnNewPractiseState(PractiseActivityState state, int currentChordIndex) {
+        if (state != PractiseActivityState.NEW_CHORD) {
+            view.playSound(state.ordinal());
+            // if in any of the countdown states, set the countdown text with message
+            if (state == PractiseActivityState.COUNTDOWN_STAGE_1 || state ==
+                    PractiseActivityState.COUNTDOWN_STAGE_2 || state == PractiseActivityState.
+                    COUNTDOWN_STAGE_3  || state == PractiseActivityState.COUNTDOWN_STAGE_GO) {
+                view.setCountdownText(state.toString());
+            }
+        }
+        else {
+            view.playSound(state.ordinal() + currentChordIndex);
+            // if in new chord state, set chord text with current chord name
+            view.setChordText(view.getSelectedChords().get(currentChordIndex).toString());
+        }
     }
 }

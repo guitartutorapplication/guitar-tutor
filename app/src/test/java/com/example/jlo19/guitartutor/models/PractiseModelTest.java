@@ -6,7 +6,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 import com.example.jlo19.guitartutor.helpers.AwaitConditionCreator;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
@@ -16,6 +16,8 @@ import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,10 +62,10 @@ public class PractiseModelTest {
         model.setPresenter(presenter);
 
         selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", 1));
-            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4", 1));
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
+            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1));
+            add(new Chord(4, "D", "MAJOR", "D.png", "D.mp4", "D.wav", 1));
         }};
         model.setSelectedChords(selectedChords);
         model.setChordChange(ChordChange.ONE_BEAT);
@@ -98,8 +100,11 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(4000, MILLISECONDS).until(AwaitConditionCreator.
-                newChordCalledOnPresenterForEachChord(presenter, selectedChords));
+        for (int i = 0; i < selectedChords.size(); i++) {
+            await().atMost(4000, MILLISECONDS).until(AwaitConditionCreator.
+                    newPractiseStateCalledOnPresenter(presenter, PractiseActivityState.NEW_CHORD, i,
+                            times(1)));
+        }
     }
 
     @Test
@@ -111,8 +116,11 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(8000, MILLISECONDS).until(AwaitConditionCreator.
-                newChordCalledOnPresenterForEachChord(presenter, selectedChords));
+        for (int i = 0; i < selectedChords.size(); i++) {
+            await().atMost(8000, MILLISECONDS).until(AwaitConditionCreator.
+                    newPractiseStateCalledOnPresenter(presenter, PractiseActivityState.NEW_CHORD, i,
+                            times(1)));
+        }
     }
 
     @Test
@@ -124,8 +132,11 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(16000, MILLISECONDS).until(AwaitConditionCreator
-                .newChordCalledOnPresenterForEachChord(presenter, selectedChords));
+        for (int i = 0; i < selectedChords.size(); i++) {
+            await().atMost(16000, MILLISECONDS).until(AwaitConditionCreator.
+                    newPractiseStateCalledOnPresenter(presenter, PractiseActivityState.NEW_CHORD, i,
+                            times(1)));
+        }
     }
 
     @Test
@@ -137,8 +148,11 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(32000, MILLISECONDS).until(AwaitConditionCreator
-                .newChordCalledOnPresenterForEachChord(presenter, selectedChords));
+        for (int i = 0; i < selectedChords.size(); i++) {
+            await().atMost(32000, MILLISECONDS).until(AwaitConditionCreator.
+                    newPractiseStateCalledOnPresenter(presenter, PractiseActivityState.NEW_CHORD, i,
+                            times(1)));
+        }
     }
 
     @Test
@@ -150,12 +164,15 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(64000, MILLISECONDS).until(AwaitConditionCreator.
-                newChordCalledOnPresenterForEachChord(presenter, selectedChords));
+        for (int i = 0; i < selectedChords.size(); i++) {
+            await().atMost(64000, MILLISECONDS).until(AwaitConditionCreator.
+                    newPractiseStateCalledOnPresenter(presenter, PractiseActivityState.NEW_CHORD, i,
+                            times(1)));
+        }
     }
 
     @Test
-    public void verySlowBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwice_After3Seconds() {
+    public void verySlowBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwiceAfter3Seconds() {
         // arrange
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
 
@@ -163,8 +180,10 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 2; i++) {
+            await().atMost(1500, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
     }
 
     @Test
@@ -176,21 +195,25 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 4; i++) {
+            await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
     }
 
     @Test
-    public void mediumBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwice_After2Seconds() {
+    public void mediumBeatSpeed_StartPractiseTimer_CallsNewBeatOnPresenterTwiceAfter2Seconds() {
         // arrange
-        model.setBeatSpeed(BeatSpeed.VERY_SLOW);
+        model.setBeatSpeed(BeatSpeed.MEDIUM);
 
         // act
         model.startPractiseTimer();
 
         // assert
-        await().atMost(2000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 2; i++) {
+            await().atMost(2000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
     }
 
     @Test
@@ -202,8 +225,10 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 4; i++) {
+            await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
     }
 
     @Test
@@ -215,8 +240,10 @@ public class PractiseModelTest {
         model.startPractiseTimer();
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 2; i++) {
+            await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
     }
 
     @Test
@@ -225,8 +252,10 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.VERY_SLOW);
         model.startPractiseTimer();
         // waits until new beat is called twice (which is running for 3 seconds)
-        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 2; i++) {
+            await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
 
         // act
         model.stopTimer();
@@ -236,8 +265,8 @@ public class PractiseModelTest {
         await().atLeast(2000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new beat
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, never()));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, never()));
     }
 
     @Test
@@ -246,8 +275,10 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.SLOW);
         model.startPractiseTimer();
         // waits until new beat is called four times (which is running for 5 seconds)
-        await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(4)));
+        for (int i = 0; i < 4; i++) {
+            await().atMost(5000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
 
         // act
         model.stopTimer();
@@ -257,8 +288,8 @@ public class PractiseModelTest {
         await().atLeast(2000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new beat
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, never()));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, never()));
     }
 
     @Test
@@ -267,8 +298,10 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.MEDIUM);
         model.startPractiseTimer();
         // waits until new beat is called twice (which is running for 2 seconds)
-        await().atMost(2000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 2; i++) {
+            await().atMost(2000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
 
         // act
         model.stopTimer();
@@ -278,8 +311,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new beat
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, never()));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, never()));
     }
 
     @Test
@@ -288,8 +321,10 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.FAST);
         model.startPractiseTimer();
         // waits until new beat is called four times (which is running for 3 seconds)
-        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(4)));
+        for (int i = 0; i < 4; i++) {
+            await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
 
         // act
         model.stopTimer();
@@ -299,8 +334,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new beat
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, never()));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, never()));
     }
 
     @Test
@@ -309,8 +344,10 @@ public class PractiseModelTest {
         model.setBeatSpeed(BeatSpeed.VERY_FAST);
         model.startPractiseTimer();
         // waits until new beat is called twice (which is running for 1 second)
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(2)));
+        for (int i = 0; i < 2; i++) {
+            await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                    presenter, PractiseActivityState.NEW_BEAT, i, times(1)));
+        }
 
         // act
         model.stopTimer();
@@ -320,8 +357,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new beat
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, never()));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, never()));
     }
 
     @Test
@@ -338,8 +375,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new chord
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.
-                newChordNotCalledOnPresenterForChord(presenter, selectedChords.get(1)));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_CHORD, 1, never()));
     }
 
     @Test
@@ -348,8 +385,8 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.TWO_BEATS);
         model.startPractiseTimer();
         // waits until new beat is called once (which is running for 1 seconds)
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(1)));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, times(1)));
 
         // act
         model.stopTimer();
@@ -359,8 +396,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new chord
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
-                selectedChords.get(1)));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_CHORD, 1, never()));
     }
 
     @Test
@@ -369,8 +406,8 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.FOUR_BEATS);
         model.startPractiseTimer();
         // waits until new beat is called once (which is running for 3 seconds)
-        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(3)));
+        await().atMost(3000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, times(3)));
 
         // act
         model.stopTimer();
@@ -380,8 +417,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new chord
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
-                selectedChords.get(1)));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_CHORD, 1, never()));
     }
 
     @Test
@@ -390,8 +427,8 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.EIGHT_BEATS);
         model.startPractiseTimer();
         // waits until new beat is called seven times (which is running for 7 seconds)
-        await().atMost(7000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(7)));
+        await().atMost(7000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, times(7)));
 
         // act
         model.stopTimer();
@@ -401,8 +438,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new chord
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
-                selectedChords.get(1)));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_CHORD, 1, never()));
     }
 
     @Test
@@ -411,8 +448,8 @@ public class PractiseModelTest {
         model.setChordChange(ChordChange.SIXTEEN_BEATS);
         model.startPractiseTimer();
         // waits until new beat is called 15 times (which is running for 15 seconds)
-        await().atMost(15000, MILLISECONDS).until(AwaitConditionCreator.newBeatCalledOnPresenter(
-                presenter, times(15)));
+        await().atMost(15000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_BEAT, 0, times(15)));
 
         // act
         model.stopTimer();
@@ -422,8 +459,8 @@ public class PractiseModelTest {
         await().atLeast(1000, MILLISECONDS);
         // resets presenter so doesn't count previous calls to new chord
         Mockito.reset(presenter);
-        await().until(AwaitConditionCreator.newChordNotCalledOnPresenterForChord(presenter,
-                selectedChords.get(1)));
+        await().until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.NEW_CHORD, 1, never()));
     }
 
     @Test
@@ -432,8 +469,14 @@ public class PractiseModelTest {
         model.startCountdown();
 
         // assert
-        await().atMost(6000, MILLISECONDS).until(AwaitConditionCreator
-                .newSecondOfCountdownCalledOnPresenterForEach(presenter));
+        await().atMost(6000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.COUNTDOWN_STAGE_3, 0, times(1)));
+        await().atMost(6000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.COUNTDOWN_STAGE_2, 0, times(1)));
+        await().atMost(6000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.COUNTDOWN_STAGE_1, 0, times(1)));
+        await().atMost(6000, MILLISECONDS).until(AwaitConditionCreator.newPractiseStateCalledOnPresenter(
+                presenter, PractiseActivityState.COUNTDOWN_STAGE_GO, 0, times(1)));
     }
 
     @Test
@@ -456,7 +499,8 @@ public class PractiseModelTest {
         model.stopTimer();
 
         // assert
-        Mockito.verify(presenter, never()).modelOnNewSecondOfCountdown((Countdown) Mockito.any());
+        Mockito.verify(presenter, never()).modelOnNewPractiseState((PractiseActivityState)
+                Mockito.any(), Mockito.anyInt());
     }
 
     @Test
@@ -528,5 +572,25 @@ public class PractiseModelTest {
 
         // assert
         Mockito.verify(presenter).modelOnPractiseSessionSaveError();
+    }
+
+    @Test
+    public void getAudioFilenames_ReturnsFilenames() {
+        // act
+        List<String> actualFilenames = model.getAudioFilenames();
+
+        // assert
+        List<String> expectedFilenames = new ArrayList<>();
+        for (PractiseActivityState state : PractiseActivityState.values()) {
+            if (state == PractiseActivityState.NEW_CHORD) {
+                for (Chord chord : selectedChords) {
+                    expectedFilenames.add(chord.getAudioFilename());
+                }
+            }
+            else {
+                expectedFilenames.add(state.getFilename());
+            }
+        }
+        Assert.assertEquals(expectedFilenames, actualFilenames);
     }
 }

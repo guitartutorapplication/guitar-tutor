@@ -44,8 +44,8 @@ public class SongActivityTest {
     public void setUp() {
         // giving activity a selected song
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", 1),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", 1));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         selectedSong = new Song("Adventure of a Lifetime", "Coldplay",
                 "Test contents of song \r\n actual contains song lyrics and chords \r\n", chords);
         Intent intent = new Intent();

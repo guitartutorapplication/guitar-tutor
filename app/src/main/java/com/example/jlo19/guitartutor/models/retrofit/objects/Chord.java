@@ -19,16 +19,19 @@ public class Chord implements Parcelable {
     private final String type;
     @SerializedName("video_filename")
     private final String videoFilename;
+    @SerializedName("audio_filename")
+    private final String audioFilename;
     @SerializedName("level_required")
     private int levelRequired;
 
     public Chord(int id, String name, String type, String diagramFilename, String videoFilename,
-                 int levelRequired) {
+                 String audioFilename, int levelRequired) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.diagramFilename = diagramFilename;
         this.videoFilename = videoFilename;
+        this.audioFilename = audioFilename;
         this.levelRequired = levelRequired;
     }
 
@@ -38,6 +41,7 @@ public class Chord implements Parcelable {
         name = in.readString();
         type = in.readString();
         videoFilename = in.readString();
+        audioFilename = in.readString();
     }
 
     public String getDiagramFilename() { return diagramFilename; }
@@ -82,6 +86,7 @@ public class Chord implements Parcelable {
         dest.writeString(name);
         dest.writeString(type);
         dest.writeString(videoFilename);
+        dest.writeString(audioFilename);
     }
 
     public static final Creator<Chord> CREATOR = new Creator<Chord>() {
@@ -101,4 +106,8 @@ public class Chord implements Parcelable {
     }
 
     public int getLevelRequired() {return levelRequired;}
+
+    public String getAudioFilename() {
+        return audioFilename;
+    }
 }
