@@ -8,15 +8,13 @@
     <string name="loading_chords_message_failure">Failed to load chords</string>
     <string name="loading_songs_message_failure">Failed to load songs</string>
     <string name="loading_chord_message">Loading chord…</string>
-    <string name="loading_chord_message_failure">Failed to load chord</string>
     <string name="loading_chord_image_message_failure">Failed to load chord diagram</string>
     <string name="loading_chord_video_message_failure">Failed to load video</string>
     <string name="loading_video_message">Loading video…</string>
     <string name="loading_account_details_message">Loading account details…</string>
-    <string name="watch_button_text">Watch demo</string>
-    <string name="diagram_help_button_text">Diagram help</string>
     <string name="practising_chords_name">Practising chords</string>
-    <string name="practise_instruction">Tip: try to keep your strumming in time with the beat.</string>
+    <string name="practise_tips">- Try to keep your strumming in time with the beat. \n- Make sure you exit
+        via the stop button, else your practise session will not be saved.</string>
     <string name="practise_first_chord_instruction">Your first chord: </string>
     <string name="practise_setup_name">Practise setup</string>
     <string name="practise_chord_selection_instruction">Please select between 2 and 4 of your learnt chords to practise</string>
@@ -79,4 +77,13 @@
     <string name="adding_learnt_chord_error_message">Failed to add chord to your learnt chords</string>
     <string name="view_all_songs_option">View all songs</string>
     <string name="view_songs_i_can_play_option">View songs I can play</string>
+    <string name="add_learnt_chord_success_message">Chord successfully added to your learnt chords.</string>
+    <string name="maximum_achievements_message">You have reached the maximum number of achievement points.</string>
+    <string name="gained_100_achievements_message">You have gained 100 achievement points and now have %1$d
+        in total!</string>
+    <string name="gained_15_achievements_message">You have gained 15 achievement points and now have %1$d
+        in total!</string>
+    <string name="new_level_message">You have also reached level %1$d!</string>
+    <string name="save_practise_session_success_message">Your practise session has been saved.</string>
+    <string name="save_practise_session_error_message">Failed to save your practise session</string>
 </resources>

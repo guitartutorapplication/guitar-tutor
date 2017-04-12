@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 
 import java.io.IOException;
 
@@ -22,7 +22,12 @@ public class FakeUserCall implements Call<User> {
 
     @Override
     public Response<User> execute() throws IOException {
-        return null;
+        if (response != null) {
+            return response;
+        }
+        else {
+            throw new IOException();
+        }
     }
 
     @Override

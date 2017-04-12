@@ -1,19 +1,23 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import com.example.jlo19.guitartutor.enums.Countdown;
+import android.content.SharedPreferences;
+
+import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 
 /**
  * Interface for PractisePresenter
  */
 public interface IPractisePresenter extends IPresenter {
-    void modelOnNewChord(String newChord);
     void viewOnStopPractising();
-    void modelOnNewBeat();
     void modelOnError();
-    void modelOnNewSecondOfCountdown(Countdown countdownStage);
     void modelOnCountdownFinished();
-    void viewOnSoundsLoaded();
+    void viewOnSoundLoaded(int status);
     void viewOnDestroy();
     void viewOnStop();
     void viewOnPause();
+    void setSharedPreferences(SharedPreferences sharedPreferences);
+    void modelOnPractiseSessionSaved(int level, int achievements);
+    void modelOnFirstRoundOfChords();
+    void modelOnPractiseSessionSaveError();
+    void modelOnNewPractiseState(PractiseActivityState state, int currentChordIndex);
 }

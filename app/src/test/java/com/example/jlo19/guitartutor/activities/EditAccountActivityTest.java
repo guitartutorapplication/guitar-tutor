@@ -13,7 +13,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.User;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 

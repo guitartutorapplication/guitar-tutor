@@ -14,8 +14,8 @@ import com.example.jlo19.guitartutor.R;
  */
 public abstract class BaseWithToolbarActivity extends AppCompatActivity {
 
-    public abstract int getLayout();
-    public abstract String getToolbarTitle();
+    protected abstract int getLayout();
+    protected abstract String getToolbarTitle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

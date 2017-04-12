@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.views.SongLibraryView;
 
@@ -90,8 +90,8 @@ public class SongLibraryPresenterTest {
     public void modelOnSongsRetrieved_SetsSongsOnView() {
         // act
         List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         List<Song> expectedSongs = Arrays.asList(
                 new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
                 new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));

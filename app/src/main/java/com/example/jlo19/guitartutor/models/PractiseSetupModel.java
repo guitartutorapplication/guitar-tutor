@@ -6,10 +6,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.ChordsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.UserChord;
-import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -51,65 +48,53 @@ public class PractiseSetupModel implements IPractiseSetupModel {
 
     @Override
     public void getChords() {
-        Call<ChordsResponse> chordsCall = api.getChords();
+        // retrieving logged in user's id from shared preferences
+        final int userId = sharedPreferences.getInt("user_id", 0);
+        Call<List<Chord>> userChordsCall = api.getUserChords(userId);
 
         // asynchronously executing call
-        chordsCall.enqueue(new Callback<ChordsResponse>() {
+        userChordsCall.enqueue(new Callback<List<Chord>>() {
             @Override
-            public void onResponse(Call<ChordsResponse> call, final Response<ChordsResponse>
-                    chordsResponse) {
-                // retrieving logged in user's id from shared preferences
-                final int userId = sharedPreferences.getInt("user_id", 0);
-                Call<UserChordsResponse> userChordsCall = api.getUserChords(userId);
-
-                // asynchronously executing call
-                userChordsCall.enqueue(new Callback<UserChordsResponse>() {
-                    @Override
-                    public void onResponse(Call<UserChordsResponse> call, Response<UserChordsResponse>
-                            userChordsResponse) {
-                        // sending both all the chords and chords that user has already learnt
-                        List<UserChord> userChords = userChordsResponse.body().getUserChords();
-                        List<Chord> allChords = chordsResponse.body().getChords();
-                        List<Chord> chords = new ArrayList<>();
-                        for(int i = 0; i < userChords.size(); i++) {
-                            for (int j = 0; j < allChords.size(); j++) {
-                                if (allChords.get(j).getId() == userChords.get(i).getChordId()) {
-                                    chords.add(allChords.get(j));
-                                    break;
-                                }
-                            }
-                        }
-                        presenter.modelOnChordsRetrieved(chords);
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserChordsResponse> call, Throwable t) {
-                        presenter.modelOnLoadChordsError();
-                    }
-                });
+            public void onResponse(Call<List<Chord>> call, Response<List<Chord>>
+                    userChordsResponse) {
+                if (userChordsResponse.isSuccessful()) {
+                    List<Chord> userChords = userChordsResponse.body();
+                    presenter.modelOnChordsRetrieved(userChords);
+                }
+                else {
+                    presenter.modelOnLoadChordsError();
+                }
             }
 
             @Override
-            public void onFailure(Call<ChordsResponse> call, Throwable t) {
+            public void onFailure(Call<List<Chord>> call, Throwable t) {
                 presenter.modelOnLoadChordsError();
             }
         });
     }
 
     @Override
-    public void chordsSelected(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
-        Set<String> uniqueChords = new HashSet<>(selectedChords);
+    public void chordsSelected(List<Chord> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
+        // removing any null values (left on default option)
+        List<Chord> chosenChords = new ArrayList<>();
+        for (Chord chord : selectedChords) {
+            if (chord != null) {
+                chosenChords.add(chord);
+            }
+        }
+
+        Set<Chord> uniqueChords = new HashSet<>(chosenChords);
 
         // if the user has selected less than two chords
-        if (selectedChords.size() < 2) {
+        if (chosenChords.size() < 2) {
             presenter.modelOnLessThanTwoChordsSelected();
         }
         // if the user has selected the same chord more than once
-        else if (uniqueChords.size() < selectedChords.size()) {
+        else if (uniqueChords.size() < chosenChords.size()) {
             presenter.modelOnSameSelectedChord();
         }
         else {
-            presenter.modelOnCorrectSelectedChords(selectedChords,
+            presenter.modelOnCorrectSelectedChords(chosenChords,
                     ChordChange.values()[chordChangeIndex], BeatSpeed.values()[beatSpeedIndex]);
         }
     }

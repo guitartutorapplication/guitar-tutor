@@ -6,7 +6,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.google.gson.Gson;
@@ -57,25 +57,25 @@ public class EditAccountModel extends DataValidationModel implements IEditAccoun
             // retrieving logged in user's id from shared preferences
             int userId = sharedPreferences.getInt("user_id", 0);
 
-            Call<PostPutResponse> call = api.editAccountDetails(userId, name, email, password);
+            Call<ResponseWithMessage> call = api.editAccountDetails(userId, name, email, password);
 
             // asynchronously executing call
-            call.enqueue(new Callback<PostPutResponse>() {
+            call.enqueue(new Callback<ResponseWithMessage>() {
                 @Override
-                public void onResponse(Call<PostPutResponse> call, Response<PostPutResponse> response) {
+                public void onResponse(Call<ResponseWithMessage> call, Response<ResponseWithMessage> response) {
                     if (response.isSuccessful()) {
                         presenter.modelOnSaveSuccess();
                     }
                     else {
                         // convert raw response when error
                         Gson gson = new Gson();
-                        TypeAdapter<PostPutResponse> adapter = gson.getAdapter(PostPutResponse.class);
+                        TypeAdapter<ResponseWithMessage> adapter = gson.getAdapter(ResponseWithMessage.class);
 
                         try {
-                            PostPutResponse postPutResponse = adapter.fromJson(
+                            ResponseWithMessage responseWithMessage = adapter.fromJson(
                                     response.errorBody().string());
 
-                            if (postPutResponse.getMessage().equals(
+                            if (responseWithMessage.getMessage().equals(
                                     ResponseError.INVALID_EMAIL.toString())) {
                                 presenter.modelOnValidationFailed(ValidationResult.INVALID_EMAIL);
                             }
@@ -89,7 +89,7 @@ public class EditAccountModel extends DataValidationModel implements IEditAccoun
                 }
 
                 @Override
-                public void onFailure(Call<PostPutResponse> call, Throwable t) {
+                public void onFailure(Call<ResponseWithMessage> call, Throwable t) {
                     presenter.modelOnSaveError();
                 }
             });

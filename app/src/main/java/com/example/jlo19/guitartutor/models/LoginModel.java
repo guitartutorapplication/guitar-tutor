@@ -3,15 +3,10 @@ package com.example.jlo19.guitartutor.models;
 import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
-import com.example.jlo19.guitartutor.models.retrofit.LoginResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-
-import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -47,45 +42,27 @@ public class LoginModel implements ILoginModel {
             presenter.modelOnFieldEmpty();
         }
         else {
-            Call<LoginResponse> call = api.loginUser(email, password);
+            Call<User> call = api.loginUser(email, password);
 
             // asynchronously executing call
-            call.enqueue(new Callback<LoginResponse>() {
+            call.enqueue(new Callback<User>() {
                 @Override
-                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                public void onResponse(Call<User> call, Response<User> response) {
                     if (response.isSuccessful()) {
                         // adding user id to shared preferences for later use
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putInt("user_id", response.body().getUserId());
+                        editor.putInt("user_id", response.body().getId());
                         editor.apply();
 
                         presenter.modelOnLoginSuccess();
                     }
                     else {
-                        // convert raw response when error
-                        Gson gson = new Gson();
-                        TypeAdapter<LoginResponse> adapter = gson.getAdapter(LoginResponse.class);
-
-                        try {
-                            LoginResponse loginResponse = adapter.fromJson(
-                                    response.errorBody().string());
-
-                            if (loginResponse.getMessage().equals(
-                                    ResponseError.INCORRECT_CREDENTIALS.toString())) {
-                                presenter.modelOnIncorrectCredentials();
-                            }
-                            else {
-                                presenter.modelOnLoginError();
-                            }
-
-                        } catch (IOException e) {
-                            presenter.modelOnLoginError();
-                        }
+                        presenter.modelOnLoginError();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                public void onFailure(Call<User> call, Throwable t) {
                     presenter.modelOnLoginError();
                 }
             });

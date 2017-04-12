@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
@@ -86,14 +86,16 @@ public class LearnChordModel implements ILearnChordModel {
     public void addLearntChord(int chordId) {
         // retrieving logged in user's id from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
-        Call<PostPutResponse> call = api.addLearntChord(userId, chordId);
+        Call<User> call = api.addUserChord(userId, chordId);
 
         // asynchronously executing call
-        call.enqueue(new Callback<PostPutResponse>() {
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<PostPutResponse> call, Response<PostPutResponse> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
-                    presenter.modelOnLearntChordAdded();
+                    int level = response.body().getLevel();
+                    int achievements = response.body().getAchievements();
+                    presenter.modelOnLearntChordAdded(level, achievements);
                 }
                 else {
                     presenter.modelOnAddLearntChordError();
@@ -101,7 +103,7 @@ public class LearnChordModel implements ILearnChordModel {
             }
 
             @Override
-            public void onFailure(Call<PostPutResponse> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 presenter.modelOnAddLearntChordError();
             }
         });

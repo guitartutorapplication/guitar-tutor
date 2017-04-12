@@ -9,8 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 
 import java.util.List;
 
@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class SongsListAdapter extends ArrayAdapter<Song> {
 
-    private Context context;
-    private int layoutResource;
+    private final Context context;
+    private final int layoutResource;
 
     public SongsListAdapter(Context context, int layoutResource, List<Song> songs) {
         super(context, layoutResource, songs);

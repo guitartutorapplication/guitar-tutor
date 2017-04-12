@@ -7,13 +7,13 @@ import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
-import com.example.jlo19.guitartutor.helpers.FakePostPutResponseCall;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
+import com.example.jlo19.guitartutor.helpers.FakeResponseWithMessageCall;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
-import com.example.jlo19.guitartutor.models.retrofit.PostPutResponse;
+import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
-import com.google.gson.Gson;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -185,14 +185,11 @@ public class EditAccountModelTest {
     }
 
     @Test
-    public void saveWithCorrectCredentials_OnSuccessfulResponse_CallsSaveSuccessOnPresenter() {
+    public void saveWithCorrectCredentials_OnSuccessfulResponse_CallsSaveSuccessOnPresenter()
+            throws IOException {
         // arrange
-        // sets fake call with a successful response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(true);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(true, null);
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((EditAccountModel) model).setApi(api);
 
         // act
@@ -206,18 +203,9 @@ public class EditAccountModelTest {
     public void saveWithCorrectCredentials_OnInvalidEmailResponse_CallsInvalidEmailOnPresenter()
             throws IOException {
         // arrange
-        // sets fake call with a invalid email response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
                 ResponseError.INVALID_EMAIL.toString());
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((EditAccountModel) model).setApi(api);
 
         // act
@@ -231,18 +219,9 @@ public class EditAccountModelTest {
     public void saveWithCorrectCredentials_OnErrorResponse_CallsSaveErrorOnPresenter()
             throws IOException {
         // arrange
-        // sets fake call with a different error response
-        Response<PostPutResponse> response = (Response<PostPutResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.isSuccessful()).thenReturn(false);
-
-        PostPutResponse postPutResponse = new PostPutResponse(true,
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
                 "another error");
-        ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
-        PowerMockito.when(errorBody.string()).thenReturn(new Gson().toJson(postPutResponse));
-        PowerMockito.when(response.errorBody()).thenReturn(errorBody);
-
-        DatabaseApi api = new FakeDatabaseApi(new FakePostPutResponseCall(response));
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((EditAccountModel) model).setApi(api);
 
         // act
@@ -255,9 +234,8 @@ public class EditAccountModelTest {
     @Test
     public void saveWithCorrectCredentials_OnFailure_CallsSaveErrorOnPresenter() {
         // arrange
-        // sets fake call with no response (failure)
-        FakePostPutResponseCall call = new FakePostPutResponseCall(null);
-        DatabaseApi api = new FakeDatabaseApi(call);
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(null));
         ((EditAccountModel) model).setApi(api);
 
         // act

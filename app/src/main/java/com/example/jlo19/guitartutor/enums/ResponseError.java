@@ -6,8 +6,7 @@ package com.example.jlo19.guitartutor.enums;
 public enum ResponseError {
     // value = error message
     INVALID_EMAIL("Invalid email address"),
-    ALREADY_REGISTERED("The specified email address is already registered"),
-    INCORRECT_CREDENTIALS("Login failed. Incorrect email or password.");
+    ALREADY_REGISTERED("The specified email address is already registered");
 
     private final String value;
 

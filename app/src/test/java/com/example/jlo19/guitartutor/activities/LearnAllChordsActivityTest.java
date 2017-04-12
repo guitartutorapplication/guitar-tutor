@@ -10,9 +10,10 @@ import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
+import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 
 import junit.framework.Assert;
@@ -28,10 +29,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -59,6 +56,8 @@ public class LearnAllChordsActivityTest {
                 .create().get();
         presenter = PowerMockito.mock(ILearnAllChordsPresenter.class);
         activity.setPresenter(presenter);
+
+        activity.setChordButtons();
     }
 
     @Test
@@ -71,74 +70,6 @@ public class LearnAllChordsActivityTest {
     public void setPresenter_SetsSharedPreferencesOnPresenter() {
         // assert
         Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
-    public void setChords_SetsGridViewWithChordItems() {
-        // arrange
-        List<Chord> expectedChords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-
-        // act
-        activity.setChords(expectedChords, null);
-
-        // assert
-        GridView gridView = (GridView) activity.findViewById(R.id.gridView);
-        Assert.assertEquals(expectedChords.get(0), gridView.getAdapter().getItem(0));
-        Assert.assertEquals(expectedChords.get(1), gridView.getAdapter().getItem(1));
-    }
-
-    @Test
-    public void setChords_WhenChordButtonClickedOnLearntChord_ChordsActivityIsStartedWithSelectedChord() {
-        // arrange
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        List<Integer> userChords = Collections.singletonList(1);
-        activity.setChords(chords, userChords);
-
-        // act
-        GridView gridView = (GridView) activity.findViewById(R.id.gridView);
-
-        int expectedSelectedChord = 0;
-        Button button = (Button) gridView.getAdapter().getView(expectedSelectedChord, null, gridView);
-        button.performClick();
-
-        // assert
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        // checks correct activity is started
-        Assert.assertEquals(LearnChordActivity.class.getName(), intent.getComponent().getClassName());
-        // checks correct chord is passed through
-        Assert.assertEquals(chords.get(expectedSelectedChord), intent.getParcelableExtra("CHORD"));
-        // checks if learnt is passed through correctly
-        Assert.assertEquals(true, intent.getBooleanExtra("LEARNT_CHORD", false));
-    }
-
-    @Test
-    public void setChords_WhenChordButtonClickedOnChordNotLearnt_ChordsActivityIsStartedWithSelectedChord() {
-        // arrange
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        List<Integer> userChords = Collections.singletonList(2);
-        activity.setChords(chords, userChords);
-
-        // act
-        GridView gridView = (GridView) activity.findViewById(R.id.gridView);
-
-        int expectedSelectedChord = 0;
-        Button button = (Button) gridView.getAdapter().getView(expectedSelectedChord, null, gridView);
-        button.performClick();
-
-        // assert
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        // checks correct activity is started
-        Assert.assertEquals(LearnChordActivity.class.getName(), intent.getComponent().getClassName());
-        // checks correct chord is passed through
-        Assert.assertEquals(chords.get(expectedSelectedChord), intent.getParcelableExtra("CHORD"));
-        // checks if learnt is passed through correctly
-        Assert.assertEquals(false, intent.getBooleanExtra("LEARNT_CHORD", false));
     }
 
     @Test
@@ -208,4 +139,95 @@ public class LearnAllChordsActivityTest {
         Assert.assertFalse(dialog.isShowing());
     }
 
+    @Test
+    public void addButton_ClickButton_CallsChordRequestedOnPresenterWithId() {
+        // arrange
+        int id = 0;
+        activity.addChordButton(id);
+
+        // act
+        Button chordButton = (Button) ((GridView) activity.findViewById(R.id.gridView))
+                .getAdapter().getView(id, null, null);
+        chordButton.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnChordRequested(id);
+    }
+
+    @Test
+    public void startLearnChordActivity_LearnChordActivityIsStarted() {
+        // act
+        Chord chord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
+        boolean isLearntChord = true;
+        activity.startLearnChordActivity(chord, true);
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(LearnChordActivity.class.getName(), intent.getComponent().getClassName());
+        // checks correct chord is passed through
+        Assert.assertEquals(chord, intent.getParcelableExtra("CHORD"));
+        // checks if learnt is passed through correctly
+        Assert.assertEquals(isLearntChord, intent.getBooleanExtra("LEARNT_CHORD", false));
+    }
+
+    @Test
+    public void addChordButton_CallsAddButtonOnAdapter() {
+        // arrange
+        ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
+        activity.setChordsButtonAdapter(adapter);
+
+        // act
+        int id = 0;
+        activity.addChordButton(id);
+
+        // assert
+        Mockito.verify(adapter).addButton(id);
+    }
+
+    @Test
+    public void setChordButtonText_CallsSetButtonTextOnAdapter() {
+        // arrange
+        ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
+        activity.setChordsButtonAdapter(adapter);
+
+        // act
+        int id = 0;
+        String text = "A";
+        activity.setChordButtonText(id, text);
+
+        // assert
+        Mockito.verify(adapter).setButtonText(id, text);
+    }
+
+    @Test
+    public void enabledChordButton_CallsEnableButtonOnAdapter() {
+        // arrange
+        ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
+        activity.setChordsButtonAdapter(adapter);
+
+        // act
+        int id = 0;
+        boolean isEnabled = true;
+        activity.enableChordButton(id, isEnabled);
+
+        // assert
+        Mockito.verify(adapter).enableButton(id, isEnabled);
+    }
+
+    @Test
+    public void setChordButtonBackground_CallsSetButtonBackgroundOnAdapter() {
+        // arrange
+        ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
+        activity.setChordsButtonAdapter(adapter);
+
+        // act
+        int id = 0;
+        String doneIdentifier = "done_";
+        String numberIdentifier = "one";
+        activity.setChordButtonBackground(id, doneIdentifier, numberIdentifier);
+
+        // assert
+        Mockito.verify(adapter).setButtonBackground(id, doneIdentifier, numberIdentifier);
+    }
 }

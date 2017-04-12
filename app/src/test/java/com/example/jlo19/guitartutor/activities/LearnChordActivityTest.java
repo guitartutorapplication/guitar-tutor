@@ -17,7 +17,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 
 import org.junit.Assert;
@@ -59,7 +59,7 @@ public class LearnChordActivityTest {
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
         // giving activity a selected chord
-        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4");
+        selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
         learntChord = true;
         Intent intent = new Intent();
         intent.putExtra("CHORD", selectedChord);
@@ -168,6 +168,46 @@ public class LearnChordActivityTest {
         junit.framework.Assert.assertEquals(getApp().getResources()
                         .getString(R.string.loading_chord_image_message_failure),
                 ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showAddLearntChordSuccess_MakesToastWithSuccessMessage() {
+        // act
+        activity.showAddLearntChordSuccess();
+
+        // assert
+        String expectedText = getApp().getResources()
+                .getString(R.string.add_learnt_chord_success_message) + "\n" + getApp().getResources()
+                .getString(R.string.maximum_achievements_message);
+        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showAddLearntChordSuccessWithAchievements_MakesToastWithSuccessMessage() {
+        // act
+        int achievements = 2100;
+        activity.showAddLearntChordSuccess(achievements);
+
+        // assert
+        String expectedText = getApp().getResources().getString(R.string.add_learnt_chord_success_message)
+                + "\n" + getApp().getResources().getString(R.string.gained_100_achievements_message,
+                achievements);
+        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void showAddLearnChordSuccessWithLevelAndAchievements_MakesToastWithSuccessMessage() {
+        // act
+        int achievements = 2000;
+        int level = 3;
+        activity.showAddLearntChordSuccess(level, achievements);
+
+        // assert
+        String expectedText = getApp().getResources().getString(R.string.add_learnt_chord_success_message)
+                + "\n" + getApp().getResources().getString(R.string.gained_100_achievements_message,
+                achievements) + "\n" + getApp().getResources().getString(R.string.new_level_message,
+                level);
+        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
     }
 
     @Test

@@ -4,15 +4,13 @@ import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.helpers.FakeChordsCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
-import com.example.jlo19.guitartutor.helpers.FakeSongsResponseCall;
-import com.example.jlo19.guitartutor.helpers.FakeUserChordsResponseCall;
+import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
+import com.example.jlo19.guitartutor.helpers.FakeSongsCall;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
-import com.example.jlo19.guitartutor.models.retrofit.SongsResponse;
-import com.example.jlo19.guitartutor.models.retrofit.UserChord;
-import com.example.jlo19.guitartutor.models.retrofit.UserChordsResponse;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -42,6 +40,8 @@ public class SongLibraryModelTest {
     private ISongLibraryModel model;
     private ISongLibraryPresenter presenter;
     private int userId;
+    private List<Song> songs;
+    private List<Chord> userChords;
 
     @Before
     public void setUp() {
@@ -58,25 +58,34 @@ public class SongLibraryModelTest {
 
         presenter = PowerMockito.mock(ISongLibraryPresenter.class);
         model.setPresenter(presenter);
+
+        userChords = Arrays.asList(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
+        songs = Arrays.asList(
+                new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
+                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1))),
+                new Song("Dance with Me Tonight", "Olly Murs", "contents", userChords));
     }
 
     @Test
-    public void getSongs_OnResponse_CallsSongsRetrievedOnPresenterWithSongs() {
+    public void getAllSongs_CallsGetSongsOnApi() {
         // arrange
-        // sets fake call with a response with songs
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
-        SongsResponse songsResponse = new SongsResponse(false, songs);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(null)));
+        ((SongLibraryModel) model).setApi(api);
 
-        Response<SongsResponse> response = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.body()).thenReturn(songsResponse);
+        // act
+        model.getAllSongs();
 
-        DatabaseApi api = new FakeDatabaseApi(new FakeSongsResponseCall(response));
+        // assert
+        Mockito.verify(api).getSongs();
+    }
+
+    @Test
+    public void getAllSongs_OnSuccessfulResponse_CallsSongsRetrievedOnPresenterWithSongs() {
+        // arrange
+        Response<List<Song>> response = FakeResponseCreator.getSongsResponse(true, songs);
+        DatabaseApi api = new FakeDatabaseApi(new FakeSongsCall(response));
         ((SongLibraryModel) model).setApi(api);
 
         // act
@@ -87,22 +96,39 @@ public class SongLibraryModelTest {
     }
 
     @Test
-    public void getSongsWithResponse_GetSongs_DoesntCallApiASecondTime() {
+    public void getAllSongs_OnUnsuccessfulResponse_CallsErrorOnPresenter() {
         // arrange
-        // sets fake call with a response with songs
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
-        SongsResponse songsResponse = new SongsResponse(false, songs);
+        Response<List<Song>> response = FakeResponseCreator.getSongsResponse(false, null);
+        DatabaseApi api = new FakeDatabaseApi(new FakeSongsCall(response));
+        ((SongLibraryModel) model).setApi(api);
 
-        Response<SongsResponse> response = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.body()).thenReturn(songsResponse);
+        // act
+        model.getAllSongs();
 
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsResponseCall(response)));
+        // assert
+        Mockito.verify(presenter).modelOnError();
+    }
+
+    @Test
+    public void getAllSongs_OnFailure_CallsErrorOnPresenter() {
+        // arrange
+        // on failure is triggered when a null response is passed through to fake call
+        FakeSongsCall call = new FakeSongsCall(null);
+        DatabaseApi api = new FakeDatabaseApi(call);
+        ((SongLibraryModel) model).setApi(api);
+
+        // act
+        model.getAllSongs();
+
+        // assert
+        Mockito.verify(presenter).modelOnError();
+    }
+
+    @Test
+    public void getAllSongsWithResponse_GetAllSongs_DoesntCallApiASecondTime() {
+        // arrange
+        Response<List<Song>> response = FakeResponseCreator.getSongsResponse(true, songs);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response)));
         ((SongLibraryModel) model).setApi(api);
         model.getAllSongs();
 
@@ -115,22 +141,10 @@ public class SongLibraryModelTest {
     }
 
     @Test
-    public void getSongsWithResponse_ResetSongs_GetSongs_CallsApiASecondTime() {
+    public void getAllSongsWithResponse_ResetSongs_GetAllSongs_CallsApiASecondTime() {
         // arrange
-        // sets fake call with a response with songs
-        List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
-        SongsResponse songsResponse = new SongsResponse(false, songs);
-
-        Response<SongsResponse> response = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(response.body()).thenReturn(songsResponse);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsResponseCall(response)));
+        Response<List<Song>> response = FakeResponseCreator.getSongsResponse(true, songs);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response)));
         ((SongLibraryModel) model).setApi(api);
         model.getAllSongs();
         model.resetSongs();
@@ -144,43 +158,11 @@ public class SongLibraryModelTest {
     }
 
     @Test
-    public void getSongs_OnFailure_CallsErrorOnPresenter() {
-        // arrange
-        // sets fake call with no response (failure)
-        FakeSongsResponseCall call = new FakeSongsResponseCall(null);
-        DatabaseApi api = new FakeDatabaseApi(call);
-        ((SongLibraryModel) model).setApi(api);
-
-        // act
-        model.getAllSongs();
-
-        // assert
-        Mockito.verify(presenter).modelOnError();
-    }
-
-    @Test
     public void getSongsUserCanPlay_CallsGetUserChordsOnApiWithIdFromSharedPreferences() {
         // arrange
-        // sets fake call with a response with songs
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
-        Response<SongsResponse> songsResponse = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
-
-        // sets fake call with user chords
-        List<UserChord> userChords = Arrays.asList(new UserChord(1), new UserChord(2));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsResponseCall(songsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse)));
+        Response<List<Song>> response = FakeResponseCreator.getSongsResponse(true, songs);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response),
+                new FakeChordsCall(null)));
         ((SongLibraryModel) model).setApi(api);
         model.getAllSongs();
 
@@ -192,28 +174,13 @@ public class SongLibraryModelTest {
     }
 
     @Test
-    public void getSongsUserCanPlay_OnResponse_CallsSongsRetrievedOnPresenterWithSongs() {
+    public void getSongsUserCanPlay_OnSuccessfulResponse_CallsSongsRetrievedOnPresenterWithSongs() {
         // arrange
-        // sets fake call with a response with songs
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
-        Response<SongsResponse> songsResponse = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
-
-        // sets fake call with user chords
-        List<UserChord> userChords = Arrays.asList(new UserChord(1), new UserChord(2));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        DatabaseApi api = new FakeDatabaseApi(new FakeSongsResponseCall(songsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse));
+        Response<List<Song>> songsResponse = FakeResponseCreator.getSongsResponse(true, songs);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        DatabaseApi api = new FakeDatabaseApi(new FakeSongsCall(songsResponse),
+                new FakeChordsCall(userChordsResponse));
         ((SongLibraryModel) model).setApi(api);
         model.getAllSongs();
 
@@ -221,32 +188,46 @@ public class SongLibraryModelTest {
         model.getSongsUserCanPlay();
 
         // assert
-        Mockito.verify(presenter).modelOnSongsRetrieved(Collections.singletonList(songs.get(0)));
+        Mockito.verify(presenter).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
+    }
+
+    @Test
+    public void getSongsUserCanPlay_OnUnsuccessfulResponse_CallsErrorOnPresenter() {
+        // arrange
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(false,
+                null);
+        DatabaseApi api = new FakeDatabaseApi(new FakeChordsCall(userChordsResponse));
+        ((SongLibraryModel) model).setApi(api);
+
+        // act
+        model.getSongsUserCanPlay();
+
+        // assert
+        Mockito.verify(presenter).modelOnError();
+    }
+
+    @Test
+    public void getSongsUserCanPlay_OnFailure_CallsErrorOnPresenter() {
+        // on failure is triggered when a null response is passed through to fake call
+        DatabaseApi api = new FakeDatabaseApi(new FakeChordsCall(null));
+        ((SongLibraryModel) model).setApi(api);
+
+        // act
+        model.getSongsUserCanPlay();
+
+        // assert
+        Mockito.verify(presenter).modelOnError();
     }
 
     @Test
     public void getSongsUserCanPlay_GetSongsUserCanPlay_DoesntCallApiSecondTime() {
         // arrange
         // sets fake call with a response with songs
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
-        Response<SongsResponse> songsResponse = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
-
-        // sets fake call with user chords
-        List<UserChord> userChords = Arrays.asList(new UserChord(1), new UserChord(2));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsResponseCall(songsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse)));
+        Response<List<Song>> songsResponse = FakeResponseCreator.getSongsResponse(true, songs);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(songsResponse),
+                new FakeChordsCall(userChordsResponse)));
         ((SongLibraryModel) model).setApi(api);
 
         model.getAllSongs();
@@ -257,32 +238,17 @@ public class SongLibraryModelTest {
 
         // assert
         Mockito.verify(api, times(1)).getUserChords(userId);
-        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(Collections.singletonList(songs.get(0)));
+        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
     }
 
     @Test
     public void getSongsUserCanPlay_ResetSongs_GetSongsUserCanPlay_CallsApiASecondTime() {
         // arrange
-        // sets fake call with a response with songs
-        List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", Arrays.asList(
-                        new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", Arrays.asList(
-                        new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                        new Chord(2, "B", "MAJOR", "B.png", "B.mp4"))));
-        Response<SongsResponse> songsResponse = (Response<SongsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(songsResponse.body()).thenReturn(new SongsResponse(false, songs));
-
-        // sets fake call with user chords
-        List<UserChord> userChords = Arrays.asList(new UserChord(1), new UserChord(2));
-        Response<UserChordsResponse> userChordsResponse = (Response<UserChordsResponse>)
-                PowerMockito.mock(Response.class);
-        PowerMockito.when(userChordsResponse.body()).thenReturn(new UserChordsResponse(userChords));
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsResponseCall(songsResponse),
-                new FakeUserChordsResponseCall(userChordsResponse)));
+        Response<List<Song>> songsResponse = FakeResponseCreator.getSongsResponse(true, songs);
+        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
+                userChords);
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(songsResponse),
+                new FakeChordsCall(userChordsResponse)));
         ((SongLibraryModel) model).setApi(api);
 
         model.getAllSongs();
@@ -295,20 +261,6 @@ public class SongLibraryModelTest {
 
         // assert
         Mockito.verify(api, times(2)).getUserChords(userId);
-        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(Collections.singletonList(songs.get(0)));
+        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
     }
-
-    @Test
-    public void getSongsUserCanPlay_OnFailure_CallsErrorOnPresenter() {
-        // sets fake call with no response (failure)
-        DatabaseApi api = new FakeDatabaseApi(new FakeUserChordsResponseCall(null));
-        ((SongLibraryModel) model).setApi(api);
-
-        // act
-        model.getSongsUserCanPlay();
-
-        // assert
-        Mockito.verify(presenter).modelOnError();
-    }
-
 }

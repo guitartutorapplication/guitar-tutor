@@ -17,7 +17,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 
 import junit.framework.Assert;
@@ -79,10 +79,10 @@ public class PractiseSetupActivityTest {
     public void setSelectedChordChordChangeSpeedAndBeatSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"),
-                new Chord(3, "C", "MAJOR", "C.png", "C.mp4"),
-                new Chord(4, "D", "MAJOR", "D.png", "D.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1),
+                new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1),
+                new Chord(4, "D", "MAJOR", "D.png", "D.mp4", "D.wav", 1));
         activity.setChords(chords);
         Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
         // index 1 as default option will be at index 0
@@ -99,8 +99,11 @@ public class PractiseSetupActivityTest {
         btnPractise.performClick();
 
         // assert
-        ArrayList<String> expectedSelectedChords = new ArrayList<String>(){{
-            add(chords.get(0).toString());
+        ArrayList<Chord> expectedSelectedChords = new ArrayList<Chord>(){{
+            add(chords.get(0));
+            add(null);
+            add(null);
+            add(null);
         }};
         Mockito.verify(presenter).viewOnPractise(expectedSelectedChords, 3, 3);
     }
@@ -184,8 +187,8 @@ public class PractiseSetupActivityTest {
     public void setChords_SetsSpinnersWithChordsAndDefaultOption() {
         // act
         final List<Chord> chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
+                new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
+                new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         activity.setChords(chords);
 
         // assert
@@ -194,24 +197,20 @@ public class PractiseSetupActivityTest {
         Spinner spnChord3 = (Spinner) activity.findViewById(R.id.spnChord3);
         Spinner spnChord4 = (Spinner) activity.findViewById(R.id.spnChord4);
 
-        Assert.assertEquals(getApp().getResources().getString(R.string.select_chord_instruction),
-                spnChord1.getAdapter().getItem(0));
-        Assert.assertEquals(getApp().getResources().getString(R.string.select_chord_instruction),
-                spnChord2.getAdapter().getItem(0));
-        Assert.assertEquals(getApp().getResources().getString(R.string.select_chord_instruction),
-                spnChord3.getAdapter().getItem(0));
-        Assert.assertEquals(getApp().getResources().getString(R.string.select_chord_instruction),
-                spnChord4.getAdapter().getItem(0));
+        Assert.assertEquals(null, spnChord1.getAdapter().getItem(0));
+        Assert.assertEquals(null, spnChord2.getAdapter().getItem(0));
+        Assert.assertEquals(null, spnChord3.getAdapter().getItem(0));
+        Assert.assertEquals(null, spnChord4.getAdapter().getItem(0));
 
-        Assert.assertEquals(chords.get(0).toString(), spnChord1.getAdapter().getItem(1));
-        Assert.assertEquals(chords.get(0).toString(), spnChord2.getAdapter().getItem(1));
-        Assert.assertEquals(chords.get(0).toString(), spnChord3.getAdapter().getItem(1));
-        Assert.assertEquals(chords.get(0).toString(), spnChord4.getAdapter().getItem(1));
+        Assert.assertEquals(chords.get(0), spnChord1.getAdapter().getItem(1));
+        Assert.assertEquals(chords.get(0), spnChord2.getAdapter().getItem(1));
+        Assert.assertEquals(chords.get(0), spnChord3.getAdapter().getItem(1));
+        Assert.assertEquals(chords.get(0), spnChord4.getAdapter().getItem(1));
 
-        Assert.assertEquals(chords.get(1).toString(), spnChord1.getAdapter().getItem(2));
-        Assert.assertEquals(chords.get(1).toString(), spnChord2.getAdapter().getItem(2));
-        Assert.assertEquals(chords.get(1).toString(), spnChord3.getAdapter().getItem(2));
-        Assert.assertEquals(chords.get(1).toString(), spnChord4.getAdapter().getItem(2));
+        Assert.assertEquals(chords.get(1), spnChord1.getAdapter().getItem(2));
+        Assert.assertEquals(chords.get(1), spnChord2.getAdapter().getItem(2));
+        Assert.assertEquals(chords.get(1), spnChord3.getAdapter().getItem(2));
+        Assert.assertEquals(chords.get(1), spnChord4.getAdapter().getItem(2));
     }
 
     @Test
@@ -257,9 +256,9 @@ public class PractiseSetupActivityTest {
     @Test
     public void startPractiseActivity_PractiseActivityIsStartedWithSelectedChordsChordChangeAndBeatSpeed() {
         // act
-        ArrayList<String> chords = new ArrayList<String>() {{
-            add("A");
-            add("B");
+        ArrayList<Chord> chords = new ArrayList<Chord>() {{
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         }};
         ChordChange chordChange = ChordChange.ONE_BEAT;
         BeatSpeed beatSpeed = BeatSpeed.VERY_SLOW;
@@ -270,7 +269,7 @@ public class PractiseSetupActivityTest {
         // checks correct activity is started
         Assert.assertEquals(PractiseActivity.class.getName(), intent.getComponent().getClassName());
         // checks correct chord is passed through
-        Assert.assertEquals(chords, intent.getExtras().getStringArrayList("CHORDS"));
+        Assert.assertEquals(chords, intent.getExtras().getParcelableArrayList("CHORDS"));
         // checks correct chord change is passed through
         Assert.assertEquals(chordChange, intent.getSerializableExtra("CHORD_CHANGE"));
         // checks correct beat speed is passed through

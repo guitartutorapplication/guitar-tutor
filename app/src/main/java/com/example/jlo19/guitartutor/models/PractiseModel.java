@@ -1,40 +1,67 @@
 package com.example.jlo19.guitartutor.models;
 
+import android.content.SharedPreferences;
+
+import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.enums.Countdown;
+import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
+import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Handles timer for practise activity
  */
 public class PractiseModel implements IPractiseModel {
 
-    private List<String> selectedChords;
+    private List<Chord> selectedChords;
     private boolean requestStop;
     private IPractisePresenter presenter;
     private Runnable timerTask;
     private ChordChange chordChange;
     private BeatSpeed beatSpeed;
+    private DatabaseApi api;
+    private SharedPreferences sharedPreferences;
+
+    public PractiseModel(){
+        App.getComponent().inject(this);
+    }
+
+    @Inject
+    void setApi(DatabaseApi api) {
+        this.api = api;
+    }
 
     @Override
-    public void setSelectedChords(List<String> selectedChords) {
+    public void setSelectedChords(List<Chord> selectedChords) {
         this.selectedChords = selectedChords;
     }
 
     @Override
     public void createPractiseTimer() {
         timerTask = new Runnable() {
+            // round = one full run of all the chords
+            int numRounds = 0;
+
             @Override
             public void run() {
                 while (!requestStop) {
                     try {
                         for (int i = 0; i < selectedChords.size(); i++) {
                             // inform presenter that on the next chord in sequence
-                            presenter.modelOnNewChord(selectedChords.get(i));
+                            presenter.modelOnNewPractiseState(PractiseActivityState.NEW_CHORD, i);
 
                             // play sound for number of beats in chord change
                             for (int j = 0; j < chordChange.getValue(); j++) {
@@ -42,9 +69,14 @@ public class PractiseModel implements IPractiseModel {
                                     return;
                                 }
                                 // inform presenter every beat
-                                presenter.modelOnNewBeat();
+                                presenter.modelOnNewPractiseState(PractiseActivityState.NEW_BEAT, i);
                                 Thread.sleep(beatSpeed.getValue());
                             }
+                        }
+                        numRounds++;
+                        // after first round of chords
+                        if (numRounds == 1) {
+                            presenter.modelOnFirstRoundOfChords();
                         }
                     }
                     catch (InterruptedException e) {
@@ -94,16 +126,14 @@ public class PractiseModel implements IPractiseModel {
                         }
 
                         // inform presenter every second of countdown
-                        presenter.modelOnNewSecondOfCountdown(Countdown.values()[i]);
+                        presenter.modelOnNewPractiseState(PractiseActivityState.values()[i], 0);
                         if (i == 3) {
                             Thread.sleep(3000);
-                        }
-                        else {
+                        } else {
                             Thread.sleep(1500);
                         }
                     }
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     presenter.modelOnError();
                 }
                 presenter.modelOnCountdownFinished();
@@ -111,5 +141,58 @@ public class PractiseModel implements IPractiseModel {
         };
 
         new Thread(countdown).start();
+    }
+
+    @Override
+    public void savePractiseSession() {
+        // retrieving logged in user's id from shared preferences
+        int userId = sharedPreferences.getInt("user_id", 0);
+        ArrayList<Integer> chordIds = new ArrayList<>();
+        for (Chord chord : selectedChords){
+            chordIds.add(chord.getId());
+        }
+
+        Call<User> call = api.updateUserChords(userId, chordIds);
+        // asynchronously executing call
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    int level = response.body().getLevel();
+                    int achievements = response.body().getAchievements();
+                    presenter.modelOnPractiseSessionSaved(level, achievements);
+                }
+                else {
+                    presenter.modelOnPractiseSessionSaveError();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                presenter.modelOnPractiseSessionSaveError();
+            }
+        });
+
+    }
+
+    @Override
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    @Override
+    public List<String> getAudioFilenames() {
+        List<String> filenames = new ArrayList<>();
+        for (PractiseActivityState state : PractiseActivityState.values()) {
+            if (state == PractiseActivityState.NEW_CHORD) {
+                for (Chord chord : selectedChords) {
+                    filenames.add(chord.getAudioFilename());
+                }
+            }
+            else {
+                filenames.add(state.getFilename());
+            }
+        }
+        return filenames;
     }
 }

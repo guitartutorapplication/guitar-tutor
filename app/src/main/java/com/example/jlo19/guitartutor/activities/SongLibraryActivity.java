@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.SongsListAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.Song;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.views.SongLibraryView;
 

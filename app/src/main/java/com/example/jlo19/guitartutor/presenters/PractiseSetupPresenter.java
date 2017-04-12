@@ -6,12 +6,11 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -55,7 +54,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     }
 
     @Override
-    public void viewOnPractise(ArrayList<String> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
+    public void viewOnPractise(List<Chord> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
         model.chordsSelected(selectedChords, chordChangeIndex, beatSpeedIndex);
     }
 
@@ -70,7 +69,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     }
 
     @Override
-    public void modelOnCorrectSelectedChords(ArrayList<String> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed) {
+    public void modelOnCorrectSelectedChords(List<Chord> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed) {
         view.startPractiseActivity(selectedChords, chordChange, beatSpeed);
     }
 

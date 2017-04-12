@@ -1,7 +1,6 @@
 package com.example.jlo19.guitartutor.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -11,7 +10,6 @@ import android.widget.Button;
 
 import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.Chord;
 
 import junit.framework.Assert;
 
@@ -23,10 +21,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Testing ChordsButtonAdapter
  */
@@ -35,39 +29,74 @@ import java.util.List;
 public class ChordsButtonAdapterTest {
 
     private ChordsButtonAdapter adapter;
-    private List<Chord> chords;
     private Context context;
 
     @Before
     public void setUp() {
-        chords = Arrays.asList(
-                new Chord(1, "A", "MAJOR", "A.png", "A.mp4"),
-                new Chord(2, "B", "MAJOR", "B.png", "B.mp4"));
         View.OnClickListener listener = PowerMockito.mock(View.OnClickListener.class);
         context = RuntimeEnvironment.application;
-        List<Integer> userChords = Collections.singletonList(1);
-
-        adapter = new ChordsButtonAdapter(context, chords, userChords, listener);
+        adapter = new ChordsButtonAdapter(context, listener);
     }
 
     @Test
-    public void getCount_ReturnsNumberOfChords() {
+    public void addButtons_GetCount_ReturnsNumberOfButtons() {
+        // arrange
+        adapter.addButton(0);
+        adapter.addButton(1);
+
         // act
         int actualCount = adapter.getCount();
 
         // assert
-        Assert.assertEquals(chords.size(), actualCount);
+        Assert.assertEquals(2, actualCount);
     }
 
     @Test
-    public void getItem_ReturnsChordAtSpecifiedPosition() {
+    public void addButton_GetItem_ReturnsButton() {
+        // arrange
         int position = 0;
+        adapter.addButton(position);
 
         // act
-        Chord actualChord = (Chord) adapter.getItem(position);
+        Button button = (Button) adapter.getItem(position);
 
         // assert
-        Assert.assertEquals(chords.get(position), actualChord);
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int expectedWidthHeightPx = (int) ((context.getResources().getDimension(
+                R.dimen.chord_button_width_height) * displayMetrics.density) + 0.5);
+        ViewGroup.LayoutParams actualLayoutParams = button.getLayoutParams();
+
+        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.height);
+        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.width);
+        Assert.assertEquals(context.getResources().getDimension(
+                R.dimen.chord_button_text_size), button.getTextSize());
+        Assert.assertEquals(position, button.getId());
+        Assert.assertTrue(button.hasOnClickListeners());
+        Assert.assertEquals(Gravity.TOP|Gravity.CENTER_HORIZONTAL, button.getGravity());
+    }
+
+    @Test
+    public void addButton_GetView_ReturnsButton() {
+        // arrange
+        int position = 0;
+        adapter.addButton(position);
+
+        // act
+        Button button = (Button) adapter.getView(position, null, null);
+
+        // assert
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int expectedWidthHeightPx = (int) ((context.getResources().getDimension(
+                R.dimen.chord_button_width_height) * displayMetrics.density) + 0.5);
+        ViewGroup.LayoutParams actualLayoutParams = button.getLayoutParams();
+
+        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.height);
+        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.width);
+        Assert.assertEquals(context.getResources().getDimension(
+                R.dimen.chord_button_text_size), button.getTextSize());
+        Assert.assertEquals(position, button.getId());
+        Assert.assertTrue(button.hasOnClickListeners());
+        Assert.assertEquals(Gravity.TOP|Gravity.CENTER_HORIZONTAL, button.getGravity());
     }
 
     @Test
@@ -82,49 +111,126 @@ public class ChordsButtonAdapterTest {
     }
 
     @Test
-    public void getView_ReturnsButton() {
-        int position = 0;
+    public void addButtonAndSetText_GetItem_ReturnsButtonWithText() {
+        // arrange
+        int id = 0;
+        String text = "A";
+        adapter.addButton(id);
+        adapter.setButtonText(id, text);
 
         // act
-        Button button = (Button) adapter.getView(position, null , null);
+        Button button = (Button) adapter.getItem(id);
 
         // assert
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int expectedWidthHeightPx = (int) ((context.getResources().getDimension(
-                R.dimen.chord_button_width_height) * displayMetrics.density) + 0.5);
-
-        ViewGroup.LayoutParams actualLayoutParams = button.getLayoutParams();
-
-        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.height);
-        Assert.assertEquals(expectedWidthHeightPx, actualLayoutParams.width);
-        Assert.assertEquals(position, button.getId());
-        Assert.assertEquals(chords.get(position).toString(), button.getText());
-        Assert.assertEquals(Gravity.TOP|Gravity.CENTER_HORIZONTAL, button.getGravity());
-        Assert.assertEquals(context.getResources().getDimension(R.dimen.chord_button_text_size),
-                button.getTextSize());
+        Assert.assertEquals(text, button.getText());
     }
 
     @Test
-    public void chordNotLearnt_GetView_ReturnsButtonWithNotLearntBackground() {
-        int position = 1;
+    public void addButtonAndSetText_GetView_ReturnsButtonWithText() {
+        // arrange
+        int id = 0;
+        String text = "A";
+        adapter.addButton(id);
+        adapter.setButtonText(id, text);
 
         // act
-        Button button = (Button) adapter.getView(position, null , null);
+        Button button = (Button) adapter.getView(id, null, null);
 
         // assert
-        Drawable expectedBackground = context.getDrawable(R.drawable.chord_button);
-        Assert.assertEquals(expectedBackground, button.getBackground());
+        Assert.assertEquals(text, button.getText());
     }
 
     @Test
-    public void chordLearnt_GetView_ReturnsButtonWithLearntBackground() {
-        int position = 1;
+    public void addButtonsAndEnableButtonWithTrue_GetItem_ReturnsEnabledButton() {
+        // arrange
+        int id = 0;
+        boolean isEnabled = true;
+        adapter.addButton(id);
+        adapter.enableButton(id, isEnabled);
 
         // act
-        Button button = (Button) adapter.getView(position, null , null);
+        Button button = (Button) adapter.getItem(id);
 
         // assert
-        Drawable expectedBackground = context.getDrawable(R.drawable.chord_done_button);
-        Assert.assertEquals(expectedBackground, button.getBackground());
+        Assert.assertEquals(isEnabled, button.isEnabled());
+    }
+
+    @Test
+    public void addButtonsAndEnableButtonWithFalse_GetItem_ReturnsDisabledButton() {
+        // arrange
+        int id = 0;
+        boolean isEnabled = false;
+        adapter.addButton(id);
+        adapter.enableButton(id, isEnabled);
+
+        // act
+        Button button = (Button) adapter.getItem(id);
+
+        // assert
+        Assert.assertEquals(isEnabled, button.isEnabled());
+    }
+
+    @Test
+    public void addButtonsAndEnableButtonWithTrue_GetView_ReturnsEnabledButton() {
+        // arrange
+        int id = 0;
+        boolean isEnabled = true;
+        adapter.addButton(id);
+        adapter.enableButton(id, isEnabled);
+
+        // act
+        Button button = (Button) adapter.getView(id, null, null);
+
+        // assert
+        Assert.assertEquals(isEnabled, button.isEnabled());
+    }
+
+    @Test
+    public void addButtonsAndEnableButtonWithFalse_GetView_ReturnsDisabledButton() {
+        // arrange
+        int id = 0;
+        boolean isEnabled = false;
+        adapter.addButton(id);
+        adapter.enableButton(id, isEnabled);
+
+        // act
+        Button button = (Button) adapter.getView(id, null, null);
+
+        // assert
+        Assert.assertEquals(isEnabled, button.isEnabled());
+    }
+
+    @Test
+    public void addButtonAndSetButtonBackground_GetItem_ReturnsButtonWithBackground() {
+        // arrange
+        int id = 0;
+        String doneIdentifier = "done_";
+        String levelNumIdentifier = "one";
+        adapter.addButton(id);
+        adapter.setButtonBackground(id, doneIdentifier, levelNumIdentifier);
+
+        // act
+        Button button = (Button) adapter.getItem(id);
+
+        // assert
+        Assert.assertEquals(context.getDrawable(R.drawable.chord_done_level_one_button),
+                button.getBackground());
+    }
+
+    @Test
+    public void addButtonAndSetButtonBackground_GetView_ReturnsButtonWithBackground() {
+        // arrange
+        int id = 0;
+        String doneIdentifier = "done_";
+        String levelNumIdentifier = "one";
+        adapter.addButton(id);
+        adapter.setButtonBackground(id, doneIdentifier, levelNumIdentifier);
+
+        // act
+        Button button = (Button) adapter.getView(id, null, null);
+
+        // assert
+        Assert.assertEquals(context.getDrawable(R.drawable.chord_done_level_one_button),
+                button.getBackground());
     }
 }

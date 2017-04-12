@@ -85,8 +85,17 @@ public class LearnChordPresenter implements ILearnChordPresenter {
     }
 
     @Override
-    public void modelOnLearntChordAdded() {
+    public void modelOnLearntChordAdded(int level, int achievements) {
         view.hideProgressBar();
+        if (level == 0 && achievements == 0) {
+            view.showAddLearntChordSuccess();
+        }
+        else if (level != 0 && achievements != 0) {
+            view.showAddLearntChordSuccess(level, achievements);
+        }
+        else {
+            view.showAddLearntChordSuccess(achievements);
+        }
         view.startLearnAllChordsActivity();
     }
 
