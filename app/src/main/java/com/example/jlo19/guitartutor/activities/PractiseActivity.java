@@ -64,7 +64,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
         // retrieving beat speed
         beatSpeed = (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
 
-        setSoundPool(new SoundPool.Builder().setMaxStreams(2).build());
+        setSoundPool(new SoundPool.Builder().setMaxStreams(4).build());
 
         txtCountdown = (TextView) findViewById(R.id.txtCountdown);
         txtFirstChordInstruction = (TextView) findViewById(R.id.txtFirstChordInstruction);

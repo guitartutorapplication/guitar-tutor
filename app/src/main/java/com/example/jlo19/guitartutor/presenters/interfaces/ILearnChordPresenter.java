@@ -10,8 +10,8 @@ public interface ILearnChordPresenter extends IPresenter {
     void viewOnVideoRequested();
     void modelOnImageDownloadFailed();
     void modelOnImageDownloadSuccess(Bitmap bitmap);
-    void modelOnVideoDownloadSuccess(String url);
-    void modelOnVideoDownloadFailed();
+    void modelOnUrlDownloadSuccess(String url);
+    void modelOnUrlDownloadFailed();
     void viewOnLearnt();
     void viewOnConfirmLearnt();
     void setSharedPreferences(SharedPreferences sharedPreferences);

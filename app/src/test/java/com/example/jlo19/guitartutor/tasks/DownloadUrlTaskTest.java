@@ -15,12 +15,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Testing DownloadVideoTask
+ * Testing DownloadUrlTask
  */
 
-public class DownloadVideoTaskTest {
+public class DownloadUrlTaskTest {
 
-    private DownloadVideoTask task;
+    private DownloadUrlTask task;
     private DownloadVideoTaskListener listener;
     private String filename;
     private AmazonS3 client;
@@ -36,7 +36,7 @@ public class DownloadVideoTaskTest {
         Mockito.when(client.generatePresignedUrl((GeneratePresignedUrlRequest) Mockito.any()))
                 .thenReturn(url);
 
-        task = new DownloadVideoTask(client, filename, listener);
+        task = new DownloadUrlTask(client, filename, listener);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DownloadVideoTaskTest {
         task.onPostExecute(url.toString());
 
         // assert
-        Mockito.verify(listener).onVideoDownloadSuccess(url.toString());
+        Mockito.verify(listener).onUrlDownloadSuccess(url.toString());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DownloadVideoTaskTest {
         task.onPostExecute(null);
 
         // assert
-        Mockito.verify(listener).onVideoDownloadFailed();
+        Mockito.verify(listener).onUrlDownloadFailed();
     }
 
     @Test

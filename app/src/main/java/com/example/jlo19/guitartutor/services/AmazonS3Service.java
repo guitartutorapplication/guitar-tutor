@@ -7,10 +7,11 @@ import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceImageListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceUrlListener;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.tasks.DownloadImageTask;
-import com.example.jlo19.guitartutor.tasks.DownloadVideoTask;
+import com.example.jlo19.guitartutor.tasks.DownloadUrlTask;
 
 /**
  * Manages calls to Amazon S3 storage
@@ -18,43 +19,49 @@ import com.example.jlo19.guitartutor.tasks.DownloadVideoTask;
 public class AmazonS3Service implements IAmazonS3Service {
 
     AmazonS3Client client;
-    private AmazonS3ServiceListener listener;
+    private AmazonS3ServiceImageListener imageListener;
     CognitoCachingCredentialsProvider credentialsProvider;
+    private AmazonS3ServiceUrlListener urlListener;
 
     public void getImage(String filename) {
         getDownloadImageTask(filename).execute();
     }
 
-    public void getVideo(String filename) {
-        getDownloadVideoTask(filename).execute();
+    public void getUrl(String filename) {
+        getDownloadUrlTask(filename).execute();
     }
 
     @Override
     public void onImageDownloadFailed() {
         // if task fails to retrieve image, report failure
-        listener.onImageDownloadFailed();
+        imageListener.onImageDownloadFailed();
     }
 
     @Override
-    public void onVideoDownloadSuccess(String url) {
+    public void onUrlDownloadSuccess(String url) {
         // if task successfully retrieves URL, send back URL
-        listener.onVideoDownloadSuccess(url);
+        urlListener.onUrlDownloadSuccess(url);
     }
 
     @Override
-    public void onVideoDownloadFailed() {
+    public void onUrlDownloadFailed() {
         // if task fails to retrieve image, report failure
-        listener.onVideoDownloadFailed();
+        urlListener.onUrlDownloadFailed();
     }
 
     @Override
     public void onImageDownloadSuccess(Bitmap bitmap) {
         // if task successfully retrieves image, send back image
-        listener.onImageDownloadSuccess(bitmap);
+        imageListener.onImageDownloadSuccess(bitmap);
     }
 
-    public void setListener(AmazonS3ServiceListener listener) {
-        this.listener = listener;
+    public void setImageListener(AmazonS3ServiceImageListener listener) {
+        this.imageListener = listener;
+    }
+
+    @Override
+    public void setUrlListener(AmazonS3ServiceUrlListener listener) {
+        this.urlListener = listener;
     }
 
     public void setClient(Context context) {
@@ -72,7 +79,7 @@ public class AmazonS3Service implements IAmazonS3Service {
         return new DownloadImageTask(client, filename, this);
     }
 
-    DownloadVideoTask getDownloadVideoTask(String filename) {
-        return  new DownloadVideoTask(client, filename, this);
+    DownloadUrlTask getDownloadUrlTask(String filename) {
+        return new DownloadUrlTask(client, filename, this);
     }
 }

@@ -3,13 +3,14 @@ package com.example.jlo19.guitartutor.models.interfaces;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceImageListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceUrlListener;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 
 /**
  * Interface for LearnChordModel
  */
-public interface ILearnChordModel extends AmazonS3ServiceListener {
+public interface ILearnChordModel extends AmazonS3ServiceUrlListener, AmazonS3ServiceImageListener {
     void setContext(Context context);
     void getImage(String filename);
     void setPresenter(ILearnChordPresenter presenter);

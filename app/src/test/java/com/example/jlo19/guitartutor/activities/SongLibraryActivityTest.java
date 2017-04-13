@@ -136,8 +136,10 @@ public class SongLibraryActivityTest {
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav" , 1));
         List<Song> expectedSongs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
+                new Song("Adventure of a Lifetime", "Coldplay", "Adventure of a Lifetime.wav",
+                        "contents", chords),
+                new Song("Dance with Me Tonight", "Olly Murs", "Dance with Me Tonight.wav",
+                        "contents", chords));
         activity.setSongs(expectedSongs);
 
         // assert
@@ -153,8 +155,10 @@ public class SongLibraryActivityTest {
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
         List<Song> songs = Arrays.asList(
-                new Song("Adventure of a Lifetime", "Coldplay", "contents", chords),
-                new Song("Dance with Me Tonight", "Olly Murs", "contents", chords));
+                new Song("Adventure of a Lifetime", "Coldplay", "Adventure of a Lifetime.wav",
+                        "contents", chords),
+                new Song("Dance with Me Tonight", "Olly Murs", "Dance with Me Tonight.wav",
+                        "contents", chords));
         activity.setSongs(songs);
 
         // act

@@ -14,14 +14,14 @@ import java.util.Date;
  * Asynchronous task to retrieve video from Amazon S3
  */
 
-public class DownloadVideoTask extends AsyncTask<Void, Void, String> {
+public class DownloadUrlTask extends AsyncTask<Void, Void, String> {
 
     private final DownloadVideoTaskListener listener;
     private final String filename;
     private final AmazonS3 client;
     GeneratePresignedUrlRequest request;
 
-    public DownloadVideoTask(AmazonS3 client, String filename, DownloadVideoTaskListener listener) {
+    public DownloadUrlTask(AmazonS3 client, String filename, DownloadVideoTaskListener listener) {
         this.client = client;
         this.filename = filename;
         this.listener = listener;
@@ -53,10 +53,10 @@ public class DownloadVideoTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String url) {
         if (url != null) {
-            listener.onVideoDownloadSuccess(url);
+            listener.onUrlDownloadSuccess(url);
         }
         else {
-            listener.onVideoDownloadFailed();
+            listener.onUrlDownloadFailed();
         }
     }
 
