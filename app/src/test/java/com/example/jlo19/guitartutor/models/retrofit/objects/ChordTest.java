@@ -204,4 +204,15 @@ public class ChordTest {
         // assert
         Assert.assertEquals(level, actualLevel);
     }
+
+    @Test
+    public void getNumTimesPractised_ReturnsNumTimesPractised() {
+        // act
+        int numTimesPractised = 5;
+        Chord chord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1, numTimesPractised);
+        int actualNumTimesPractised = chord.getNumTimesPractised();
+
+        // assert
+        Assert.assertEquals(numTimesPractised, actualNumTimesPractised);
+    }
 }

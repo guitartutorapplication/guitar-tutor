@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtChordTitle"
+        android:textStyle="bold"
+        android:text="@string/chord_title"
+        android:textSize="@dimen/practise_setup_big_text"
+        android:textColor="@color/colorText"
+        android:layout_marginEnd="@dimen/small_layout_margin"
+        android:layout_marginStart="@dimen/small_layout_margin"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtChord"
+        android:textSize="@dimen/practise_setup_big_text"
+        android:textColor="@color/colorText"
+        android:layout_marginEnd="@dimen/small_layout_margin"
+        android:layout_marginStart="@dimen/small_layout_margin"
+        android:layout_toEndOf="@+id/txtChordTitle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtPractiseNumTitle"
+        android:textStyle="bold"
+        android:text="@string/practise_num_title"
+        android:textSize="@dimen/practise_setup_big_text"
+        android:textColor="@color/colorText"
+        android:layout_marginEnd="@dimen/small_layout_margin"
+        android:layout_marginStart="@dimen/small_layout_margin"
+        android:layout_below="@+id/txtChordTitle"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtPractiseNum"
+        android:textSize="@dimen/practise_setup_big_text"
+        android:textColor="@color/colorText"
+        android:layout_marginEnd="@dimen/small_layout_margin"
+        android:layout_marginStart="@dimen/small_layout_margin"
+        android:layout_below="@+id/txtChord"
+        android:layout_toEndOf="@+id/txtPractiseNumTitle"/>
+
+</RelativeLayout>
