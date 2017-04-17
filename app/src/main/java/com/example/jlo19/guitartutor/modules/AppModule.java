@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.modules;
 
+import android.app.Application;
+
 import com.example.jlo19.guitartutor.models.AccountActivityModel;
 import com.example.jlo19.guitartutor.models.AccountModel;
 import com.example.jlo19.guitartutor.models.EditAccountModel;
@@ -60,6 +62,13 @@ import dagger.Provides;
 
 @Module
 public class AppModule {
+
+    private Application application;
+
+    public AppModule(Application application) {
+        this.application = application;
+    }
+
     @Provides
     @Singleton
     ILearnAllChordsPresenter provideLearnAllChordsPresenter() {
@@ -94,7 +103,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    DatabaseApi provideDatabaseApi() {return DatabaseService.getApi();}
+    DatabaseApi provideDatabaseApi() {return DatabaseService.getApi(application.getApplicationContext());}
 
     @Provides
     @Singleton
