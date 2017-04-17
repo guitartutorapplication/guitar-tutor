@@ -16,10 +16,40 @@
         android:scrollbars="vertical"
         android:scrollbarStyle="insideOverlay"
         android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:layout_above="@+id/btnLayout"
         android:textColor="@color/colorText"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/toolbar"
         android:textSize="@dimen/song_text_size"
         android:layout_margin="@dimen/big_layout_margin" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLayout"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnStop"
+            android:textSize="50sp"
+            android:layout_marginTop="@dimen/big_layout_margin"
+            android:background="@drawable/stop_button"
+            android:layout_width="@dimen/main_buttons_width"
+            android:layout_height="@dimen/main_buttons_height"
+            android:visibility="invisible"
+            />
+
+        <Button
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnPlay"
+            android:textSize="50sp"
+            android:layout_marginTop="@dimen/big_layout_margin"
+            android:background="@drawable/play_demo_button"
+            android:layout_width="@dimen/main_buttons_width"
+            android:layout_height="@dimen/main_buttons_height"
+            />
+
+    </RelativeLayout>
 
 </RelativeLayout>

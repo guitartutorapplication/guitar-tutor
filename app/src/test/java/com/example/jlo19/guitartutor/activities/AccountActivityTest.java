@@ -209,4 +209,26 @@ public class AccountActivityTest {
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
     }
+
+    @Test
+    public void activityButtonClicked_CallsAccountActivityRequestedOnView() {
+        // act
+        Button btnActivity = (Button) activity.findViewById(R.id.btnActivity);
+        btnActivity.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnAccountActivityRequested();
+    }
+
+    @Test
+    public void startAccountActivityActivity_StartsAccountActivityActivity() {
+        // act
+        activity.startAccountActivityActivity();
+
+        // assert
+        Intent intent = shadowOf(activity).getNextStartedActivity();
+        // checks correct activity is started
+        Assert.assertEquals(AccountActivityActivity.class.getName(), intent.getComponent()
+                .getClassName());
+    }
 }

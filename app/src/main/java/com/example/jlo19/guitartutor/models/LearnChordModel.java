@@ -34,7 +34,8 @@ public class LearnChordModel implements ILearnChordModel {
     @Inject
     void createAmazonS3Service(IAmazonS3Service service) {
         this.service = service;
-        service.setListener(this);
+        service.setImageListener(this);
+        service.setUrlListener(this);
     }
 
     @Inject
@@ -53,13 +54,13 @@ public class LearnChordModel implements ILearnChordModel {
     }
 
     @Override
-    public void onVideoDownloadSuccess(String url) {
-        presenter.modelOnVideoDownloadSuccess(url);
+    public void onUrlDownloadSuccess(String url) {
+        presenter.modelOnUrlDownloadSuccess(url);
     }
 
     @Override
-    public void onVideoDownloadFailed() {
-        presenter.modelOnVideoDownloadFailed();
+    public void onUrlDownloadFailed() {
+        presenter.modelOnUrlDownloadFailed();
     }
 
     @Override
@@ -79,7 +80,7 @@ public class LearnChordModel implements ILearnChordModel {
 
     @Override
     public void getVideo(String filename) {
-        service.getVideo(filename);
+        service.getUrl(filename);
     }
 
     @Override

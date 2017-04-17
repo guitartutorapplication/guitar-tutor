@@ -21,16 +21,27 @@ public class SongTest {
     private String artist;
     private List<Chord> chords;
     private String contents;
+    private String audioFilename;
 
     @Before
     public void setUp() {
         title = "Adventure of a Lifetime";
         artist = "Coldplay";
+        audioFilename = "Adventure of a Lifetime.wav";
         contents = "contents";
         chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
-        song = new Song(title, artist, contents, chords);
+        song = new Song(title, artist, audioFilename, contents, chords);
+    }
+
+    @Test
+    public void getAudioFilename_ReturnsAudioFilename() {
+        // act
+        String actualFilename = song.getAudioFilename();
+
+        // assert
+        Assert.assertEquals(audioFilename, actualFilename);
     }
 
     @Test
@@ -80,6 +91,7 @@ public class SongTest {
         // assert
         Mockito.verify(parcel).writeString(title);
         Mockito.verify(parcel).writeString(artist);
+        Mockito.verify(parcel).writeString(audioFilename);
         Mockito.verify(parcel).writeString(contents);
         Mockito.verify(parcel).writeList(chords);
     }

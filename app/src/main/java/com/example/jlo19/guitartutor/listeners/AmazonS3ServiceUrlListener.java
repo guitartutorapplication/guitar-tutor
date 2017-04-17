@@ -1,10 +1,9 @@
 package com.example.jlo19.guitartutor.listeners;
 
 /**
- * Listener for DownloadUrlTask
+ * Listener for Amazon S3 Service (for URLs)
  */
-
-public interface DownloadVideoTaskListener {
+public interface AmazonS3ServiceUrlListener {
     void onUrlDownloadSuccess(String url);
     void onUrlDownloadFailed();
 }

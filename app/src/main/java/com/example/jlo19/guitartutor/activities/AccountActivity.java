@@ -58,6 +58,14 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
                 presenter.viewOnLogout();
             }
         });
+
+        Button btnActivity = (Button) findViewById(R.id.btnActivity);
+        btnActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.viewOnAccountActivityRequested();
+            }
+        });
     }
 
     @Inject
@@ -105,6 +113,12 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
         // passing account details to next activity
         Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
         intent.putExtra("USER", user);
+        startActivity(intent);
+    }
+
+    @Override
+    public void startAccountActivityActivity() {
+        Intent intent = new Intent(getBaseContext(), AccountActivityActivity.class);
         startActivity(intent);
     }
 

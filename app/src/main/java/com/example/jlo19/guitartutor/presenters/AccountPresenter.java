@@ -64,4 +64,9 @@ public class AccountPresenter implements IAccountPresenter {
     public void viewOnEditAccount() {
         view.startEditAccountActivity();
     }
+
+    @Override
+    public void viewOnAccountActivityRequested() {
+        view.startAccountActivityActivity();
+    }
 }

@@ -9,10 +9,11 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceImageListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceUrlListener;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.tasks.DownloadImageTask;
-import com.example.jlo19.guitartutor.tasks.DownloadVideoTask;
+import com.example.jlo19.guitartutor.tasks.DownloadUrlTask;
 
 import junit.framework.Assert;
 
@@ -33,9 +34,10 @@ import org.robolectric.annotation.Config;
 public class AmazonS3ServiceTest {
 
     private IAmazonS3Service service;
-    private AmazonS3ServiceListener listener;
+    private AmazonS3ServiceImageListener imageListener;
     private DownloadImageTask downloadImageTask;
-    private DownloadVideoTask downloadVideoTask;
+    private DownloadUrlTask downloadUrlTask;
+    private AmazonS3ServiceUrlListener urlListener;
 
     public App getApp() {
         return (App) RuntimeEnvironment.application;
@@ -48,16 +50,19 @@ public class AmazonS3ServiceTest {
 
         service = Mockito.spy(new AmazonS3Service());
 
-        listener = Mockito.mock(AmazonS3ServiceListener.class);
-        service.setListener(listener);
+        imageListener = Mockito.mock(AmazonS3ServiceImageListener.class);
+        service.setImageListener(imageListener);
+
+        urlListener = Mockito.mock(AmazonS3ServiceUrlListener.class);
+        service.setUrlListener(urlListener);
 
         downloadImageTask = Mockito.mock(DownloadImageTask.class);
         Mockito.when(((AmazonS3Service) service).getDownloadImageTask("filename")).thenReturn(
                 downloadImageTask);
 
-        downloadVideoTask = Mockito.mock(DownloadVideoTask.class);
-        Mockito.when(((AmazonS3Service) service).getDownloadVideoTask("filename")).thenReturn(
-                downloadVideoTask);
+        downloadUrlTask = Mockito.mock(DownloadUrlTask.class);
+        Mockito.when(((AmazonS3Service) service).getDownloadUrlTask("filename")).thenReturn(
+                downloadUrlTask);
     }
 
     @Test
@@ -72,10 +77,10 @@ public class AmazonS3ServiceTest {
     @Test
     public void getVideo_CallsExecuteOnDownloadVideoTask() {
         // act
-        service.getVideo("filename");
+        service.getUrl("filename");
 
         // assert
-        Mockito.verify(downloadVideoTask).execute();
+        Mockito.verify(downloadUrlTask).execute();
     }
 
     @Test
@@ -84,26 +89,26 @@ public class AmazonS3ServiceTest {
         service.onImageDownloadFailed();
 
         // assert
-        Mockito.verify(listener).onImageDownloadFailed();
+        Mockito.verify(imageListener).onImageDownloadFailed();
     }
 
     @Test
-    public void onVideoDownloadSuccess_CallsOnVideoDownloadSuccessOnListener() {
+    public void onUrlDownloadSuccess_CallsOnUrlDownloadSuccessOnListener() {
         // act
         String expectedUrl = "url";
-        service.onVideoDownloadSuccess(expectedUrl);
+        service.onUrlDownloadSuccess(expectedUrl);
 
         // assert
-        Mockito.verify(listener).onVideoDownloadSuccess(expectedUrl);
+        Mockito.verify(urlListener).onUrlDownloadSuccess(expectedUrl);
     }
 
     @Test
-    public void onVideoDownloadFailed_CallsOnVideoDownloadFailedOnListener() {
+    public void onUrlDownloadFailed_CallsOnUrlDownloadFailedOnListener() {
         // act
-        service.onVideoDownloadFailed();
+        service.onUrlDownloadFailed();
 
         // assert
-        Mockito.verify(listener).onVideoDownloadFailed();
+        Mockito.verify(urlListener).onUrlDownloadFailed();
     }
 
     @Test
@@ -113,7 +118,7 @@ public class AmazonS3ServiceTest {
         service.onImageDownloadSuccess(expectedImage);
 
         // assert
-        Mockito.verify(listener).onImageDownloadSuccess(expectedImage);
+        Mockito.verify(imageListener).onImageDownloadSuccess(expectedImage);
     }
 
     @Test

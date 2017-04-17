@@ -27,7 +27,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 /**
- * Testing LearnChordModelTest
+ * Testing LearnChordModel
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({App.class, Response.class, ResponseBody.class})
@@ -71,12 +71,12 @@ public class LearnChordModelTest {
     }
 
     @Test
-    public void onVideoDownloadFailed_CallsOnDownloadFailedOnPresenter() {
+    public void onUrlDownloadFailed_CallsOnDownloadFailedOnPresenter() {
         // act
-        model.onVideoDownloadFailed();
+        model.onUrlDownloadFailed();
 
         // assert
-        Mockito.verify(presenter).modelOnVideoDownloadFailed();
+        Mockito.verify(presenter).modelOnUrlDownloadFailed();
     }
 
     @Test
@@ -90,13 +90,13 @@ public class LearnChordModelTest {
     }
 
     @Test
-    public void onVideoDownloadSuccess_CallsOnDownloadSuccessWithUrlOnPresenter() {
+    public void onUrlDownloadSuccess_CallsOnDownloadSuccessWithUrlOnPresenter() {
         // act
         String expectedUrl = "url";
-        model.onVideoDownloadSuccess(expectedUrl);
+        model.onUrlDownloadSuccess(expectedUrl);
 
         // assert
-        Mockito.verify(presenter).modelOnVideoDownloadSuccess(expectedUrl);
+        Mockito.verify(presenter).modelOnUrlDownloadSuccess(expectedUrl);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class LearnChordModelTest {
         model.getVideo(expectedFilename);
 
         // assert
-        Mockito.verify(service).getVideo(expectedFilename);
+        Mockito.verify(service).getUrl(expectedFilename);
     }
 
     @Test

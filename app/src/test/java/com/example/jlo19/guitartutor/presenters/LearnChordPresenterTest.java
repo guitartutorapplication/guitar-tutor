@@ -160,7 +160,7 @@ public class LearnChordPresenterTest {
     @Test
     public void modelOnVideoDownloadSuccess_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnVideoDownloadSuccess("url");
+        presenter.modelOnUrlDownloadSuccess("url");
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -170,7 +170,7 @@ public class LearnChordPresenterTest {
     public void modelOnVideoDownloadSuccess_CallsPlayVideoOnView() {
         // act
         String expectedUrl = "url";
-        presenter.modelOnVideoDownloadSuccess(expectedUrl);
+        presenter.modelOnUrlDownloadSuccess(expectedUrl);
 
         // assert
         Mockito.verify(view).playVideo(expectedUrl);
@@ -179,7 +179,7 @@ public class LearnChordPresenterTest {
     @Test
     public void modelOnVideoDownloadFailed_HidesProgressBarOnView() {
         // act
-        presenter.modelOnVideoDownloadFailed();
+        presenter.modelOnUrlDownloadFailed();
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -188,7 +188,7 @@ public class LearnChordPresenterTest {
     @Test
     public void modelOnVideoDownloadFailed_ShowVideoLoadErrorOnView() {
         // act
-        presenter.modelOnVideoDownloadFailed();
+        presenter.modelOnUrlDownloadFailed();
 
         // assert
         Mockito.verify(view).showVideoLoadError();

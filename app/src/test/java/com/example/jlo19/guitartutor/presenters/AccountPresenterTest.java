@@ -141,4 +141,13 @@ public class AccountPresenterTest {
         // assert
         Mockito.verify(view).startEditAccountActivity();
     }
+
+    @Test
+    public void viewOnAccountActivityRequested_CallsStartAccountActivityActivityOnView(){
+        // act
+        presenter.viewOnAccountActivityRequested();
+
+        // assert
+        Mockito.verify(view).startAccountActivityActivity();
+    }
 }

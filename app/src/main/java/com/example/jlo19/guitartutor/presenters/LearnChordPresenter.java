@@ -57,13 +57,13 @@ public class LearnChordPresenter implements ILearnChordPresenter {
     }
 
     @Override
-    public void modelOnVideoDownloadSuccess(String url) {
+    public void modelOnUrlDownloadSuccess(String url) {
         view.hideProgressBar();
         view.playVideo(url);
     }
 
     @Override
-    public void modelOnVideoDownloadFailed() {
+    public void modelOnUrlDownloadFailed() {
         view.hideProgressBar();
         view.showVideoLoadError();
     }

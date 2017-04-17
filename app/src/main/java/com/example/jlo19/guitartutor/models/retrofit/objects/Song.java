@@ -16,14 +16,17 @@ public class Song implements Parcelable {
     private final String title;
     @SerializedName("artist")
     private final String artist;
+    @SerializedName("audio_filename")
+    private final String audioFilename;
     @SerializedName("contents")
     private final String contents;
     @SerializedName("chords")
     private final List<Chord> chords;
 
-    public Song(String title, String artist, String contents, List<Chord> chords) {
+    public Song(String title, String artist, String audioFilename, String contents, List<Chord> chords) {
         this.title = title;
         this.artist = artist;
+        this.audioFilename = audioFilename;
         this.contents = contents;
         this.chords = chords;
     }
@@ -31,6 +34,7 @@ public class Song implements Parcelable {
     private Song(Parcel in) {
         title = in.readString();
         artist = in.readString();
+        audioFilename = in.readString();
         contents = in.readString();
         chords = new ArrayList<>();
         in.readList(chords, getClass().getClassLoader());
@@ -57,6 +61,7 @@ public class Song implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(artist);
+        dest.writeString(audioFilename);
         dest.writeString(contents);
         dest.writeList(chords);
     }
@@ -75,5 +80,9 @@ public class Song implements Parcelable {
 
     public String getContents() {
         return contents;
+    }
+
+    public String getAudioFilename() {
+        return audioFilename;
     }
 }
