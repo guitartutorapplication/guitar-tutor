@@ -46,12 +46,6 @@ public class RegisterPresenter implements IRegisterPresenter {
     }
 
     @Override
-    public void modelOnAlreadyRegistered() {
-        view.hideProgressBar();
-        view.showAlreadyRegisteredError();
-    }
-
-    @Override
     public void modelOnRegisterSuccess() {
         view.hideProgressBar();
         view.startLoginActivity();
@@ -85,6 +79,9 @@ public class RegisterPresenter implements IRegisterPresenter {
                 break;
             case PASSWORD_NO_NUMBER:
                 view.showPasswordNoNumberError();
+                break;
+            case EMAIL_ALREADY_REGISTERED:
+                view.showAlreadyRegisteredError();
                 break;
         }
     }

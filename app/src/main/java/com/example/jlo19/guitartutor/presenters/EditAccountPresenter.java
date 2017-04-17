@@ -87,6 +87,9 @@ public class EditAccountPresenter implements IEditAccountPresenter {
             case PASSWORD_NO_NUMBER:
                 view.showPasswordNoNumberError();
                 break;
+            case EMAIL_ALREADY_REGISTERED:
+                view.showAlreadyRegisteredError();
+                break;
         }
     }
 }

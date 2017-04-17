@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
@@ -204,7 +203,7 @@ public class EditAccountModelTest {
             throws IOException {
         // arrange
         Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
-                ResponseError.INVALID_EMAIL.toString());
+                ValidationResult.INVALID_EMAIL.toString());
         DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((EditAccountModel) model).setApi(api);
 
@@ -213,6 +212,86 @@ public class EditAccountModelTest {
 
         // assert
         Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.INVALID_EMAIL);
+    }
+
+    @Test
+    public void saveWithCorrectCredentials_OnEmailAlreadyRegisteredResponse_CallsAlreadyRegisteredOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.EMAIL_ALREADY_REGISTERED.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((EditAccountModel) model).setApi(api);
+
+        // act
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.EMAIL_ALREADY_REGISTERED);
+    }
+
+    @Test
+    public void saveWithCorrectCredentials_OnPasswordTooShortResponse_CallsPasswordTooShortOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_TOO_SHORT.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((EditAccountModel) model).setApi(api);
+
+        // act
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_TOO_SHORT);
+    }
+
+    @Test
+    public void saveWithCorrectCredentials_OnPasswordNoUpperResponse_CallsPasswordNoUpperOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_NO_UPPER.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((EditAccountModel) model).setApi(api);
+
+        // act
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_UPPER);
+    }
+
+    @Test
+    public void saveWithCorrectCredentials_OnPasswordNoLowerResponse_CallsPasswordNoLowerOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_NO_LOWER.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((EditAccountModel) model).setApi(api);
+
+        // act
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_LOWER);
+    }
+
+    @Test
+    public void saveWithCorrectCredentials_OnPasswordNoNumberResponse_CallsPasswordNoNumberOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_NO_NUMBER.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((EditAccountModel) model).setApi(api);
+
+        // act
+        model.save("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_NUMBER);
     }
 
     @Test

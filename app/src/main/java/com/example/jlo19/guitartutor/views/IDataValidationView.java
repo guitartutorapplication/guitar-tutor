@@ -12,4 +12,5 @@ interface IDataValidationView extends IProgressBarView{
     void showPasswordNoUpperCaseLetterError();
     void showPasswordNoLowerCaseLetterError();
     void showPasswordNoNumberError();
+    void showAlreadyRegisteredError();
 }

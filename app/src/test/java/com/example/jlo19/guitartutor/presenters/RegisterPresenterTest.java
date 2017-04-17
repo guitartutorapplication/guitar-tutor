@@ -235,7 +235,7 @@ public class RegisterPresenterTest {
     @Test
     public void modelOnAlreadyRegistered_HidesProgressBarOnView() {
         // act
-        presenter.modelOnAlreadyRegistered();
+        presenter.modelOnValidationFailed(ValidationResult.EMAIL_ALREADY_REGISTERED);
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -244,7 +244,7 @@ public class RegisterPresenterTest {
     @Test
     public void modelOnAlreadyRegistered_ShowsAlreadyRegisterErrorOnView() {
         // act
-        presenter.modelOnAlreadyRegistered();
+        presenter.modelOnValidationFailed(ValidationResult.EMAIL_ALREADY_REGISTERED);
 
         // assert
         Mockito.verify(view).showAlreadyRegisteredError();

@@ -12,13 +12,13 @@ import java.util.List;
  * Object that stores details of a song
  */
 public class Song implements Parcelable {
-    @SerializedName("title")
+    @SerializedName("TITLE")
     private final String title;
-    @SerializedName("artist")
+    @SerializedName("ARTIST")
     private final String artist;
-    @SerializedName("audio_filename")
+    @SerializedName("AUDIO_FILENAME")
     private final String audioFilename;
-    @SerializedName("contents")
+    @SerializedName("CONTENTS")
     private final String contents;
     @SerializedName("chords")
     private final List<Chord> chords;

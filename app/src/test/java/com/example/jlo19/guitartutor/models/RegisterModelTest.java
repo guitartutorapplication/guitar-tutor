@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
@@ -194,7 +193,7 @@ public class RegisterModelTest {
             throws IOException {
         // arrange
         Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
-                ResponseError.INVALID_EMAIL.toString());
+                ValidationResult.INVALID_EMAIL.toString());
         DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((RegisterModel) model).setApi(api);
 
@@ -206,11 +205,11 @@ public class RegisterModelTest {
     }
 
     @Test
-    public void registerWithCorrectCredentials_OnAlreadyRegisteredResponse_CallsAlreadyRegisterOnPresenter()
+    public void registerWithCorrectCredentials_OnEmailAlreadyRegisteredResponse_CallsAlreadyRegisteredOnPresenter()
             throws IOException {
         // arrange
         Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
-                ResponseError.ALREADY_REGISTERED.toString());
+                ValidationResult.EMAIL_ALREADY_REGISTERED.toString());
         DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
         ((RegisterModel) model).setApi(api);
 
@@ -218,8 +217,73 @@ public class RegisterModelTest {
         model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
 
         // assert
-        Mockito.verify(presenter).modelOnAlreadyRegistered();
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.EMAIL_ALREADY_REGISTERED);
     }
+
+    @Test
+    public void registerWithCorrectCredentials_OnPasswordTooShortResponse_CallsPasswordTooShortOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_TOO_SHORT.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((RegisterModel) model).setApi(api);
+
+        // act
+        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_TOO_SHORT);
+    }
+
+    @Test
+    public void registerWithCorrectCredentials_OnPasswordNoUpperResponse_CallsPasswordNoUpperOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_NO_UPPER.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((RegisterModel) model).setApi(api);
+
+        // act
+        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_UPPER);
+    }
+
+    @Test
+    public void registerWithCorrectCredentials_OnPasswordNoLowerResponse_CallsPasswordNoLowerOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_NO_LOWER.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((RegisterModel) model).setApi(api);
+
+        // act
+        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_LOWER);
+    }
+
+    @Test
+    public void registerWithCorrectCredentials_OnPasswordNoNumberResponse_CallsPasswordNoNumberOnPresenter()
+            throws IOException {
+        // arrange
+        Response<ResponseWithMessage> response = FakeResponseCreator.getResponseWithMessage(false,
+                ValidationResult.PASSWORD_NO_NUMBER.toString());
+        DatabaseApi api = new FakeDatabaseApi(new FakeResponseWithMessageCall(response));
+        ((RegisterModel) model).setApi(api);
+
+        // act
+        model.register("Kate", "kate@gmail.com", "kate@gmail.com", "Password123", "Password123");
+
+        // assert
+        Mockito.verify(presenter).modelOnValidationFailed(ValidationResult.PASSWORD_NO_NUMBER);
+    }
+
 
     @Test
     public void registerWithCorrectCredentials_OnErrorResponse_CallsRegisterErrorOnPresenter()

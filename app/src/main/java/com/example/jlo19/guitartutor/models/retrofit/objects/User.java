@@ -9,15 +9,15 @@ import com.google.gson.annotations.SerializedName;
  * Object that stores details of a User
  */
 public class User implements Parcelable {
-    @SerializedName("user_id")
+    @SerializedName("USER_ID")
     private int id;
-    @SerializedName("name")
+    @SerializedName("NAME")
     private final String name;
-    @SerializedName("email")
+    @SerializedName("EMAIL")
     private final String email;
-    @SerializedName("level")
+    @SerializedName("LEVEL")
     private final int level;
-    @SerializedName("achievements")
+    @SerializedName("ACHIEVEMENTS")
     private final int achievements;
 
     public User(String name, String email, int level, int achievements) {

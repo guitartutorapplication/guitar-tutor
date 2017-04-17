@@ -1,7 +1,6 @@
 package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
 import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
@@ -41,7 +40,7 @@ public class RegisterModel implements IRegisterModel {
     @Override
     public void register(String name, String email, String confirmEmail, String password,
                          String confirmPassword) {
-        ValidationResult validationResult = DataValidationModel.validate(
+        final ValidationResult validationResult = DataValidationModel.validate(
                 name, email, confirmEmail, password, confirmPassword);
 
         if (validationResult != ValidationResult.VALID_DATA) {
@@ -66,16 +65,15 @@ public class RegisterModel implements IRegisterModel {
                             ResponseWithMessage responseWithMessage = adapter.fromJson(
                                     response.errorBody().string());
 
-                            if (responseWithMessage.getMessage().equals(
-                                    ResponseError.INVALID_EMAIL.toString())) {
-                                presenter.modelOnValidationFailed(ValidationResult.INVALID_EMAIL);
-                            }
-                            else if (responseWithMessage.getMessage().equals(
-                                    ResponseError.ALREADY_REGISTERED.toString())) {
-                                presenter.modelOnAlreadyRegistered();
+                            ValidationResult validationResult = DataValidationModel.validateResponse(
+                                    responseWithMessage.getMessage());
+
+                            if (validationResult == ValidationResult.VALID_DATA) {
+                                // if API finds no data validation error, show general error
+                                presenter.modelOnRegisterError();
                             }
                             else {
-                                presenter.modelOnRegisterError();
+                                presenter.modelOnValidationFailed(validationResult);
                             }
 
                         } catch (IOException e) {

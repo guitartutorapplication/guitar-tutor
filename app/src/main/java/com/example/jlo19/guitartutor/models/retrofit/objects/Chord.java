@@ -9,21 +9,21 @@ import com.google.gson.annotations.SerializedName;
  * Object that stores details of a chord
  */
 public class Chord implements Parcelable {
-    @SerializedName("diagram_filename")
+    @SerializedName("DIAGRAM_FILENAME")
     private final String diagramFilename;
-    @SerializedName("chord_id")
+    @SerializedName("CHORD_ID")
     private final int id;
-    @SerializedName("name")
+    @SerializedName("NAME")
     private final String name;
-    @SerializedName("type")
+    @SerializedName("TYPE")
     private final String type;
-    @SerializedName("video_filename")
+    @SerializedName("VIDEO_FILENAME")
     private final String videoFilename;
-    @SerializedName("audio_filename")
+    @SerializedName("AUDIO_FILENAME")
     private final String audioFilename;
-    @SerializedName("level_required")
+    @SerializedName("LEVEL_REQUIRED")
     private int levelRequired;
-    @SerializedName("num_times_pract")
+    @SerializedName("NUM_TIMES_PRACT")
     private int numTimesPractised;
 
     public Chord(int id, String name, String type, String diagramFilename, String videoFilename,

@@ -275,4 +275,14 @@ public class EditAccountActivityTest {
         // checks correct activity is started
         junit.framework.Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
     }
+
+    @Test
+    public void showAlreadyRegisteredError_MakesToastWithAlreadyRegisteredErrorMessage() {
+        // act
+        activity.showAlreadyRegisteredError();
+
+        // assert
+        junit.framework.Assert.assertEquals(getApp().getResources().getString(R.string.already_registered_error_message),
+                ShadowToast.getTextOfLatestToast());
+    }
 }

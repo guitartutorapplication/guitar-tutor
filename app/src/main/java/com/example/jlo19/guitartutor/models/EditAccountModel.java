@@ -3,7 +3,6 @@ package com.example.jlo19.guitartutor.models;
 import android.content.SharedPreferences;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ResponseError;
 import com.example.jlo19.guitartutor.enums.ValidationResult;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
 import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
@@ -75,15 +74,19 @@ public class EditAccountModel extends DataValidationModel implements IEditAccoun
                             ResponseWithMessage responseWithMessage = adapter.fromJson(
                                     response.errorBody().string());
 
-                            if (responseWithMessage.getMessage().equals(
-                                    ResponseError.INVALID_EMAIL.toString())) {
-                                presenter.modelOnValidationFailed(ValidationResult.INVALID_EMAIL);
-                            }
-                            else {
+                            ValidationResult validationResult = DataValidationModel.validateResponse(
+                                    responseWithMessage.getMessage());
+
+                            if (validationResult == ValidationResult.VALID_DATA) {
+                                // if API finds no data validation error, show general error
                                 presenter.modelOnSaveError();
                             }
+                            else {
+                                presenter.modelOnValidationFailed(validationResult);
+                            }
+
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            presenter.modelOnSaveError();
                         }
                     }
                 }

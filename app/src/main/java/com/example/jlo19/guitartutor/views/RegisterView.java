@@ -6,6 +6,5 @@ package com.example.jlo19.guitartutor.views;
 
 public interface RegisterView extends IDataValidationView {
     void showRegisterError();
-    void showAlreadyRegisteredError();
     void startLoginActivity();
 }

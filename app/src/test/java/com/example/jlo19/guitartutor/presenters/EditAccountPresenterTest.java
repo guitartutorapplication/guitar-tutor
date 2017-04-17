@@ -232,6 +232,24 @@ public class EditAccountPresenterTest {
     }
 
     @Test
+    public void modelOnAlreadyRegistered_ShowsAlreadyRegisteredOnView() {
+        // act
+        presenter.modelOnValidationFailed(ValidationResult.EMAIL_ALREADY_REGISTERED);
+
+        // assert
+        Mockito.verify(view).showAlreadyRegisteredError();
+    }
+
+    @Test
+    public void modelOnAlreadyRegistered_HidesProgressBarOnView() {
+        // act
+        presenter.modelOnValidationFailed(ValidationResult.EMAIL_ALREADY_REGISTERED);
+
+        // assert
+        Mockito.verify(view).hideProgressBar();
+    }
+
+    @Test
     public void modelOnSaveError_HidesProgressBarOnView() {
         // act
         presenter.modelOnSaveError();

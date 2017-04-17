@@ -52,4 +52,28 @@ class DataValidationModel {
             return ValidationResult.VALID_DATA;
         }
     }
+
+    static ValidationResult validateResponse(String responseMessage) {
+        if (responseMessage.equals(ValidationResult.INVALID_EMAIL.toString())) {
+            return ValidationResult.INVALID_EMAIL;
+        }
+        else if (responseMessage.equals(ValidationResult.EMAIL_ALREADY_REGISTERED.toString())) {
+            return ValidationResult.EMAIL_ALREADY_REGISTERED;
+        }
+        else if (responseMessage.equals(ValidationResult.PASSWORD_TOO_SHORT.toString())) {
+            return ValidationResult.PASSWORD_TOO_SHORT;
+        }
+        else if (responseMessage.equals(ValidationResult.PASSWORD_NO_UPPER.toString())) {
+            return ValidationResult.PASSWORD_NO_UPPER;
+        }
+        else if (responseMessage.equals(ValidationResult.PASSWORD_NO_LOWER.toString())) {
+            return ValidationResult.PASSWORD_NO_LOWER;
+        }
+        else if (responseMessage.equals(ValidationResult.PASSWORD_NO_NUMBER.toString())) {
+            return ValidationResult.PASSWORD_NO_NUMBER;
+        }
+        else {
+            return ValidationResult.VALID_DATA;
+        }
+    }
 }

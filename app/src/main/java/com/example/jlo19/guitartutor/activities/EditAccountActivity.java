@@ -151,4 +151,10 @@ public class EditAccountActivity extends BaseWithToolbarActivity implements Edit
         Toast.makeText(getApplicationContext(), R.string.password_no_number_error_message,
                 Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void showAlreadyRegisteredError() {
+        Toast.makeText(getApplicationContext(), R.string.already_registered_error_message,
+                Toast.LENGTH_SHORT).show();
+    }
 }
