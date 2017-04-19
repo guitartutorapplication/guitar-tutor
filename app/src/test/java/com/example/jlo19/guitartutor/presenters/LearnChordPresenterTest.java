@@ -19,8 +19,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.mockito.internal.verification.VerificationModeFactory.atLeast;
-
 /**
  * Testing LearnChordPresenter
  */
@@ -67,12 +65,14 @@ public class LearnChordPresenterTest {
     public void setView_LearnChordFalse_EnablesLearntButtonOnView() {
         // arrange
         Mockito.when(view.getLearntChord()).thenReturn(false);
+        // so doesn't account for calls before
+        Mockito.reset(view);
 
         // act
         presenter.setView(view);
 
         // assert
-        Mockito.verify(view, atLeast(1)).enableLearntButton(true);
+        Mockito.verify(view).enableLearntButton(true);
     }
 
     @Test
@@ -205,11 +205,15 @@ public class LearnChordPresenterTest {
 
     @Test
     public void viewOnConfirmLearnt_ShowsProgressBarOnView() {
+        // so doesn't account for calls to showProgressBar before
+        Mockito.reset(view);
+        Mockito.when(view.getChord()).thenReturn(selectedChord);
+
         // act
         presenter.viewOnConfirmLearnt();
 
         // assert
-        Mockito.verify(view, atLeast(1)).showProgressBar();
+        Mockito.verify(view).showProgressBar();
     }
 
     @Test

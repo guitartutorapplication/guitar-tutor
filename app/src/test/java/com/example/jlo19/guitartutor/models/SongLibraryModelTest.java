@@ -28,7 +28,7 @@ import java.util.List;
 
 import retrofit2.Response;
 
-import static org.mockito.internal.verification.VerificationModeFactory.times;
+import static org.mockito.Mockito.never;
 
 /**
  * Testing SongLibraryModel
@@ -133,14 +133,18 @@ public class SongLibraryModelTest {
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response)));
         ((SongLibraryModel) model).setApi(api);
         model.getAllSongs();
+        // so doesn't account for calls before second getAllSongs when verifying
+        Mockito.reset(presenter);
+        Mockito.reset(api);
 
         // act
         model.getAllSongs();
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(songs);
-        Mockito.verify(api, times(1)).getSongs();
+        Mockito.verify(presenter).modelOnSongsRetrieved(songs);
+        Mockito.verify(api, never()).getSongs();
     }
+
 
     @Test
     public void getAllSongsWithResponse_ResetSongs_GetAllSongs_CallsApiASecondTime() {
@@ -150,13 +154,16 @@ public class SongLibraryModelTest {
         ((SongLibraryModel) model).setApi(api);
         model.getAllSongs();
         model.resetSongs();
+        // so doesn't account for calls before second getAllSongs when verifying
+        Mockito.reset(presenter);
+        Mockito.reset(api);
 
         // act
         model.getAllSongs();
 
         // assert
-        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(songs);
-        Mockito.verify(api, times(2)).getSongs();
+        Mockito.verify(presenter).modelOnSongsRetrieved(songs);
+        Mockito.verify(api).getSongs();
     }
 
     @Test
@@ -234,13 +241,16 @@ public class SongLibraryModelTest {
 
         model.getAllSongs();
         model.getSongsUserCanPlay();
+        // so doesn't account for calls before second getAllSongs when verifying
+        Mockito.reset(presenter);
+        Mockito.reset(api);
 
         // act
         model.getSongsUserCanPlay();
 
         // assert
-        Mockito.verify(api, times(1)).getUserChords(userId);
-        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
+        Mockito.verify(api, never()).getUserChords(userId);
+        Mockito.verify(presenter).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
     }
 
     @Test
@@ -257,12 +267,15 @@ public class SongLibraryModelTest {
         model.getSongsUserCanPlay();
         model.resetSongs();
         model.getAllSongs();
+        // so doesn't account for calls before second getAllSongs when verifying
+        Mockito.reset(presenter);
+        Mockito.reset(api);
 
         // act
         model.getSongsUserCanPlay();
 
         // assert
-        Mockito.verify(api, times(2)).getUserChords(userId);
-        Mockito.verify(presenter, times(2)).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
+        Mockito.verify(api).getUserChords(userId);
+        Mockito.verify(presenter).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
     }
 }

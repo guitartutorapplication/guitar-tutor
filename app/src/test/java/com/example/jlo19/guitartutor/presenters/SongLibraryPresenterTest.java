@@ -123,6 +123,7 @@ public class SongLibraryPresenterTest {
 
     @Test
     public void viewOnSongFilterChangedWithTrue_CallsGetAllSongsOnModel() {
+
         // act
         presenter.viewOnSongFilterChanged(true);
 
