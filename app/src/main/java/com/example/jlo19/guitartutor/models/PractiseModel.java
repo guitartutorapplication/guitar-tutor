@@ -145,14 +145,15 @@ public class PractiseModel implements IPractiseModel {
 
     @Override
     public void savePractiseSession() {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         int userId = sharedPreferences.getInt("user_id", 0);
+        String apiKey = sharedPreferences.getString("api_key", "");
         ArrayList<Integer> chordIds = new ArrayList<>();
         for (Chord chord : selectedChords){
             chordIds.add(chord.getId());
         }
 
-        Call<User> call = api.updateUserChords(userId, chordIds);
+        Call<User> call = api.updateUserChords(apiKey, userId, chordIds);
         // asynchronously executing call
         call.enqueue(new Callback<User>() {
             @Override

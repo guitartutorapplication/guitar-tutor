@@ -42,6 +42,7 @@ public class PractiseSetupModelTest {
     private IPractiseSetupModel model;
     private IPractiseSetupPresenter presenter;
     private int userId;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -54,6 +55,8 @@ public class PractiseSetupModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
 
         presenter = PowerMockito.mock(IPractiseSetupPresenter.class);
@@ -326,7 +329,7 @@ public class PractiseSetupModelTest {
     }
 
     @Test
-    public void getChords_CallsUserChordsOnApiWithIdFromSharedPreferences() {
+    public void getChords_CallsUserChordsOnApiWithIdAndApiKeyFromSharedPreferences() {
         // arrange
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(null)));
         ((PractiseSetupModel) model).setApi(api);
@@ -335,7 +338,7 @@ public class PractiseSetupModelTest {
         model.getChords();
 
         // assert
-        Mockito.verify(api).getUserChords(userId);
+        Mockito.verify(api).getUserChords(apiKey, userId);
     }
 
     @Test

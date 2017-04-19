@@ -20,6 +20,7 @@ public class UserTest {
     private int level;
     private int achievements;
     private int id;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -28,7 +29,8 @@ public class UserTest {
         level = 2;
         achievements = 400;
         id = 1;
-        user = new User(id, name, email, level, achievements);
+        apiKey = "api_key";
+        user = new User(id, name, email, level, achievements, apiKey);
     }
 
     @Test
@@ -111,5 +113,14 @@ public class UserTest {
 
         // assert
         Assert.assertEquals(id, actualId);
+    }
+
+    @Test
+    public void getApiKey_ReturnsApiKey() {
+        // act
+        String actualApiKey = user.getApiKey();
+
+        // assert
+        Assert.assertEquals(apiKey, actualApiKey);
     }
 }

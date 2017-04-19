@@ -48,9 +48,10 @@ public class PractiseSetupModel implements IPractiseSetupModel {
 
     @Override
     public void getChords() {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
-        Call<List<Chord>> userChordsCall = api.getUserChords(userId);
+        final String apiKey = sharedPreferences.getString("api_key", "");
+        Call<List<Chord>> userChordsCall = api.getUserChords(apiKey, userId);
 
         // asynchronously executing call
         userChordsCall.enqueue(new Callback<List<Chord>>() {

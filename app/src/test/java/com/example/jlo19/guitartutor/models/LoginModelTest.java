@@ -50,7 +50,7 @@ public class LoginModelTest {
         presenter = PowerMockito.mock(ILoginPresenter.class);
         model.setPresenter(presenter);
 
-        user = new User(1, "Kate", "katesmith@gmail.com", 2, 1000);
+        user = new User(1, "Kate", "katesmith@gmail.com", 2, 1000, "api_key");
     }
 
     @Test
@@ -153,6 +153,27 @@ public class LoginModelTest {
 
         // assert
         Mockito.verify(editor).putInt("user_id", user.getId());
+        Mockito.verify(editor).apply();
+    }
+
+    @Test
+    public void loginWithValidCredentials_OnSuccessfulResponse_AddsApiKeyToSharedPreferences() {
+        // arrange
+        // sets fake call with a successful response
+        SharedPreferences sharedPreferences = Mockito.spy(SharedPreferences.class);
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(sharedPreferences.edit()).thenReturn(editor);
+        model.setSharedPreferences(sharedPreferences);
+
+        Response<User> response = FakeResponseCreator.getUserResponse(true, user);
+        DatabaseApi api = new FakeDatabaseApi(new FakeUserCall(response));
+        ((LoginModel) model).setApi(api);
+
+        // act
+        model.login(user.getEmail(), "password");
+
+        // assert
+        Mockito.verify(editor).putString("api_key", user.getApiKey());
         Mockito.verify(editor).apply();
     }
 

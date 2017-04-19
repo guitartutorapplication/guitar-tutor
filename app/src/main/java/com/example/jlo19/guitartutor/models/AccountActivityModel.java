@@ -44,10 +44,11 @@ public class AccountActivityModel implements IAccountActivityModel {
 
     @Override
     public void getAccountActivity() {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         int userId = sharedPreferences.getInt("user_id", 0);
+        String apiKey = sharedPreferences.getString("api_key", "");
 
-        Call<List<Chord>> call = api.getUserChords(userId);
+        Call<List<Chord>> call = api.getUserChords(apiKey, userId);
         // asynchronously executing call
         call.enqueue(new Callback<List<Chord>>() {
             @Override

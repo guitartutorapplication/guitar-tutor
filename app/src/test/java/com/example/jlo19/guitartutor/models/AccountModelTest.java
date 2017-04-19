@@ -35,6 +35,7 @@ public class AccountModelTest {
     private IAccountPresenter presenter;
     private int userId;
     private SharedPreferences sharedPreferences;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -50,14 +51,16 @@ public class AccountModelTest {
         userId = 1;
         sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
     }
 
     @Test
-    public void getAccountDetails_CallsGetAccountDetailsOnDatabaseApiWithIdFromSharedPreferences() {
+    public void getAccountDetails_CallsGetAccountDetailsOnDatabaseApiWithIdAndApiKeyFromSharedPreferences() {
         // arrange
         DatabaseApi api = Mockito.mock(DatabaseApi.class);
-        Mockito.when(api.getAccountDetails(Mockito.anyInt()))
+        Mockito.when(api.getAccountDetails(Mockito.anyString(), Mockito.anyInt()))
                 .thenReturn(Mockito.mock(Call.class));
         ((AccountModel) model).setApi(api);
 
@@ -65,7 +68,7 @@ public class AccountModelTest {
         model.getAccountDetails();
 
         // assert
-        Mockito.verify(api).getAccountDetails(userId);
+        Mockito.verify(api).getAccountDetails(apiKey, userId);
     }
 
     @Test
@@ -112,7 +115,7 @@ public class AccountModelTest {
     }
 
     @Test
-    public void logOut_RemovesUserIdFromSharedPreferences() {
+    public void logOut_RemovesUserIdAndApiKeyFromSharedPreferences() {
         // arrange
         SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
         Mockito.when(sharedPreferences.edit()).thenReturn(editor);
@@ -122,6 +125,7 @@ public class AccountModelTest {
 
         // assert
         Mockito.verify(editor).remove("user_id");
+        Mockito.verify(editor).remove("api_key");
         Mockito.verify(editor).apply();
     }
 }

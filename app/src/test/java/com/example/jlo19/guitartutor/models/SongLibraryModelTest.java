@@ -42,6 +42,7 @@ public class SongLibraryModelTest {
     private int userId;
     private List<Song> songs;
     private List<Chord> userChords;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -54,6 +55,8 @@ public class SongLibraryModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
 
         presenter = PowerMockito.mock(ISongLibraryPresenter.class);
@@ -71,7 +74,7 @@ public class SongLibraryModelTest {
     }
 
     @Test
-    public void getAllSongs_CallsGetSongsOnApi() {
+    public void getAllSongs_CallsGetSongsOnApiWithApiKeyFromSharedPref() {
         // arrange
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(null)));
         ((SongLibraryModel) model).setApi(api);
@@ -80,7 +83,7 @@ public class SongLibraryModelTest {
         model.getAllSongs();
 
         // assert
-        Mockito.verify(api).getSongs();
+        Mockito.verify(api).getSongs(apiKey);
     }
 
     @Test
@@ -142,7 +145,7 @@ public class SongLibraryModelTest {
 
         // assert
         Mockito.verify(presenter).modelOnSongsRetrieved(songs);
-        Mockito.verify(api, never()).getSongs();
+        Mockito.verify(api, never()).getSongs(apiKey);
     }
 
 
@@ -163,11 +166,11 @@ public class SongLibraryModelTest {
 
         // assert
         Mockito.verify(presenter).modelOnSongsRetrieved(songs);
-        Mockito.verify(api).getSongs();
+        Mockito.verify(api).getSongs(apiKey);
     }
 
     @Test
-    public void getSongsUserCanPlay_CallsGetUserChordsOnApiWithIdFromSharedPreferences() {
+    public void getSongsUserCanPlay_CallsGetUserChordsOnApiWithIdAndApiKeyFromSharedPreferences() {
         // arrange
         Response<List<Song>> response = FakeResponseCreator.getSongsResponse(true, songs);
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response),
@@ -179,7 +182,7 @@ public class SongLibraryModelTest {
         model.getSongsUserCanPlay();
 
         // assert
-        Mockito.verify(api).getUserChords(userId);
+        Mockito.verify(api).getUserChords(apiKey, userId);
     }
 
     @Test
@@ -249,7 +252,7 @@ public class SongLibraryModelTest {
         model.getSongsUserCanPlay();
 
         // assert
-        Mockito.verify(api, never()).getUserChords(userId);
+        Mockito.verify(api, never()).getUserChords(apiKey, userId);
         Mockito.verify(presenter).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
     }
 
@@ -275,7 +278,7 @@ public class SongLibraryModelTest {
         model.getSongsUserCanPlay();
 
         // assert
-        Mockito.verify(api).getUserChords(userId);
+        Mockito.verify(api).getUserChords(apiKey, userId);
         Mockito.verify(presenter).modelOnSongsRetrieved(Collections.singletonList(songs.get(1)));
     }
 }

@@ -52,6 +52,7 @@ public class LearnAllChordsModelTest {
     private List<Chord> userChords;
     private List<Integer> userChordIds;
     private User user;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -64,6 +65,8 @@ public class LearnAllChordsModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
 
         presenter = PowerMockito.mock(ILearnAllChordsPresenter.class);
@@ -75,7 +78,7 @@ public class LearnAllChordsModelTest {
         userChords = Collections.singletonList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
         userChordIds = Collections.singletonList(1);
-        user = new User(1, "Kate", "katesmith@gmail.com", 2, 2000);
+        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 2000, "api_key");
     }
 
     @Test
@@ -89,7 +92,7 @@ public class LearnAllChordsModelTest {
         model.getChordsAndDetails();
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getChordsCalledOnApi(api));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getChordsCalledOnApi(api, apiKey));
     }
 
     @Test
@@ -126,7 +129,7 @@ public class LearnAllChordsModelTest {
 
         // assert
         await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getUserChordsCalledOnApi(
-                api, userId));
+                api, userId, apiKey));
     }
 
     @Test
@@ -152,7 +155,7 @@ public class LearnAllChordsModelTest {
     }
 
     @Test
-    public void getChordsAndDetailsWithSuccessfulGetChordsAndGetUserChordsOnApi_CallsGetAccountDetailsOnApiWithUserIdFromSharedPref() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsAndGetUserChordsOnApi_CallsGetAccountDetailsOnApiWithUserIdAndApiKeyFromSharedPref() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
         Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
@@ -167,7 +170,7 @@ public class LearnAllChordsModelTest {
 
         // assert
         await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getAccountDetailsCalledOnApi(
-                api, userId));
+                api, userId, apiKey));
     }
 
     @Test

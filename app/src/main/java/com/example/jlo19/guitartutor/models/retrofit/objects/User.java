@@ -19,6 +19,8 @@ public class User implements Parcelable {
     private final int level;
     @SerializedName("ACHIEVEMENTS")
     private final int achievements;
+    @SerializedName("API_KEY")
+    private String apiKey;
 
     public User(String name, String email, int level, int achievements) {
         this.name = name;
@@ -27,12 +29,13 @@ public class User implements Parcelable {
         this.achievements = achievements;
     }
 
-    public User(int id, String name, String email, int level, int achievements) {
+    public User(int id, String name, String email, int level, int achievements, String apiKey) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.level = level;
         this.achievements = achievements;
+        this.apiKey = apiKey;
     }
 
     private User(Parcel in) {
@@ -60,6 +63,10 @@ public class User implements Parcelable {
 
     public int getId() {
         return id;
+    }
+
+    public String getApiKey() {
+        return apiKey;
     }
 
     @Override

@@ -52,12 +52,12 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<List<Chord>> getChords() {
+    public Call<List<Chord>> getChords(String apiKey) {
         return fakeChordsCall;
     }
 
     @Override
-    public Call<List<Song>> getSongs() {
+    public Call<List<Song>> getSongs(String apiKey) {
         return fakeSongsCall;
     }
 
@@ -67,12 +67,13 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<User> getAccountDetails(int userId) {
+    public Call<User> getAccountDetails(String apiKey, int userId) {
         return fakeUserCall;
     }
 
     @Override
-    public Call<ResponseWithMessage> editAccountDetails(int userId, String name, String email, String password) {
+    public Call<ResponseWithMessage> editAccountDetails(
+            String apiKey, int userId, String name, String email, String password) {
         return fakeResponseWithMessageCall;
     }
 
@@ -82,7 +83,7 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<List<Chord>> getUserChords(int userId) {
+    public Call<List<Chord>> getUserChords(String apiKey, int userId) {
         if (fakeUserChordsResponseCall == null) {
             return fakeChordsCall;
         }
@@ -92,12 +93,12 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<User> addUserChord(int userId, int chordId) {
+    public Call<User> addUserChord(String apiKey, int userId, int chordId) {
         return fakeUserCall;
     }
 
     @Override
-    public Call<User> updateUserChords(int userId, ArrayList<Integer> chordIds) {
+    public Call<User> updateUserChords(String apiKey, int userId, ArrayList<Integer> chordIds) {
         return fakeUserCall;
     }
 }

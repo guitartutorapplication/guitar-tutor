@@ -85,9 +85,10 @@ public class LearnChordModel implements ILearnChordModel {
 
     @Override
     public void addLearntChord(int chordId) {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
-        Call<User> call = api.addUserChord(userId, chordId);
+        final String apiKey = sharedPreferences.getString("api_key", "");
+        Call<User> call = api.addUserChord(apiKey, userId, chordId);
 
         // asynchronously executing call
         call.enqueue(new Callback<User>() {

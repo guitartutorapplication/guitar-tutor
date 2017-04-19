@@ -61,11 +61,12 @@ public class LearnAllChordsModel implements ILearnAllChordsModel {
     }
 
     private boolean setLevel() {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
+        final String apiKey = sharedPreferences.getString("api_key", "");
         // retrieving user's level (so know which chords are unlocked)
         try {
-            Call<User> call = api.getAccountDetails(userId);
+            Call<User> call = api.getAccountDetails(apiKey, userId);
             Response<User> response = call.execute();
 
             if (response.isSuccessful()) {
@@ -80,11 +81,12 @@ public class LearnAllChordsModel implements ILearnAllChordsModel {
     }
 
     private boolean setUserChords() {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         final int userId = sharedPreferences.getInt("user_id", 0);
+        final String apiKey = sharedPreferences.getString("api_key", "");
         // retrieving chords that user has learnt
         try {
-            Call<List<Chord>> call = api.getUserChords(userId);
+            Call<List<Chord>> call = api.getUserChords(apiKey, userId);
             Response<List<Chord>> response = call.execute();
 
             if (response.isSuccessful()) {
@@ -99,9 +101,11 @@ public class LearnAllChordsModel implements ILearnAllChordsModel {
     }
 
     private boolean setAllChords() {
+        // retrieving logged in user's api key from shared preferences
+        final String apiKey = sharedPreferences.getString("api_key", "");
         // retrieving all the chords
         try {
-            Call<List<Chord>> call = api.getChords();
+            Call<List<Chord>> call = api.getChords(apiKey);
             Response<List<Chord>> response = call.execute();
 
             if (response.isSuccessful()) {

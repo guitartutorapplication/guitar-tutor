@@ -35,6 +35,7 @@ public class AccountActivityModelTest {
     private IAccountActivityModel model;
     private IAccountActivityPresenter presenter;
     private int userId;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -47,6 +48,8 @@ public class AccountActivityModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
 
         presenter = PowerMockito.mock(IAccountActivityPresenter.class);
@@ -54,7 +57,7 @@ public class AccountActivityModelTest {
     }
 
     @Test
-    public void getAccountActivity_CallsUserChordsOnApiWithIdFromSharedPreferences() {
+    public void getAccountActivity_CallsUserChordsOnApiWithIdAndApiKeyFromSharedPreferences() {
         // arrange
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(null)));
         ((AccountActivityModel) model).setApi(api);
@@ -63,7 +66,7 @@ public class AccountActivityModelTest {
         model.getAccountActivity();
 
         // assert
-        Mockito.verify(api).getUserChords(userId);
+        Mockito.verify(api).getUserChords(apiKey, userId);
     }
 
     @Test

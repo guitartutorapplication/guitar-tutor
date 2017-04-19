@@ -46,7 +46,9 @@ public class SongLibraryModel implements ISongLibraryModel {
     @Override
     public void getAllSongs() {
         if (allSongs == null) {
-            Call<List<Song>> call = api.getSongs();
+            // retrieving logged in user's api key from shared preferences
+            String apiKey = sharedPreferences.getString("api_key", "");
+            Call<List<Song>> call = api.getSongs(apiKey);
 
             // asynchronously executing call
             call.enqueue(new Callback<List<Song>>() {
@@ -79,9 +81,10 @@ public class SongLibraryModel implements ISongLibraryModel {
 
     public void getSongsUserCanPlay() {
         if (songsUserCanPlay == null) {
-            // retrieving logged in user's id from shared preferences
+            // retrieving logged in user's id & api key from shared preferences
             final int userId = sharedPreferences.getInt("user_id", 0);
-            Call<List<Chord>> userChordsCall = api.getUserChords(userId);
+            final String apiKey = sharedPreferences.getString("api_key", "");
+            Call<List<Chord>> userChordsCall = api.getUserChords(apiKey, userId);
 
             // asynchronously executing call
             userChordsCall.enqueue(new Callback<List<Chord>>() {

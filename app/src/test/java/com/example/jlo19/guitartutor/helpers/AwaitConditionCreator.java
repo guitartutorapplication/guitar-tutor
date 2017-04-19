@@ -16,12 +16,12 @@ import java.util.concurrent.Callable;
  */
 public class AwaitConditionCreator {
 
-    public static Callable<Boolean> getChordsCalledOnApi(final DatabaseApi api) {
+    public static Callable<Boolean> getChordsCalledOnApi(final DatabaseApi api, final String apiKey) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(api).getChords();
+                    Mockito.verify(api).getChords(apiKey);
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -30,12 +30,13 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> getUserChordsCalledOnApi(final DatabaseApi api, final int userId) {
+    public static Callable<Boolean> getUserChordsCalledOnApi(
+            final DatabaseApi api, final int userId, final String apiKey) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(api).getUserChords(userId);
+                    Mockito.verify(api).getUserChords(apiKey, userId);
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -44,12 +45,13 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> getAccountDetailsCalledOnApi(final DatabaseApi api, final int userId) {
+    public static Callable<Boolean> getAccountDetailsCalledOnApi(
+            final DatabaseApi api, final int userId, final String apiKey) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(api).getAccountDetails(userId);
+                    Mockito.verify(api).getAccountDetails(apiKey, userId);
                     return true;
                 } catch (AssertionError error) {
                     return false;

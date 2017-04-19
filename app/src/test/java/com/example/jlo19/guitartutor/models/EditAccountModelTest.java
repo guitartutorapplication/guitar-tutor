@@ -38,6 +38,7 @@ public class EditAccountModelTest {
     private IEditAccountModel model;
     private IEditAccountPresenter presenter;
     private int userId;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -53,6 +54,8 @@ public class EditAccountModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
     }
 
@@ -168,7 +171,7 @@ public class EditAccountModelTest {
     public void saveWithCorrectCredentials_CallsEditAccountDetailsOnDatabaseApiWithCredentials() {
         // arrange
         DatabaseApi api = Mockito.mock(DatabaseApi.class);
-        Mockito.when(api.editAccountDetails(Mockito.anyInt(),
+        Mockito.when(api.editAccountDetails(Mockito.anyString(), Mockito.anyInt(),
                 Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Mockito.mock(Call.class));
         ((EditAccountModel) model).setApi(api);
@@ -180,7 +183,7 @@ public class EditAccountModelTest {
         model.save(expectedName, expectedEmail, expectedEmail, expectedPassword, expectedPassword);
 
         // assert
-        Mockito.verify(api).editAccountDetails(userId, expectedName, expectedEmail, expectedPassword);
+        Mockito.verify(api).editAccountDetails(apiKey, userId, expectedName, expectedEmail, expectedPassword);
     }
 
     @Test

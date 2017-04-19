@@ -49,6 +49,7 @@ public class PractiseModelTest {
     private List<Chord> selectedChords;
     private int userId;
     private User user;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -76,9 +77,11 @@ public class PractiseModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
 
-        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 1000);
+        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 1000, "api_key");
     }
 
     @Test
@@ -529,7 +532,7 @@ public class PractiseModelTest {
         for (Chord chord : selectedChords) {
             chordIds.add(chord.getId());
         }
-        Mockito.verify(api).updateUserChords(userId, chordIds);
+        Mockito.verify(api).updateUserChords(apiKey, userId, chordIds);
     }
 
     @Test

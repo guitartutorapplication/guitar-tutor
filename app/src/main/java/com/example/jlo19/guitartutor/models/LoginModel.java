@@ -49,9 +49,10 @@ public class LoginModel implements ILoginModel {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     if (response.isSuccessful()) {
-                        // adding user id to shared preferences for later use
+                        // adding user id and api key to shared preferences for later use
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putInt("user_id", response.body().getId());
+                        editor.putString("api_key", response.body().getApiKey());
                         editor.apply();
 
                         presenter.modelOnLoginSuccess();

@@ -38,6 +38,7 @@ public class LearnChordModelTest {
     private IAmazonS3Service service;
     private int userId;
     private User user;
+    private String apiKey;
 
     @Before
     public void setUp() {
@@ -56,9 +57,11 @@ public class LearnChordModelTest {
         userId = 1;
         SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
+        apiKey = "api_key";
+        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
         model.setSharedPreferences(sharedPreferences);
 
-        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 2000);
+        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 2000, "api_key");
     }
 
     @Test
@@ -130,7 +133,7 @@ public class LearnChordModelTest {
     }
 
     @Test
-    public void addLearntChord_CallsAddLearntChordOnApiWithIdFromSharedPreferences() {
+    public void addLearntChord_CallsAddLearntChordOnApiWithIdAndApiKeyFromSharedPreferences() {
         // arrange
         int chordId = 3;
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeUserCall(null)));
@@ -140,7 +143,7 @@ public class LearnChordModelTest {
         model.addLearntChord(chordId);
 
         // assert
-        Mockito.verify(api).addUserChord(userId, chordId);
+        Mockito.verify(api).addUserChord(apiKey, userId, chordId);
     }
 
     @Test

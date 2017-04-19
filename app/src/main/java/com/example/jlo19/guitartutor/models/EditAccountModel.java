@@ -53,10 +53,11 @@ public class EditAccountModel extends DataValidationModel implements IEditAccoun
             presenter.modelOnValidationFailed(validationResult);
         }
         else {
-            // retrieving logged in user's id from shared preferences
+            // retrieving logged in user's id & api key from shared preferences
             int userId = sharedPreferences.getInt("user_id", 0);
+            String apiKey = sharedPreferences.getString("api_key", "");
 
-            Call<ResponseWithMessage> call = api.editAccountDetails(userId, name, email, password);
+            Call<ResponseWithMessage> call = api.editAccountDetails(apiKey, userId, name, email, password);
 
             // asynchronously executing call
             call.enqueue(new Callback<ResponseWithMessage>() {

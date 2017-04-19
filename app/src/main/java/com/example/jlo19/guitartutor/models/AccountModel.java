@@ -42,10 +42,11 @@ public class AccountModel implements IAccountModel {
 
     @Override
     public void getAccountDetails() {
-        // retrieving logged in user's id from shared preferences
+        // retrieving logged in user's id & api key from shared preferences
         int userId = sharedPreferences.getInt("user_id", 0);
+        String apiKey = sharedPreferences.getString("api_key", "");
 
-        Call<User> call = api.getAccountDetails(userId);
+        Call<User> call = api.getAccountDetails(apiKey, userId);
 
         // asynchronously executing call
         call.enqueue(new Callback<User>() {
@@ -68,9 +69,10 @@ public class AccountModel implements IAccountModel {
 
     @Override
     public void logout() {
-       // removing user id from shared preferences
+       // removing user id & api key from shared preferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove("user_id");
+        editor.remove("api_key");
         editor.apply();
     }
 }
