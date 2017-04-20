@@ -25,6 +25,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     private ProgressDialog progressDialog;
     private User user;
     private IAccountPresenter presenter;
+    private final int REQUEST_SAVE = 1;
 
     @Override
     public int getLayout() {
@@ -106,6 +107,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
         Intent intent = new Intent(getBaseContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -113,7 +115,17 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
         // passing account details to next activity
         Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
         intent.putExtra("USER", user);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_SAVE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SAVE) {
+            if (resultCode == RESULT_OK) {
+                finish();
+            }
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -103,7 +104,7 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndLearnAllChordsActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -112,6 +113,10 @@ public class LearnAllChordsActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -169,6 +174,16 @@ public class LearnAllChordsActivityTest {
         Assert.assertEquals(chord, intent.getParcelableExtra("CHORD"));
         // checks if learnt is passed through correctly
         Assert.assertEquals(isLearntChord, intent.getBooleanExtra("LEARNT_CHORD", false));
+    }
+
+    @Test
+    public void onActivityResultWithRequestLearntAndResultOk_FinishesActivity() {
+        // act
+        int REQUEST_LEARNT = 1;
+        activity.onActivityResult(REQUEST_LEARNT, Activity.RESULT_OK, null);
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

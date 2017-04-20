@@ -1,7 +1,6 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Build;
 import android.widget.Button;
 import android.widget.EditText;
@@ -192,14 +191,12 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void startLoginActivity_LoginActivityIsStarted() {
+    public void finishRegister_ActivityIsFinished() {
         // act
-        activity.startLoginActivity();
+        activity.finishRegister();
 
         // assert
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        // checks correct activity is started
-        Assert.assertEquals(LoginActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

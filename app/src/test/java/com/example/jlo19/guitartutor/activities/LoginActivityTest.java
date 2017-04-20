@@ -146,7 +146,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void startHomeActivity_HomeActivityIsStarted() {
+    public void startHomeActivity_HomeActivityIsStartedAndLoginActivityIsFinished() {
         // act
         activity.startHomeActivity();
 
@@ -154,6 +154,7 @@ public class LoginActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

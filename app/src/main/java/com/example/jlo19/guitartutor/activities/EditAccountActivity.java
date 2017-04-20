@@ -90,6 +90,8 @@ public class EditAccountActivity extends BaseWithToolbarActivity implements Edit
     public void startAccountActivity() {
         Intent intent = new Intent(getBaseContext(), AccountActivity.class);
         startActivity(intent);
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override

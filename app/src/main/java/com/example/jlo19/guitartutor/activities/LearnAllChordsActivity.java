@@ -27,6 +27,7 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     private ProgressDialog progressDialog;
     private ILearnAllChordsPresenter presenter;
     private ChordsButtonAdapter chordsButtonAdapter;
+    private final int REQUEST_LEARNT = 1;
 
     @Override
     public int getLayout() {
@@ -76,7 +77,17 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
         Intent intent = new Intent(getBaseContext(), LearnChordActivity.class);
         intent.putExtra("CHORD", selectedChord);
         intent.putExtra("LEARNT_CHORD", learntChord);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_LEARNT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LEARNT) {
+            if (resultCode == RESULT_OK) {
+                finish();
+            }
+        }
     }
 
     @Override

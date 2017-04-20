@@ -125,7 +125,7 @@ public class SongActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndSongActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -134,6 +134,10 @@ public class SongActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

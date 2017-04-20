@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -185,7 +186,7 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void startLoginActivity_LoginActivityIsStartedWithFlagsSet() {
+    public void startLoginActivity_LoginActivityIsStartedWithFlagsSetAndAccountActivityIsFinished() {
         // act
         activity.startLoginActivity();
 
@@ -196,10 +197,11 @@ public class AccountActivityTest {
         // check flags
         Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
                 intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndAccountActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -208,6 +210,10 @@ public class AccountActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -230,5 +236,15 @@ public class AccountActivityTest {
         // checks correct activity is started
         Assert.assertEquals(AccountActivityActivity.class.getName(), intent.getComponent()
                 .getClassName());
+    }
+
+    @Test
+    public void onActivityResultWithRequestSaveAndResultOk_FinishesActivity() {
+        // act
+        int REQUEST_SAVE = 1;
+        activity.onActivityResult(REQUEST_SAVE, Activity.RESULT_OK, null);
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 }

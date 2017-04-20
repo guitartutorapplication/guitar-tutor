@@ -48,7 +48,7 @@ public class RegisterPresenter implements IRegisterPresenter {
     @Override
     public void modelOnRegisterSuccess() {
         view.hideProgressBar();
-        view.startLoginActivity();
+        view.finishRegister();
     }
 
     @Override

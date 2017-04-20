@@ -260,11 +260,11 @@ public class RegisterPresenterTest {
     }
 
     @Test
-    public void modelOnRegisterSuccess_CallsStartLoginActivityOnView() {
+    public void modelOnRegisterSuccess_CallsFinishRegisterOnView() {
         // act
         presenter.modelOnRegisterSuccess();
 
         // assert
-        Mockito.verify(view).startLoginActivity();
+        Mockito.verify(view).finishRegister();
     }
 }

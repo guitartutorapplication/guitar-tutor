@@ -30,6 +30,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
 
+import static android.app.Activity.RESULT_OK;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
@@ -253,7 +254,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void startAccountActivity_AccountActivityIsStarted() {
+    public void startAccountActivity_AccountActivityIsStartedWithResultSetAndEditAccountActivityIsFinished() {
         // act
         activity.startAccountActivity();
 
@@ -262,10 +263,12 @@ public class EditAccountActivityTest {
         // checks correct activity is started
         junit.framework.Assert.assertEquals(AccountActivity.class.getName(),
                 intent.getComponent().getClassName());
+        junit.framework.Assert.assertEquals(RESULT_OK, shadowOf(activity).getResultCode());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndFinishesEditAccountActivity() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -274,6 +277,10 @@ public class EditAccountActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         junit.framework.Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        junit.framework.Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        junit.framework.Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

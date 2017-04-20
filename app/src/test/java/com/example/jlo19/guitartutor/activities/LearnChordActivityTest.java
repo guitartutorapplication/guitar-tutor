@@ -34,6 +34,7 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
 
+import static android.app.Activity.RESULT_OK;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
@@ -84,7 +85,7 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void startLearnAllChordsActivity_StartsLearnAllChordsActivity() {
+    public void startLearnAllChordsActivity_StartsLearnAllChordsActivityAndLearnChordActivityIsFinished() {
         // act
         activity.startLearnAllChordsActivity();
 
@@ -92,6 +93,8 @@ public class LearnChordActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(LearnAllChordsActivity.class.getName(), intent.getComponent().getClassName());
+        junit.framework.Assert.assertEquals(RESULT_OK, shadowOf(activity).getResultCode());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -282,7 +285,7 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndLearnChordActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -291,6 +294,10 @@ public class LearnChordActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         junit.framework.Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        junit.framework.Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        junit.framework.Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

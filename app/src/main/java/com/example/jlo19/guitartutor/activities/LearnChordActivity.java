@@ -172,6 +172,8 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     public void startLearnAllChordsActivity() {
         Intent intent = new Intent(getBaseContext(), LearnAllChordsActivity.class);
         startActivity(intent);
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
