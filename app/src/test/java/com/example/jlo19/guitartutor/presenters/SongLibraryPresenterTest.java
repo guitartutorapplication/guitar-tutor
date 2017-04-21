@@ -148,4 +148,13 @@ public class SongLibraryPresenterTest {
         // assert
         Mockito.verify(model).resetSongs();
     }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
+    }
 }

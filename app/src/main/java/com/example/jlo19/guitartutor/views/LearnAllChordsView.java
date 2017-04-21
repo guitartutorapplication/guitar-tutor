@@ -13,4 +13,5 @@ public interface LearnAllChordsView extends IProgressBarView {
     void enableChordButton(int buttonId, boolean isEnabled);
     void setChordButtonBackground(int buttonId, String doneIdentifier, String levelNumberIdentifier);
     void setChordButtons();
+    void finishActivity();
 }

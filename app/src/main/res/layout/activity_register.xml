@@ -96,7 +96,8 @@
         android:layout_marginBottom="@dimen/big_layout_margin"
         android:layout_marginEnd="@dimen/big_layout_margin"
         android:layout_marginStart="@dimen/big_layout_margin"
-        app:hintTextAppearance="@style/AppTheme.TextInput">
+        app:hintTextAppearance="@style/AppTheme.TextInput"
+        android:id="@+id/txtInputConfirmPassword">
 
         <EditText
             android:layout_width="match_parent"

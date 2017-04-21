@@ -92,6 +92,15 @@ public class LoginPresenterTest {
     }
 
     @Test
+    public void viewOnLogin_ResetErrorOnView() {
+        // act
+        presenter.viewOnLogin("kate@gmail.com", "password");
+
+        // assert
+        Mockito.verify(view).resetFieldEmptyErrors();
+    }
+
+    @Test
     public void viewOnLogin_CallsLoginOnModel() {
         // act
         String expectedEmail = "kate@gmail.com";
@@ -103,18 +112,37 @@ public class LoginPresenterTest {
     }
 
     @Test
-    public void modelOnFieldEmpty_ShowsFieldEmptyErrorOnView() {
+    public void modelOnFieldEmptyEmail_ShowsFieldEmptyErrorOnView() {
         // act
-        presenter.modelOnFieldEmpty();
+        presenter.modelOnFieldEmailEmpty();
 
         // assert
-        Mockito.verify(view).showFieldEmptyError();
+        Mockito.verify(view).showFieldEmailEmptyError();
     }
 
     @Test
-    public void modelOnFieldEmpty_HidesProgressBarOnView() {
+    public void modelOnFieldEmptyEmail_HidesProgressBarOnView() {
         // act
-        presenter.modelOnFieldEmpty();
+        presenter.modelOnFieldEmailEmpty();
+
+        // assert
+        Mockito.verify(view).hideProgressBar();
+    }
+
+
+    @Test
+    public void modelOnFieldEmptyPassword_ShowsFieldEmptyErrorOnView() {
+        // act
+        presenter.modelOnFieldPasswordEmpty();
+
+        // assert
+        Mockito.verify(view).showFieldPasswordEmptyError();
+    }
+
+    @Test
+    public void modelOnFieldEmptyPassword_HidesProgressBarOnView() {
+        // act
+        presenter.modelOnFieldPasswordEmpty();
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -154,23 +182,5 @@ public class LoginPresenterTest {
 
         // assert
         Mockito.verify(view).startHomeActivity();
-    }
-
-    @Test
-    public void modelOnIncorrectCredentials_HidesProgressBarOnView() {
-        // act
-        presenter.modelOnIncorrectCredentials();
-
-        // assert
-        Mockito.verify(view).hideProgressBar();
-    }
-
-    @Test
-    public void modelOnIncorrectCredentials_CallsShowIncorrectCredentialsErrorOnView() {
-        // act
-        presenter.modelOnIncorrectCredentials();
-
-        // assert
-        Mockito.verify(view).showIncorrectCredentialsError();
     }
 }

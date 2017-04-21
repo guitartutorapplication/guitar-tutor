@@ -1,7 +1,9 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -28,8 +30,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -113,13 +115,28 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.account_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
     }
 
     @Test
@@ -243,6 +260,15 @@ public class AccountActivityTest {
         // act
         int REQUEST_SAVE = 1;
         activity.onActivityResult(REQUEST_SAVE, Activity.RESULT_OK, null);
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
 
         // assert
         Assert.assertTrue(activity.isFinishing());

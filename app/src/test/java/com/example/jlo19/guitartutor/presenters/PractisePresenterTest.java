@@ -159,12 +159,12 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void modelOnError_CallsReturnToPractiseSetup() {
+    public void modelOnError_CallsModelOnStopTimerOnView() {
         // act
         presenter.modelOnError();
 
         // assert
-        Mockito.verify(view).returnToPractiseSetup();
+        Mockito.verify(model).stopTimer();
     }
 
     @Test
@@ -320,6 +320,24 @@ public class PractisePresenterTest {
     }
 
     @Test
+    public void modelOnPractiseSessionSaved_CallsStopTimerOnModel() {
+        // act
+        presenter.modelOnPractiseSessionSaved(0, 0);
+
+        // assert
+        Mockito.verify(model).stopTimer();
+    }
+
+    @Test
+    public void modelOnPractiseSessionError_CallsStopTimerOnModel() {
+        // act
+        presenter.modelOnPractiseSessionSaveError();
+
+        // assert
+        Mockito.verify(model).stopTimer();
+    }
+
+    @Test
     public void modelOnPractiseSessionSavedWithZeroLevelAndAchievements_CallsShowPractiseSessionSaveSuccessOnView() {
         // act
         presenter.modelOnPractiseSessionSaved(0, 0);
@@ -350,30 +368,12 @@ public class PractisePresenterTest {
     }
 
     @Test
-    public void modelOnPractiseSessionSaved_CallsReturnToPractiseSetupOnView() {
-        // act
-        presenter.modelOnPractiseSessionSaved(0, 0);
-
-        // assert
-        Mockito.verify(view).returnToPractiseSetup();
-    }
-
-    @Test
     public void modelOnPractiseSessionSaveError_CallsShowPractiseSessionSaveErrorOnView() {
         // act
         presenter.modelOnPractiseSessionSaveError();
 
         // assert
         Mockito.verify(view).showPractiseSessionSaveError();
-    }
-
-    @Test
-    public void modelOnPractiseSessionSaveError_CallsReturnToPractiseSetupOnView() {
-        // act
-        presenter.modelOnPractiseSessionSaveError();
-
-        // assert
-        Mockito.verify(view).returnToPractiseSetup();
     }
 
     @Test
@@ -397,5 +397,23 @@ public class PractisePresenterTest {
 
         // assert
         Mockito.verify(view).showError();
+    }
+
+    @Test
+    public void viewOnConfirmSuccess_CallsReturnToPractiseSetupOnView() {
+        // act
+        presenter.viewOnConfirmSuccess();
+
+        // assert
+        Mockito.verify(view).returnToPractiseSetup();
+    }
+
+    @Test
+    public void viewOnConfirmError_CallsReturnToPractiseSetupOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).returnToPractiseSetup();
     }
 }

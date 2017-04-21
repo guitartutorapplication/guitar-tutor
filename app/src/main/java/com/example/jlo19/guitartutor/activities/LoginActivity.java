@@ -1,15 +1,18 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
@@ -22,6 +25,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     private ILoginPresenter presenter;
     private ProgressDialog progressDialog;
+    private TextInputLayout txtInputPassword;
+    private TextInputLayout txtInputEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                         editTxtPassword.getText().toString());
             }
         });
+
+        txtInputPassword = (TextInputLayout) findViewById(R.id.txtInputPassword);
+        txtInputEmail = (TextInputLayout) findViewById(R.id.txtInputEmail);
     }
 
     @Inject
@@ -73,9 +81,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void showFieldEmptyError() {
-        Toast.makeText(getApplicationContext(), R.string.field_empty_error_message,
-                Toast.LENGTH_SHORT).show();
+    public void showFieldEmailEmptyError() {
+        txtInputEmail.setError(getResources().getString(R.string.field_empty_error_message));
     }
 
     @Override
@@ -91,14 +98,27 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void showIncorrectCredentialsError() {
-        Toast.makeText(getApplicationContext(), R.string.incorrect_login_credentials_error_message,
-                Toast.LENGTH_SHORT).show();
+    public void showLoginError() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.login_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
-    public void showLoginError() {
-        Toast.makeText(getApplicationContext(), R.string.login_error_message,
-                Toast.LENGTH_SHORT).show();
+    public void showFieldPasswordEmptyError() {
+        txtInputPassword.setError(getResources().getString(R.string.field_empty_error_message));
+    }
+
+    @Override
+    public void resetFieldEmptyErrors() {
+        txtInputEmail.setError(null);
+        txtInputPassword.setError(null);
     }
 }

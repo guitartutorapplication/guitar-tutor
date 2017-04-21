@@ -32,7 +32,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static android.app.Activity.RESULT_OK;
 import static org.robolectric.Shadows.shadowOf;
@@ -163,75 +162,140 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void showImageLoadError_MakesToastWithErrorMessage() {
+    public void showImageLoadError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showImageLoadError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         junit.framework.Assert.assertEquals(getApp().getResources()
                         .getString(R.string.loading_chord_image_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showAddLearntChordSuccess_MakesToastWithSuccessMessage() {
+    public void showImageLoadError_ClicksOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showImageLoadError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void showAddLearntChordSuccess_ShowsAlertDialogWithSuccessMessage() {
         // act
         activity.showAddLearntChordSuccess();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         String expectedText = getApp().getResources()
                 .getString(R.string.add_learnt_chord_success_message) + "\n" + getApp().getResources()
                 .getString(R.string.maximum_achievements_message);
-        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+        Assert.assertEquals(expectedText, shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showAddLearntChordSuccessWithAchievements_MakesToastWithSuccessMessage() {
+    public void showAddLearntChordSuccess_ClicksOkButton_CallsConfirmLearntSuccessOnPresenter() {
+        // arrange
+        activity.showAddLearntChordSuccess();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmLearntSuccess();
+    }
+
+    @Test
+    public void showAddLearntChordSuccessWithAchievements_ShowsAlertDialogWithSuccessMessage() {
         // act
         int achievements = 2100;
         activity.showAddLearntChordSuccess(achievements);
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         String expectedText = getApp().getResources().getString(R.string.add_learnt_chord_success_message)
                 + "\n" + getApp().getResources().getString(R.string.gained_100_achievements_message,
                 achievements);
-        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+        Assert.assertEquals(expectedText, shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showAddLearnChordSuccessWithLevelAndAchievements_MakesToastWithSuccessMessage() {
+    public void showAddLearntChordSuccessWithAchievements_ClickOkButton_CallsConfirmLearntSuccessOnPresenter() {
+        // arrange
+        int achievements = 2100;
+        activity.showAddLearntChordSuccess(achievements);
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmLearntSuccess();
+    }
+
+    @Test
+    public void showAddLearnChordSuccessWithLevelAndAchievements_ShowsAlertDialogWithSuccessMessage() {
         // act
         int achievements = 2000;
         int level = 3;
         activity.showAddLearntChordSuccess(level, achievements);
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         String expectedText = getApp().getResources().getString(R.string.add_learnt_chord_success_message)
                 + "\n" + getApp().getResources().getString(R.string.gained_100_achievements_message,
                 achievements) + "\n" + getApp().getResources().getString(R.string.new_level_message,
                 level);
-        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+        Assert.assertEquals(expectedText, shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showAddLearntChordError_MakesToastWithErrorMessage() {
+    public void showAddLearnChordSuccessWithLevelAndAchievements_ClickOkButton_CallsConfirmLearntSuccessOnPresenter() {
+        // arrange
+        int achievements = 2000;
+        int level = 3;
+        activity.showAddLearntChordSuccess(level, achievements);
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmLearntSuccess();
+    }
+
+    @Test
+    public void showAddLearntChordError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showAddLearntChordError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.adding_learnt_chord_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showVideoLoadError_MakesToastWithErrorMessage() {
+    public void showVideoLoadError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showVideoLoadError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         junit.framework.Assert.assertEquals(getApp().getResources()
                         .getString(R.string.loading_chord_video_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
@@ -333,9 +397,9 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void showConfirmDialog_ShowsAlertDialog() {
+    public void showLearntConfirmDialog_ShowsAlertDialog() {
         // act
-        activity.showConfirmDialog();
+        activity.showLearntConfirmDialog();
 
         // assert
         AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -352,37 +416,9 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void showConfirmDialog_ClickNoButton_AlertDialogNoLongerShown() {
-        // arrange
-        activity.showConfirmDialog();
-
-        // act
-        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
-        Button btnNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-        btnNegative.performClick();
-
-        // assert
-        Assert.assertFalse(dialog.isShowing());
-    }
-
-    @Test
-    public void showConfirmDialog_ClickYesButton_AlertDialogNoLongerShown() {
-        // arrange
-        activity.showConfirmDialog();
-
-        // act
-        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
-        Button btnPositive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        btnPositive.performClick();
-
-        // assert
-        Assert.assertFalse(dialog.isShowing());
-    }
-
-    @Test
     public void showConfirmDialog_ClickYesButton_CallsConfirmLearntOnPresenter() {
         // arrange
-        activity.showConfirmDialog();
+        activity.showLearntConfirmDialog();
 
         // act
         AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -391,5 +427,14 @@ public class LearnChordActivityTest {
 
         // assert
         Mockito.verify(presenter).viewOnConfirmLearnt();
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        junit.framework.Assert.assertTrue(activity.isFinishing());
     }
 }

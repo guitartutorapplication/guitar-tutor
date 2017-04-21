@@ -195,12 +195,12 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void viewOnLearnt_ShowsConfirmDialogOnView() {
+    public void viewOnLearnt_ShowsLearntConfirmDialogOnView() {
         // act
         presenter.viewOnLearnt();
 
         // assert
-        Mockito.verify(view).showConfirmDialog();
+        Mockito.verify(view).showLearntConfirmDialog();
     }
 
     @Test
@@ -232,15 +232,6 @@ public class LearnChordPresenterTest {
 
         // assert
         Mockito.verify(view).hideProgressBar();
-    }
-
-    @Test
-    public void modelOnLearntChordAdded_CallsStartLearnAllChordsActivityOnView() {
-        // act
-        presenter.modelOnLearntChordAdded(0, 0);
-
-        // assert
-        Mockito.verify(view).startLearnAllChordsActivity();
     }
 
     @Test
@@ -289,5 +280,23 @@ public class LearnChordPresenterTest {
 
         // assert
         Mockito.verify(view).showAddLearntChordError();
+    }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
+    }
+
+    @Test
+    public void viewOnConfirmLearntSuccess_CallStartLearnAllChordsActivityOnView() {
+        // act
+        presenter.viewOnConfirmLearntSuccess();
+
+        // assert
+        Mockito.verify(view).startLearnAllChordsActivity();
     }
 }

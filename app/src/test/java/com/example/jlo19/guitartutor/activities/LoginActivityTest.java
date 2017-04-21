@@ -1,9 +1,11 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputLayout;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,8 +28,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -123,13 +125,38 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void showFieldEmptyError_MakesToastWithFieldEmptyErrorMessage() {
+    public void showFieldEmailEmptyError_SetsErrorOnEmailTextInputWithMessage() {
         // act
-        activity.showFieldEmptyError();
+        activity.showFieldEmailEmptyError();
 
         // assert
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
         Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
-                ShadowToast.getTextOfLatestToast());
+                txtInputEmail.getError());
+    }
+
+    @Test
+    public void showFieldPasswordEmptyError_SetsErrorOnPasswordTextInputWithMessage() {
+        // act
+        activity.showFieldPasswordEmptyError();
+
+        // assert
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
+                txtInputPassword.getError());
+    }
+
+    @Test
+    public void restFieldEmptyErrors_SetsErrorToNullOnTextInputs() {
+        // act
+        activity.resetFieldEmptyErrors();
+
+        // assert
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+
+        Assert.assertNull(txtInputEmail.getError());
+        Assert.assertNull(txtInputPassword.getError());
     }
 
     @Test
@@ -158,22 +185,13 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void showIncorrectCredentialsError_MakesToastWithIncorrectCredentialsErrorMessage() {
-        // act
-        activity.showIncorrectCredentialsError();
-
-        // assert
-        Assert.assertEquals(getApp().getResources().getString(
-                R.string.incorrect_login_credentials_error_message), ShadowToast.getTextOfLatestToast());
-    }
-
-    @Test
-    public void showLoginError_MakesToastWithGeneralLoginErrorMessage() {
+    public void showLoginError_ShowsAlertDialogWithLoginErrorMessage() {
         // act
         activity.showLoginError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.login_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 }

@@ -13,4 +13,5 @@ public interface IAccountActivityPresenter extends IPresenter {
     void setSharedPreferences(SharedPreferences preferences);
     void modelOnError();
     void modelOnAccountActivityRetrieved(List<Chord> chords);
+    void viewOnConfirmError();
 }

@@ -15,4 +15,5 @@ public interface ISongLibraryPresenter extends IPresenter {
     void setSharedPreferences(SharedPreferences sharedPreferences);
     void viewOnSongFilterChanged(boolean viewAll);
     void viewOnExit();
+    void viewOnConfirmError();
 }

@@ -1,13 +1,15 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
@@ -65,8 +67,17 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(),
-                        R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+                AlertDialog dialog = new AlertDialog.Builder(LearnAllChordsActivity.this)
+                        .setMessage(R.string.loading_chords_message_failure)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                presenter.viewOnConfirmError();
+                            }
+                        }).create();
+                dialog.show();
+
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(
+                        LearnAllChordsActivity.this, R.color.colorAccent));
             }
         });
     }
@@ -85,7 +96,7 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_LEARNT) {
             if (resultCode == RESULT_OK) {
-                finish();
+                finishActivity();
             }
         }
     }
@@ -140,6 +151,11 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
                 gridView.setAdapter(chordsButtonAdapter);
             }
         });
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     public void showProgressBar() {

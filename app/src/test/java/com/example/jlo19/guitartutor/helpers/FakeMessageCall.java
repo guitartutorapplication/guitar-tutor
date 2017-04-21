@@ -1,8 +1,7 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
-
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Request;
 import retrofit2.Call;
@@ -12,16 +11,16 @@ import retrofit2.Response;
 /**
  * Fakes retrofit call with ResponseWithMessage
  */
-public class FakeResponseWithMessageCall implements Call<ResponseWithMessage> {
+public class FakeMessageCall implements Call<List<String>> {
 
-    private final Response<ResponseWithMessage> response;
+    private final Response<List<String>> response;
 
-    public FakeResponseWithMessageCall(Response<ResponseWithMessage> response) {
+    public FakeMessageCall(Response<List<String>> response) {
         this.response = response;
     }
 
     @Override
-    public Response<ResponseWithMessage> execute() throws IOException {
+    public Response<List<String>> execute() throws IOException {
         if (response != null) {
             return response;
         }
@@ -31,7 +30,7 @@ public class FakeResponseWithMessageCall implements Call<ResponseWithMessage> {
     }
 
     @Override
-    public void enqueue(Callback<ResponseWithMessage> callback) {
+    public void enqueue(Callback<List<String>> callback) {
         if (response != null) {
             callback.onResponse(this, response);
         }
@@ -56,7 +55,7 @@ public class FakeResponseWithMessageCall implements Call<ResponseWithMessage> {
     }
 
     @Override
-    public Call<ResponseWithMessage> clone() {
+    public Call<List<String>> clone() {
         return null;
     }
 

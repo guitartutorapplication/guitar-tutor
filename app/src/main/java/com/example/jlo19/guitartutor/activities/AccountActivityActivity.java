@@ -1,10 +1,12 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.AccountActivityListAdapter;
@@ -20,6 +22,7 @@ import javax.inject.Inject;
 public class AccountActivityActivity extends BaseWithToolbarActivity implements AccountActivityView {
 
     private ProgressDialog progressDialog;
+    private IAccountActivityPresenter presenter;
 
     @Override
     protected int getLayout() {
@@ -41,6 +44,7 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Inject
     public void setPresenter(IAccountActivityPresenter presenter) {
+        this.presenter = presenter;
         presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
@@ -66,7 +70,21 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_account_activity_message_failure, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_account_activity_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 }

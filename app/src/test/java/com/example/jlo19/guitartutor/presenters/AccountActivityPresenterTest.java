@@ -112,4 +112,13 @@ public class AccountActivityPresenterTest {
         // assert
         Mockito.verify(view).showError();
     }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
+    }
 }

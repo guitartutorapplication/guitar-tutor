@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
@@ -106,8 +105,17 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showImageLoadError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chord_image_message_failure, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_chord_image_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -132,8 +140,16 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showVideoLoadError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chord_video_message_failure, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_chord_video_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -148,7 +164,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     }
 
     @Override
-    public void showConfirmDialog() {
+    public void showLearntConfirmDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_learnt_message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -173,13 +189,21 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
         Intent intent = new Intent(getBaseContext(), LearnAllChordsActivity.class);
         startActivity(intent);
         setResult(RESULT_OK);
-        finish();
+        finishActivity();
     }
 
     @Override
     public void showAddLearntChordError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.adding_learnt_chord_error_message, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.adding_learnt_chord_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -187,8 +211,17 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.maximum_achievements_message);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearntSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -197,8 +230,17 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
                 getString(R.string.gained_100_achievements_message, achievements) + "\n" +
                 getString(R.string.new_level_message, level);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearntSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -206,7 +248,21 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.gained_100_achievements_message, achievements);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearntSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 }

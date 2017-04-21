@@ -17,4 +17,6 @@ public interface ILearnChordPresenter extends IPresenter {
     void setSharedPreferences(SharedPreferences sharedPreferences);
     void modelOnLearntChordAdded(int level, int achievements);
     void modelOnAddLearntChordError();
+    void viewOnConfirmError();
+    void viewOnConfirmLearntSuccess();
 }

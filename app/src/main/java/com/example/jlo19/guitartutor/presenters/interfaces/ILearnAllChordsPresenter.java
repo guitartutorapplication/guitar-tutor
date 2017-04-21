@@ -10,4 +10,5 @@ public interface ILearnAllChordsPresenter extends IPresenter {
     void modelOnError();
     void setSharedPreferences(SharedPreferences sharedPreferences);
     void viewOnChordRequested(int chordPos);
+    void viewOnConfirmError();
 }

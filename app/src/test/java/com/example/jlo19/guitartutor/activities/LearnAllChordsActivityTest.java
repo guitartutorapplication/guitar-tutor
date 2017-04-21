@@ -1,7 +1,9 @@
 package com.example.jlo19.guitartutor.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -28,8 +30,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -74,13 +76,28 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.loading_chords_message_failure),
-                ShadowToast.getTextOfLatestToast());
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Assert.assertEquals(activity.getResources().getString(R.string.loading_chords_message_failure),
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
     }
 
     @Test
@@ -244,5 +261,14 @@ public class LearnAllChordsActivityTest {
 
         // assert
         Mockito.verify(adapter).setButtonBackground(id, doneIdentifier, numberIdentifier);
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 }

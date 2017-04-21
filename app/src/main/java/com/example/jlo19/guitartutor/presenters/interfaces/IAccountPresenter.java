@@ -14,4 +14,5 @@ public interface IAccountPresenter extends IPresenter {
     void viewOnLogout();
     void viewOnEditAccount();
     void viewOnAccountActivityRequested();
+    void viewOnConfirmError();
 }

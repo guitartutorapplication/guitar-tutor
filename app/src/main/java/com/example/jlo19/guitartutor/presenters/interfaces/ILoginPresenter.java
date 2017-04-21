@@ -8,10 +8,10 @@ import android.content.SharedPreferences;
 public interface ILoginPresenter extends IPresenter {
     void viewOnRegister();
     void viewOnLogin(String email, String password);
-    void modelOnFieldEmpty();
     void modelOnLoginSuccess();
-    void modelOnIncorrectCredentials();
     void modelOnLoginError();
     void setSharedPreferences(SharedPreferences sharedPreferences);
     void modelOnUserAlreadyLoggedIn();
+    void modelOnFieldEmailEmpty();
+    void modelOnFieldPasswordEmpty();
 }

@@ -1,5 +1,6 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -30,8 +31,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -226,13 +227,14 @@ public class SongActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_demo_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test

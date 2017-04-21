@@ -1,14 +1,16 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.SongsListAdapter;
@@ -95,8 +97,22 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_songs_message_failure, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_songs_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     @Override

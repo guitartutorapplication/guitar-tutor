@@ -19,4 +19,5 @@ public interface PractiseSetupView extends IProgressBarView {
     void loadSound();
     void showPreviewBeatError();
     void enablePreviewButton(boolean isEnabled);
+    void finishActivity();
 }

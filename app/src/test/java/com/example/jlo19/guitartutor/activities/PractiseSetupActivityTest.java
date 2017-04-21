@@ -1,6 +1,8 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
@@ -31,8 +33,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -214,43 +216,61 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void showLoadChordError_MakesToastWithLoadChordsFailureMessage() {
+    public void showLoadChordError_ShowsAlertDialogWithLoadChordsFailureMessage() {
         // act
         activity.showLoadChordsError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_chords_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showPreviewBeatError_MakesToastWithPreviewBeatFailureMessage() {
+    public void showLoadChordError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showLoadChordsError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void showPreviewBeatError_ShowsAlertDialogWithPreviewBeatFailureMessage() {
         // act
         activity.showPreviewBeatError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_beat_preview_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showLessThanTwoChordsSelectedError_MakesToastWithLessThanTwoChordsSelectedMessage() {
+    public void showLessThanTwoChordsSelectedError_ShowsAlertDialogWithLessThanTwoChordsSelectedMessage() {
         // act
         activity.showLessThanTwoChordsSelectedError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.less_than_two_selected_chords_error),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showSameSelectedChordError_MakesToastWithSameChordSelectedMessage() {
+    public void showSameSelectedChordError_ShowsAlertDialogWithSameChordSelectedMessage() {
         // act
         activity.showSameSelectedChordError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.same_chord_selected_error),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
@@ -368,6 +388,15 @@ public class PractiseSetupActivityTest {
         // check flags
         Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
                 intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
         Assert.assertTrue(activity.isFinishing());
     }
 }

@@ -1,7 +1,9 @@
 package com.example.jlo19.guitartutor.models;
 
-import com.example.jlo19.guitartutor.enums.ValidationResult;
+import com.example.jlo19.guitartutor.enums.ValidationError;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -18,62 +20,80 @@ class DataValidationModel {
                     ")+"
     );
 
-    static ValidationResult validate(String name, String email, String confirmEmail, String password,
-                                     String confirmPassword) {
-        if (name.isEmpty() || email.isEmpty() || confirmEmail.isEmpty() || password.isEmpty() ||
-                confirmPassword.isEmpty()) {
-            return ValidationResult.FIELD_EMPTY;
-        }
-        else if (!email.equals(confirmEmail)) {
-            return ValidationResult.EMAIL_MISMATCH;
-        }
-        else if(!password.equals(confirmPassword)) {
-            return ValidationResult.PASSWORD_MISMATCH;
-        }
-        else if(!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
-            return ValidationResult.INVALID_EMAIL;
-        }
-        else if(password.length() < 8) {
-            return ValidationResult.PASSWORD_TOO_SHORT;
-        }
-        // checks if password contains upper case letter
-        else if(password.equals(password.toLowerCase())) {
-            return ValidationResult.PASSWORD_NO_UPPER;
+    static List<ValidationError> validate(String name, String email, String confirmEmail, String password,
+                                          String confirmPassword) {
+        List<ValidationError> errors = new ArrayList<>();
+
+        // checks if password contains number
+        if(!password.matches(".*\\d+.*")) {
+            errors.add(ValidationError.PASSWORD_NO_NUMBER);
         }
         // checks if password contains lower case letter
-        else if(password.equals(password.toUpperCase())) {
-            return ValidationResult.PASSWORD_NO_LOWER;
+        if (password.equals(password.toUpperCase())) {
+            errors.add(ValidationError.PASSWORD_NO_LOWER);
         }
-        // checks if password contains number
-        else if(!password.matches(".*\\d+.*")) {
-            return ValidationResult.PASSWORD_NO_NUMBER;
+        // checks if password contains upper case letter
+        if (password.equals(password.toLowerCase())) {
+            errors.add(ValidationError.PASSWORD_NO_UPPER);
         }
-        else {
-            return ValidationResult.VALID_DATA;
+        if (password.length() < 8) {
+            errors.add(ValidationError.PASSWORD_TOO_SHORT);
         }
+        if (!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
+            errors.add(ValidationError.INVALID_EMAIL);
+        }
+        if (!password.equals(confirmPassword)) {
+            errors.add(ValidationError.PASSWORD_MISMATCH);
+        }
+        if (!email.equals(confirmEmail)) {
+            errors.add(ValidationError.EMAIL_MISMATCH);
+        }
+        if (confirmPassword.isEmpty()) {
+            errors.add(ValidationError.FIELD_EMPTY_CONFIRM_PASSWORD);
+        }
+        if (password.isEmpty()) {
+            errors.add(ValidationError.FIELD_EMPTY_PASSWORD);
+        }
+        if (confirmEmail.isEmpty()) {
+            errors.add(ValidationError.FIELD_EMPTY_CONFIRM_EMAIL);
+        }
+        if (email.isEmpty()) {
+            errors.add(ValidationError.FIELD_EMPTY_EMAIL);
+        }
+        if (name.isEmpty()) {
+            errors.add(ValidationError.FIELD_EMPTY_NAME);
+        }
+        return errors;
     }
 
-    static ValidationResult validateResponse(String responseMessage) {
-        if (responseMessage.equals(ValidationResult.INVALID_EMAIL.toString())) {
-            return ValidationResult.INVALID_EMAIL;
+    static List<ValidationError> validateResponse(String responseMessage) {
+        // converting raw response to a list of string errors
+        responseMessage = responseMessage.replace("[", "").replace("]", "").replace("\"", "");
+        String[] errors = responseMessage.split(",");
+
+        List<ValidationError> validationErrors = new ArrayList<>();
+
+        for (String error : errors) {
+            if (error.equals(ValidationError.INVALID_EMAIL.toString())) {
+                validationErrors.add(ValidationError.INVALID_EMAIL);
+            }
+            else if (error.equals(ValidationError.EMAIL_ALREADY_REGISTERED.toString())) {
+                validationErrors.add(ValidationError.EMAIL_ALREADY_REGISTERED);
+            }
+            else if (error.equals(ValidationError.PASSWORD_TOO_SHORT.toString())) {
+                validationErrors.add(ValidationError.PASSWORD_TOO_SHORT);
+            }
+            else if (error.equals(ValidationError.PASSWORD_NO_UPPER.toString())) {
+                validationErrors.add(ValidationError.PASSWORD_NO_UPPER);
+            }
+            else if (error.equals(ValidationError.PASSWORD_NO_LOWER.toString())) {
+                validationErrors.add(ValidationError.PASSWORD_NO_LOWER);
+            }
+            else if (error.equals(ValidationError.PASSWORD_NO_NUMBER.toString())) {
+                validationErrors.add(ValidationError.PASSWORD_NO_NUMBER);
+            }
         }
-        else if (responseMessage.equals(ValidationResult.EMAIL_ALREADY_REGISTERED.toString())) {
-            return ValidationResult.EMAIL_ALREADY_REGISTERED;
-        }
-        else if (responseMessage.equals(ValidationResult.PASSWORD_TOO_SHORT.toString())) {
-            return ValidationResult.PASSWORD_TOO_SHORT;
-        }
-        else if (responseMessage.equals(ValidationResult.PASSWORD_NO_UPPER.toString())) {
-            return ValidationResult.PASSWORD_NO_UPPER;
-        }
-        else if (responseMessage.equals(ValidationResult.PASSWORD_NO_LOWER.toString())) {
-            return ValidationResult.PASSWORD_NO_LOWER;
-        }
-        else if (responseMessage.equals(ValidationResult.PASSWORD_NO_NUMBER.toString())) {
-            return ValidationResult.PASSWORD_NO_NUMBER;
-        }
-        else {
-            return ValidationResult.VALID_DATA;
-        }
+
+        return validationErrors;
     }
 }

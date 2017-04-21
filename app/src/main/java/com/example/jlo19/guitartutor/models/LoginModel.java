@@ -38,10 +38,16 @@ public class LoginModel implements ILoginModel {
 
     @Override
     public void login(String email, String password) {
-        if (email.isEmpty() || password.isEmpty()) {
-            presenter.modelOnFieldEmpty();
+        boolean validData = true;
+        if (email.isEmpty()) {
+            validData = false;
+            presenter.modelOnFieldEmailEmpty();
         }
-        else {
+        if (password.isEmpty()) {
+            validData = false;
+            presenter.modelOnFieldPasswordEmpty();
+        }
+        if (validData) {
             Call<User> call = api.loginUser(email, password);
 
             // asynchronously executing call

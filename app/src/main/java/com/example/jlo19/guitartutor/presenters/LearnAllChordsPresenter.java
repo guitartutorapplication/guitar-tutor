@@ -101,4 +101,9 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
         Chord chord = model.getAllChords().get(chordPos);
         view.startLearnChordActivity(chord, model.getUserChordIds().contains(chord.getId()));
     }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
 }

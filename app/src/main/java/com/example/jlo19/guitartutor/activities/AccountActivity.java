@@ -1,13 +1,15 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
@@ -98,8 +100,17 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(), R.string.account_error_message,
-                Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.account_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -132,6 +143,11 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     public void startAccountActivityActivity() {
         Intent intent = new Intent(getBaseContext(), AccountActivityActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     @Override

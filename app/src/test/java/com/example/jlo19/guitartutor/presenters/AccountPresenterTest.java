@@ -150,4 +150,13 @@ public class AccountPresenterTest {
         // assert
         Mockito.verify(view).startAccountActivityActivity();
     }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
+    }
 }

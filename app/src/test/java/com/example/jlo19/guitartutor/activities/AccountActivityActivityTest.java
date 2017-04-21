@@ -1,6 +1,8 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -26,8 +28,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,13 +83,37 @@ public class AccountActivityActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_account_activity_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // assert
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

@@ -12,4 +12,5 @@ public interface AccountView extends IProgressBarView {
     void startLoginActivity();
     void startEditAccountActivity();
     void startAccountActivityActivity();
+    void finishActivity();
 }

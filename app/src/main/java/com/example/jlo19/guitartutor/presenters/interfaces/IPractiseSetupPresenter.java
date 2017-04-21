@@ -27,4 +27,5 @@ public interface IPractiseSetupPresenter extends IPresenter {
     void viewOnPause();
     void viewOnStop();
     void setSharedPreferences(SharedPreferences sharedPreferences);
+    void viewOnConfirmError();
 }

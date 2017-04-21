@@ -251,4 +251,13 @@ public class PractiseSetupPresenterTest {
         // assert
         Mockito.verify(model).stopBeatPreview();
     }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
+    }
 }

@@ -69,4 +69,9 @@ public class AccountPresenter implements IAccountPresenter {
     public void viewOnAccountActivityRequested() {
         view.startAccountActivityActivity();
     }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
 }

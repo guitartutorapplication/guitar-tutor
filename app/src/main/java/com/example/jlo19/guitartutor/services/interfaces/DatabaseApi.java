@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.services.interfaces;
 
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
-import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 
 import java.util.ArrayList;
@@ -29,14 +28,14 @@ public interface DatabaseApi {
 
     @FormUrlEncoded
     @POST("users")
-    Call<ResponseWithMessage> registerUser(
+    Call<List<String>> registerUser(
             @Field("name") String name, @Field("email") String email, @Field("password") String password);
 
     @GET("users/{id}")
     Call<User> getAccountDetails(@Header("Authorization") String apiKey, @Path("id") int userId);
     @FormUrlEncoded
     @PUT("users/{id}")
-    Call<ResponseWithMessage> editAccountDetails(@Header("Authorization") String apiKey, @Path("id")
+    Call<List<String>> editAccountDetails(@Header("Authorization") String apiKey, @Path("id")
             int userId, @Field("name") String name, @Field("email") String email, @Field("password")
             String password);
 

@@ -42,25 +42,26 @@ public class LoginPresenter implements ILoginPresenter {
     @Override
     public void viewOnLogin(String email, String password) {
         view.showProgressBar();
+        view.resetFieldEmptyErrors();
         model.login(email, password);
     }
 
     @Override
-    public void modelOnFieldEmpty() {
+    public void modelOnFieldEmailEmpty() {
         view.hideProgressBar();
-        view.showFieldEmptyError();
+        view.showFieldEmailEmptyError();
+    }
+
+    @Override
+    public void modelOnFieldPasswordEmpty() {
+        view.hideProgressBar();
+        view.showFieldPasswordEmptyError();
     }
 
     @Override
     public void modelOnLoginSuccess() {
         view.hideProgressBar();
         view.startHomeActivity();
-    }
-
-    @Override
-    public void modelOnIncorrectCredentials() {
-        view.hideProgressBar();
-        view.showIncorrectCredentialsError();
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.helpers;
 
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
-import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
@@ -18,7 +17,7 @@ public class FakeDatabaseApi implements DatabaseApi{
 
     private FakeChordsCall fakeUserChordsResponseCall;
     private FakeUserCall fakeUserCall;
-    private FakeResponseWithMessageCall fakeResponseWithMessageCall;
+    private FakeMessageCall fakeMessageCall;
     private FakeChordsCall fakeChordsCall;
     private FakeSongsCall fakeSongsCall;
 
@@ -30,8 +29,8 @@ public class FakeDatabaseApi implements DatabaseApi{
         this.fakeSongsCall = fakeSongsCall;
     }
 
-    public FakeDatabaseApi(FakeResponseWithMessageCall fakeResponseWithMessageCall) {
-        this.fakeResponseWithMessageCall = fakeResponseWithMessageCall;
+    public FakeDatabaseApi(FakeMessageCall fakeMessageCall) {
+        this.fakeMessageCall = fakeMessageCall;
     }
 
     public FakeDatabaseApi(FakeUserCall fakeUserCall) {
@@ -62,8 +61,8 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<ResponseWithMessage> registerUser(String name, String email, String password) {
-        return fakeResponseWithMessageCall;
+    public Call<List<String>> registerUser(String name, String email, String password) {
+        return fakeMessageCall;
     }
 
     @Override
@@ -72,9 +71,9 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<ResponseWithMessage> editAccountDetails(
+    public Call<List<String>> editAccountDetails(
             String apiKey, int userId, String name, String email, String password) {
-        return fakeResponseWithMessageCall;
+        return fakeMessageCall;
     }
 
     @Override

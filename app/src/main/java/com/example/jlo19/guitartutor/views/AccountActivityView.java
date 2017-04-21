@@ -10,4 +10,5 @@ import java.util.List;
 public interface AccountActivityView extends IProgressBarView {
     void setAccountActivity(List<Chord> chord);
     void showError();
+    void finishActivity();
 }

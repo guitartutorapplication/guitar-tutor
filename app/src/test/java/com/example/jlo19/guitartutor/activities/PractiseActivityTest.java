@@ -1,5 +1,7 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
@@ -28,7 +30,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowToast;
+import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -263,63 +265,141 @@ public class PractiseActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
-        // arrange
+        // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_error_occurred_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showPractiseSessionSaveError_MakesToastWithErrorMessage() {
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void showPractiseSessionSaveError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showPractiseSessionSaveError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.save_practise_session_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showPractiseSessionSaveSuccess_MakesToastWithSuccessMessage() {
+    public void showPractiseSessionSaveError_ClicksOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showPractiseSessionSaveError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccess_ShowsAlertDialogWithSuccessMessage() {
         // act
         activity.showPractiseSessionSaveSuccess();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         String expectedText = getApp().getResources().getString(
                 R.string.save_practise_session_success_message) + "\n" + getApp().getResources()
                 .getString(R.string.maximum_achievements_message);
-        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+        Assert.assertEquals(expectedText, shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showPractiseSessionSaveSuccessWithAchievements_MakesToastWithSuccessMessage() {
+    public void showPractiseSessionSaveSuccess_ClicksOkButton_CallsConfirmSuccessOnPresenter() {
+        // arrange
+        activity.showPractiseSessionSaveSuccess();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmSuccess();
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccessWithAchievements_ShowsAlertDialogWithSuccessMessage() {
         // act
         int achievements = 2100;
         activity.showPractiseSessionSaveSuccess(achievements);
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         String expectedText = getApp().getResources().getString(
                 R.string.save_practise_session_success_message) + "\n" + getApp().getResources().
                 getString(R.string.gained_15_achievements_message, achievements);
-        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+        Assert.assertEquals(expectedText, shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showPractiseSessionSaveSuccessWithLevel_MakesToastWithSuccessMessage() {
+    public void showPractiseSessionSaveSuccessWithAchievements_ClickOkButton_CallsConfirmSuccessOnPresenter() {
+        // arrange
+        int achievements = 2100;
+        activity.showPractiseSessionSaveSuccess(achievements);
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmSuccess();
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccessWithLevel_ShowsAlertDialogWithSuccessMessage() {
         // act
         int achievements = 2000;
         int level = 3;
         activity.showPractiseSessionSaveSuccess(level, achievements);
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         String expectedText = getApp().getResources().getString(
                 R.string.save_practise_session_success_message) + "\n" + getApp().getResources().
                 getString(R.string.gained_15_achievements_message, achievements) + "\n" + getApp()
                 .getResources().getString(R.string.new_level_message, level);
-        Assert.assertEquals(expectedText, ShadowToast.getTextOfLatestToast());
+        Assert.assertEquals(expectedText, shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showPractiseSessionSaveSuccessWithLevel_ClickOkButton_CallsConfirmSuccessOnPresenter() {
+        // arrange
+        int achievements = 2000;
+        int level = 3;
+        activity.showPractiseSessionSaveSuccess(level, achievements);
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmSuccess();
     }
 
     @Test

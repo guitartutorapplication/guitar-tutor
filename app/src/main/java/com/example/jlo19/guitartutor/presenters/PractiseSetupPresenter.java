@@ -118,4 +118,9 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
 }

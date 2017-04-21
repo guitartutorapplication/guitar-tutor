@@ -69,4 +69,9 @@ public class SongLibraryPresenter implements ISongLibraryPresenter {
     public void viewOnExit() {
         model.resetSongs();
     }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
 }

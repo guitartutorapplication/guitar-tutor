@@ -70,7 +70,7 @@ public class LearnChordPresenter implements ILearnChordPresenter {
 
     @Override
     public void viewOnLearnt() {
-        view.showConfirmDialog();
+        view.showLearntConfirmDialog();
     }
 
     @Override
@@ -96,12 +96,21 @@ public class LearnChordPresenter implements ILearnChordPresenter {
         else {
             view.showAddLearntChordSuccess(achievements);
         }
-        view.startLearnAllChordsActivity();
     }
 
     @Override
     public void modelOnAddLearntChordError() {
         view.hideProgressBar();
         view.showAddLearntChordError();
+    }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
+
+    @Override
+    public void viewOnConfirmLearntSuccess() {
+        view.startLearnAllChordsActivity();
     }
 }

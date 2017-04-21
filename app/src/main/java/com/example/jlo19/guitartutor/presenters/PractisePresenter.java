@@ -53,7 +53,7 @@ public class PractisePresenter implements IPractisePresenter {
     @Override
     public void modelOnError() {
         view.showError();
-        view.returnToPractiseSetup();
+        model.stopTimer();
     }
 
     @Override
@@ -105,6 +105,7 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void modelOnPractiseSessionSaved(int level, int achievements) {
+        model.stopTimer();
         if (level == 0 && achievements == 0) {
             view.showPractiseSessionSaveSuccess();
         }
@@ -114,7 +115,6 @@ public class PractisePresenter implements IPractisePresenter {
         else {
             view.showPractiseSessionSaveSuccess(achievements);
         }
-        view.returnToPractiseSetup();
     }
 
     @Override
@@ -125,8 +125,8 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void modelOnPractiseSessionSaveError() {
+        model.stopTimer();
         view.showPractiseSessionSaveError();
-        view.returnToPractiseSetup();
     }
 
     @Override
@@ -145,5 +145,15 @@ public class PractisePresenter implements IPractisePresenter {
             // if in new chord state, set chord text with current chord name
             view.setChordText(view.getSelectedChords().get(currentChordIndex).toString());
         }
+    }
+
+    @Override
+    public void viewOnConfirmSuccess() {
+        view.returnToPractiseSetup();
+    }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.returnToPractiseSetup();
     }
 }

@@ -20,4 +20,6 @@ public interface IPractisePresenter extends IPresenter {
     void modelOnFirstRoundOfChords();
     void modelOnPractiseSessionSaveError();
     void modelOnNewPractiseState(PractiseActivityState state, int currentChordIndex);
+    void viewOnConfirmSuccess();
+    void viewOnConfirmError();
 }

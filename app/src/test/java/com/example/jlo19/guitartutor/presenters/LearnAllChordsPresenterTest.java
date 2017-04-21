@@ -215,4 +215,13 @@ public class LearnAllChordsPresenterTest {
         Chord chord = chords.get(pos);
         Mockito.verify(view).startLearnChordActivity(chord, userChords.contains(chord.getId()));
     }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
+    }
 }

@@ -87,7 +87,7 @@ public class LoginModelTest {
         model.login("", "password");
 
         // assert
-        Mockito.verify(presenter).modelOnFieldEmpty();
+        Mockito.verify(presenter).modelOnFieldEmailEmpty();
     }
 
     @Test
@@ -96,7 +96,7 @@ public class LoginModelTest {
         model.login("kate@gmail.com", "");
 
         // assert
-        Mockito.verify(presenter).modelOnFieldEmpty();
+        Mockito.verify(presenter).modelOnFieldPasswordEmpty();
     }
 
     @Test

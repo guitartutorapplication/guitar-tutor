@@ -1,14 +1,16 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
@@ -156,8 +158,17 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.practise_error_occurred_message, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.practise_error_occurred_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -226,14 +237,32 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.gained_15_achievements_message, achievements);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showPractiseSessionSaveError() {
-        Toast.makeText(getApplicationContext(), getResources().getString(
-                R.string.save_practise_session_error_message), Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.save_practise_session_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -242,8 +271,17 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
                 getString(R.string.gained_15_achievements_message, achievements) + "\n" +
                 getString(R.string.new_level_message, level);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -251,7 +289,16 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.maximum_achievements_message);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 }

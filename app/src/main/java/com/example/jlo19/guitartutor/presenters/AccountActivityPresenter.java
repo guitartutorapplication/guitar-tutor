@@ -52,4 +52,9 @@ public class AccountActivityPresenter implements IAccountActivityPresenter {
         view.hideProgressBar();
         view.setAccountActivity(chords);
     }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
 }

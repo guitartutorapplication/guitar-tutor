@@ -1,16 +1,18 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsListAdapter;
@@ -162,20 +164,45 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
 
     @Override
     public void showLoadChordsError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_chords_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showLessThanTwoChordsSelectedError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.less_than_two_selected_chords_error, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.less_than_two_selected_chords_error)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showSameSelectedChordError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.same_chord_selected_error, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.same_chord_selected_error)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -201,8 +228,16 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
 
     @Override
     public void showPreviewBeatError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.practise_beat_preview_error_message, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.practise_beat_preview_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -213,5 +248,10 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
                 btnPreview.setEnabled(isEnabled);
             }
         });
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 }

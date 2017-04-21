@@ -1,15 +1,13 @@
 package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ValidationResult;
+import com.example.jlo19.guitartutor.enums.ValidationError;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
-import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -40,40 +38,33 @@ public class RegisterModel implements IRegisterModel {
     @Override
     public void register(String name, String email, String confirmEmail, String password,
                          String confirmPassword) {
-        final ValidationResult validationResult = DataValidationModel.validate(
+        final List<ValidationError> validationErrors = DataValidationModel.validate(
                 name, email, confirmEmail, password, confirmPassword);
 
-        if (validationResult != ValidationResult.VALID_DATA) {
-            presenter.modelOnValidationFailed(validationResult);
+        if (!validationErrors.isEmpty()) {
+            presenter.modelOnValidationFailed(validationErrors);
         }
         else {
-            Call<ResponseWithMessage> call = api.registerUser(name, email, password);
+            Call<List<String>> call = api.registerUser(name, email, password);
 
             // asynchronously executing call
-            call.enqueue(new Callback<ResponseWithMessage>() {
+            call.enqueue(new Callback<List<String>>() {
                 @Override
-                public void onResponse(Call<ResponseWithMessage> call, Response<ResponseWithMessage> response) {
+                public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                     if (response.isSuccessful()) {
                         presenter.modelOnRegisterSuccess();
                     }
                     else {
-                        // convert raw response when error
-                        Gson gson = new Gson();
-                        TypeAdapter<ResponseWithMessage> adapter = gson.getAdapter(ResponseWithMessage.class);
-
                         try {
-                            ResponseWithMessage responseWithMessage = adapter.fromJson(
+                            List<ValidationError> validationErrors = DataValidationModel.validateResponse(
                                     response.errorBody().string());
 
-                            ValidationResult validationResult = DataValidationModel.validateResponse(
-                                    responseWithMessage.getMessage());
-
-                            if (validationResult == ValidationResult.VALID_DATA) {
+                            if (validationErrors.isEmpty()) {
                                 // if API finds no data validation error, show general error
                                 presenter.modelOnRegisterError();
                             }
                             else {
-                                presenter.modelOnValidationFailed(validationResult);
+                                presenter.modelOnValidationFailed(validationErrors);
                             }
 
                         } catch (IOException e) {
@@ -83,7 +74,7 @@ public class RegisterModel implements IRegisterModel {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseWithMessage> call, Throwable t) {
+                public void onFailure(Call<List<String>> call, Throwable t) {
                     presenter.modelOnRegisterError();
                 }
             });
