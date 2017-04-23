@@ -1,10 +1,9 @@
 package com.example.jlo19.guitartutor.modules;
 
-import android.app.Application;
-
+import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.AccountActivityModel;
-import com.example.jlo19.guitartutor.models.AccountModel;
 import com.example.jlo19.guitartutor.models.EditAccountModel;
+import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.LearnChordModel;
 import com.example.jlo19.guitartutor.models.LoginModel;
@@ -14,8 +13,8 @@ import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.SongModel;
 import com.example.jlo19.guitartutor.models.interfaces.IAccountActivityModel;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
+import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
@@ -63,9 +62,9 @@ import dagger.Provides;
 @Module
 public class AppModule {
 
-    private final Application application;
+    private final App application;
 
-    public AppModule(Application application) {
+    public AppModule(App application) {
         this.application = application;
     }
 
@@ -139,11 +138,16 @@ public class AppModule {
 
     @Provides
     @Singleton
-    IAccountPresenter provideAccountPresenter() {return new AccountPresenter();}
+    IAccountPresenter provideAccountPresenter() {
+        return new AccountPresenter(provideGetAccountDetailsInteractor(),
+                application.getLoggedInUser());
+    }
 
     @Provides
     @Singleton
-    IAccountModel provideAccountModel() {return new AccountModel();}
+    IGetAccountDetailsInteractor provideGetAccountDetailsInteractor() {
+        return new GetAccountDetailsInteractor(provideDatabaseApi());
+    }
 
     @Provides
     @Singleton

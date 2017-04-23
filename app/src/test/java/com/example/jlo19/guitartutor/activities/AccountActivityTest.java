@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -68,12 +67,6 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
     public void setsTitleOfToolbar() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
@@ -99,8 +92,8 @@ public class AccountActivityTest {
         String expectedEmail = "katesmith@gmail.com";
         int expectedLevel = 2;
         int expectedAchievements = 2000;
-        activity.setAccountDetails(new User(expectedName, expectedEmail, expectedLevel,
-                expectedAchievements));
+        activity.setAccountDetails(expectedName, expectedEmail, expectedLevel,
+                expectedAchievements);
 
         // assert
         TextView txtName = (TextView) activity.findViewById(R.id.txtName);
@@ -166,13 +159,9 @@ public class AccountActivityTest {
 
     @Test
     public void startEditAccountActivity_EditAccountActivityIsStartedWithAccountDetails() {
-        // arrange
-        User user = new User("Kate", "katesmith@gmail.com", 2,
-                2000);
-        activity.setAccountDetails(user);
-
         // act
-        activity.startEditAccountActivity();
+        User user = new User("Kate", "katesmith@gmail.com", 2, 2000);
+        activity.startEditAccountActivity(user);
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();

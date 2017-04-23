@@ -7,10 +7,10 @@ import com.example.jlo19.guitartutor.models.retrofit.objects.User;
  */
 public interface AccountView extends IProgressBarView {
     void hideAccountButton();
-    void setAccountDetails(User user);
+    void setAccountDetails(String name, String email, int level, int achievements);
     void showError();
     void startLoginActivity();
-    void startEditAccountActivity();
+    void startEditAccountActivity(User user);
     void startAccountActivityActivity();
     void finishActivity();
 }

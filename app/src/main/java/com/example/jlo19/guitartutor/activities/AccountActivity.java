@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +24,6 @@ import javax.inject.Inject;
 public class AccountActivity extends BaseWithToolbarActivity implements AccountView {
 
     private ProgressDialog progressDialog;
-    private User user;
     private IAccountPresenter presenter;
     private final int REQUEST_SAVE = 1;
 
@@ -74,7 +72,6 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     @Inject
     public void setPresenter(IAccountPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -85,17 +82,16 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     }
 
     @Override
-    public void setAccountDetails(User user) {
-        this.user = user;
+    public void setAccountDetails(String name, String email, int level, int achievements) {
         TextView txtName = (TextView) findViewById(R.id.txtName);
         TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
         TextView txtLevel = (TextView) findViewById(R.id.txtLevel);
         TextView txtAchievements = (TextView) findViewById(R.id.txtAchievements);
 
-        txtName.setText(user.getName());
-        txtEmail.setText(user.getEmail());
-        txtLevel.setText(String.valueOf(user.getLevel()));
-        txtAchievements.setText(String.valueOf(user.getAchievements()));
+        txtName.setText(name);
+        txtEmail.setText(email);
+        txtLevel.setText(String.valueOf(level));
+        txtAchievements.setText(String.valueOf(achievements));
     }
 
     @Override
@@ -122,7 +118,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     }
 
     @Override
-    public void startEditAccountActivity() {
+    public void startEditAccountActivity(User user) {
         // passing account details to next activity
         Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
         intent.putExtra("USER", user);

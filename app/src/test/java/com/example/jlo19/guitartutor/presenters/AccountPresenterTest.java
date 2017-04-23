@@ -1,68 +1,49 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Testing AccountPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class AccountPresenterTest {
 
     private IAccountPresenter presenter;
-    private SharedPreferences sharedPreferences;
-    private IAccountModel model;
+    private IGetAccountDetailsInteractor getAccountDetailsInteractor;
     private AccountView view;
+    private LoggedInUser loggedInUser;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
+        loggedInUser = Mockito.mock(LoggedInUser.class);
+        Mockito.when(loggedInUser.getApiKey()).thenReturn("api_key");
+        Mockito.when(loggedInUser.getUserId()).thenReturn(2);
 
-        presenter = new AccountPresenter();
-
-        sharedPreferences = Mockito.mock(SharedPreferences.class);
-        presenter.setSharedPreferences(sharedPreferences);
-
-        model = Mockito.mock(IAccountModel.class);
-        ((AccountPresenter) presenter).setModel(model);
+        getAccountDetailsInteractor = Mockito.mock(IGetAccountDetailsInteractor.class);
+        presenter = new AccountPresenter(getAccountDetailsInteractor, loggedInUser);
 
         view = Mockito.mock(AccountView.class);
         presenter.setView(view);
     }
 
     @Test
-    public void setModel_SetsSharedPreferencesOnModel() {
+    public void setsPresenterAsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).setSharedPreferences(sharedPreferences);
+        Mockito.verify(getAccountDetailsInteractor).setListener(presenter);
     }
 
     @Test
-    public void setModel_SetsPresenterOnModel() {
+    public void setView_CallsGetAccountDetailsOnInteractor() {
         // assert
-        Mockito.verify(model).setPresenter(presenter);
-    }
-
-    @Test
-    public void setModel_CallsGetAccountDetailsOnModel() {
-        // assert
-        Mockito.verify(model).getAccountDetails();
+        Mockito.verify(getAccountDetailsInteractor).getAccountDetails(loggedInUser.getApiKey(),
+                loggedInUser.getUserId());
     }
 
     @Test
@@ -78,50 +59,51 @@ public class AccountPresenterTest {
     }
 
     @Test
-    public void modelOnAccountDetailsRetrieved_SetsAccountDetailsOnView() {
+    public void onAccountDetailsRetrieved_SetsAccountDetailsOnView() {
         // act
         User user = new User("Kate", "katesmith@gmail.com", 2, 2000);
-        presenter.modelOnAccountDetailsRetrieved(user);
+        presenter.onAccountDetailsRetrieved(user);
 
         // assert
-        Mockito.verify(view).setAccountDetails(user);
+        Mockito.verify(view).setAccountDetails(user.getName(), user.getEmail(), user.getLevel(),
+                user.getAchievements());
     }
 
     @Test
-    public void modelOnAccountDetailsRetrieved_HidesProgressBarOnView() {
+    public void onAccountDetailsRetrieved_HidesProgressBarOnView() {
         // act
         User user = new User("Kate", "katesmith@gmail.com", 2, 2000);
-        presenter.modelOnAccountDetailsRetrieved(user);
+        presenter.onAccountDetailsRetrieved(user);
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnError_ShowsErrorOnView() {
+    public void onError_ShowsErrorOnView() {
         // act
-        presenter.modelOnError();
+        presenter.onError();
 
         // assert
         Mockito.verify(view).showError();
     }
 
     @Test
-    public void modelOnError_HidesProgressBarOnView() {
+    public void onError_HidesProgressBarOnView() {
         // act
-        presenter.modelOnError();
+        presenter.onError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void viewOnLogOut_CallsLogoutOnModel() {
+    public void viewOnLogout_CallsLogoutOnLoggedInUser() {
         // act
         presenter.viewOnLogout();
 
         // assert
-        Mockito.verify(model).logout();
+        Mockito.verify(loggedInUser).logout();
     }
 
     @Test
@@ -135,11 +117,15 @@ public class AccountPresenterTest {
 
     @Test
     public void viewOnEditAccount_CallsStartEditAccountActivityOnView() {
+        // arrange
+        User user = new User("Kate", "katesmith@gmail.com", 2, 2000);
+        presenter.onAccountDetailsRetrieved(user);
+
         // act
         presenter.viewOnEditAccount();
 
         // assert
-        Mockito.verify(view).startEditAccountActivity();
+        Mockito.verify(view).startEditAccountActivity(user);
     }
 
     @Test

@@ -1,31 +1,26 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 import com.example.jlo19.guitartutor.views.IView;
-
-import javax.inject.Inject;
 
 /**
  * Presenter that provides the AccountActivity with account details from DB
  */
 public class AccountPresenter implements IAccountPresenter {
 
-    private SharedPreferences sharedPreferences;
     private AccountView view;
-    private IAccountModel model;
+    private final IGetAccountDetailsInteractor getAccountDetailsInteractor;
+    private final LoggedInUser loggedInUser;
+    private User user;
 
-    @Inject
-    public void setModel(IAccountModel model) {
-        this.model = model;
-        this.model.setPresenter(this);
-        this.model.setSharedPreferences(sharedPreferences);
-        this.model.getAccountDetails();
+    public AccountPresenter(IGetAccountDetailsInteractor getAccountDetailsInteractor, LoggedInUser loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        this.getAccountDetailsInteractor = getAccountDetailsInteractor;
+        this.getAccountDetailsInteractor.setListener(this);
     }
 
     @Override
@@ -34,35 +29,32 @@ public class AccountPresenter implements IAccountPresenter {
         this.view.hideAccountButton();
         this.view.showProgressBar();
 
-        App.getComponent().inject(this);
+        getAccountDetailsInteractor.getAccountDetails(loggedInUser.getApiKey(),
+                loggedInUser.getUserId());
     }
 
     @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
-    }
-
-    @Override
-    public void modelOnAccountDetailsRetrieved(User user) {
+    public void onAccountDetailsRetrieved(User user) {
+        this.user = user;
         view.hideProgressBar();
-        view.setAccountDetails(user);
+        view.setAccountDetails(user.getName(), user.getEmail(), user.getLevel(), user.getAchievements());
     }
 
     @Override
-    public void modelOnError() {
+    public void onError() {
         view.hideProgressBar();
         view.showError();
     }
 
     @Override
     public void viewOnLogout() {
-        model.logout();
+        loggedInUser.logout();
         view.startLoginActivity();
     }
 
     @Override
     public void viewOnEditAccount() {
-        view.startEditAccountActivity();
+        view.startEditAccountActivity(user);
     }
 
     @Override

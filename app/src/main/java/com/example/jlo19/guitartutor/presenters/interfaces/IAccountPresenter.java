@@ -1,16 +1,11 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.listeners.GetAccountDetailsListener;
 
 /**
  * Interface for AccountPresenter
  */
-public interface IAccountPresenter extends IPresenter {
-    void setSharedPreferences(SharedPreferences preferences);
-    void modelOnAccountDetailsRetrieved(User user);
-    void modelOnError();
+public interface IAccountPresenter extends IPresenter, GetAccountDetailsListener {
     void viewOnLogout();
     void viewOnEditAccount();
     void viewOnAccountActivityRequested();
