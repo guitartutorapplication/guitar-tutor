@@ -1,21 +1,14 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountActivityModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountActivityPresenter;
 import com.example.jlo19.guitartutor.views.AccountActivityView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,28 +16,20 @@ import java.util.List;
 /**
  * Testing AccountActivityPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class AccountActivityPresenterTest {
 
     private IAccountActivityPresenter presenter;
-    private IAccountActivityModel model;
+    private IGetUserChordsInteractor getUserChordsInteractor;
     private AccountActivityView view;
-    private SharedPreferences sharedPreferences;
+    private LoggedInUser loggedInUser;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        presenter = new AccountActivityPresenter();
-
-        sharedPreferences = Mockito.mock(SharedPreferences.class);
-        presenter.setSharedPreferences(sharedPreferences);
-
-        model = Mockito.mock(IAccountActivityModel.class);
-        ((AccountActivityPresenter) presenter).setModel(model);
+        loggedInUser = Mockito.mock(LoggedInUser.class);
+        Mockito.when(loggedInUser.getUserId()).thenReturn(2);
+        Mockito.when(loggedInUser.getApiKey()).thenReturn("api_key");
+        getUserChordsInteractor = Mockito.mock(IGetUserChordsInteractor.class);
+        presenter = new AccountActivityPresenter(getUserChordsInteractor, loggedInUser);
 
         view = Mockito.mock(AccountActivityView.class);
         presenter.setView(view);
@@ -57,57 +42,52 @@ public class AccountActivityPresenterTest {
     }
 
     @Test
-    public void setModel_CallsGetActivityOnModel() {
+    public void setView_CallsGetUserChordsOnInteractor() {
         // assert
-        Mockito.verify(model).getAccountActivity();
+        Mockito.verify(getUserChordsInteractor).getUserChords(loggedInUser.getApiKey(),
+                loggedInUser.getUserId());
     }
 
     @Test
-    public void setModel_SetsSharedPreferencesOnModel() {
+    public void setsPresenterAsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).setSharedPreferences(sharedPreferences);
+        Mockito.verify(getUserChordsInteractor).setListener(presenter);
     }
 
     @Test
-    public void setModel_SetsPresenterOnModel() {
-        // assert
-        Mockito.verify(model).setPresenter(presenter);
-    }
-
-    @Test
-    public void modelOnAccountActivityRetrieved_HidesProgressBarOnView() {
+    public void onUserChordsRetrieved_HidesProgressBarOnView() {
         // act
-        presenter.modelOnAccountActivityRetrieved(null);
+        presenter.onUserChordsRetrieved(null);
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnAccountActivityRetrieved_SetsActivityOnView() {
+    public void onUserChordsRetrieved_SetsActivityOnView() {
         // act
         List<Chord> expectedChords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
-        presenter.modelOnAccountActivityRetrieved(expectedChords);
+        presenter.onUserChordsRetrieved(expectedChords);
 
         // assert
         Mockito.verify(view).setAccountActivity(expectedChords);
     }
 
     @Test
-    public void modelOnError_HidesProgressBarOnView() {
+    public void onError_HidesProgressBarOnView() {
         // act
-        presenter.modelOnError();
+        presenter.onError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnError_ShowErrorOnView() {
+    public void onError_ShowErrorOnView() {
         // act
-        presenter.modelOnError();
+        presenter.onError();
 
         // assert
         Mockito.verify(view).showError();

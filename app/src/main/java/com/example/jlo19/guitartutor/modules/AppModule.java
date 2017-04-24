@@ -1,7 +1,7 @@
 package com.example.jlo19.guitartutor.modules;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.AccountActivityModel;
+import com.example.jlo19.guitartutor.models.GetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.EditAccountModel;
 import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
@@ -12,7 +12,7 @@ import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.SongModel;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountActivityModel;
+import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
 import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
@@ -139,13 +139,11 @@ public class AppModule {
     @Provides
     @Singleton
     IAccountPresenter provideAccountPresenter() {
-        return new AccountPresenter(provideGetAccountDetailsInteractor(),
+        return new AccountPresenter(createGetAccountDetailsInteractor(),
                 application.getLoggedInUser());
     }
 
-    @Provides
-    @Singleton
-    IGetAccountDetailsInteractor provideGetAccountDetailsInteractor() {
+    private IGetAccountDetailsInteractor createGetAccountDetailsInteractor() {
         return new GetAccountDetailsInteractor(provideDatabaseApi());
     }
 
@@ -167,9 +165,12 @@ public class AppModule {
 
     @Provides
     @Singleton
-    IAccountActivityPresenter provideAccountActivityPresenter() {return new AccountActivityPresenter();}
+    IAccountActivityPresenter provideAccountActivityPresenter() {
+        return new AccountActivityPresenter(createGetUserChordsInteractor(),
+                application.getLoggedInUser());
+    }
 
-    @Provides
-    @Singleton
-    IAccountActivityModel provideAccountActivityModel() {return new AccountActivityModel();}
+    private IGetUserChordsInteractor createGetUserChordsInteractor() {
+        return new GetUserChordsInteractor(provideDatabaseApi());
+    }
 }

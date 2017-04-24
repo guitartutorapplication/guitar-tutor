@@ -11,7 +11,6 @@ import com.example.jlo19.guitartutor.activities.PractiseSetupActivity;
 import com.example.jlo19.guitartutor.activities.RegisterActivity;
 import com.example.jlo19.guitartutor.activities.SongActivity;
 import com.example.jlo19.guitartutor.activities.SongLibraryActivity;
-import com.example.jlo19.guitartutor.models.AccountActivityModel;
 import com.example.jlo19.guitartutor.models.EditAccountModel;
 import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.LearnChordModel;
@@ -22,7 +21,6 @@ import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.SongModel;
 import com.example.jlo19.guitartutor.modules.AppModule;
-import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.LearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.presenters.LearnChordPresenter;
@@ -83,6 +81,4 @@ public interface AppComponent {
     void inject(SongModel model);
 
     void inject(AccountActivityActivity activity);
-    void inject(AccountActivityPresenter presenter);
-    void inject(AccountActivityModel model);
 }
