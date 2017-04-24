@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * View interface for SongLibraryActivity
  */
-public interface SongLibraryView extends IProgressBarView {
+public interface SongLibraryView extends ProgressBarView {
     void setSongs(List<Song> songs);
     void showError();
     void finishActivity();

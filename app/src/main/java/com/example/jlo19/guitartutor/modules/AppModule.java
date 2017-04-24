@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.modules;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.GetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.EditAccountModel;
+import com.example.jlo19.guitartutor.models.EditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.LearnChordModel;
@@ -13,7 +13,7 @@ import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.SongModel;
 import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
+import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
@@ -149,11 +149,14 @@ public class AppModule {
 
     @Provides
     @Singleton
-    IEditAccountPresenter provideEditAccountPresenter() {return new EditAccountPresenter();}
+    IEditAccountPresenter provideEditAccountPresenter() {
+        return new EditAccountPresenter(createEditAccountDetailsInteractor(),
+                application.getLoggedInUser());
+    }
 
-    @Provides
-    @Singleton
-    IEditAccountModel provideEditAccountModel() {return new EditAccountModel();}
+    private IEditAccountDetailsInteractor createEditAccountDetailsInteractor() {
+        return new EditAccountDetailsInteractor(provideDatabaseApi());
+    }
 
     @Provides
     @Singleton

@@ -5,7 +5,7 @@ import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 /**
  * View interface for LearnAllChordsActivity
  */
-public interface LearnAllChordsView extends IProgressBarView {
+public interface LearnAllChordsView extends ProgressBarView {
     void showError();
     void startLearnChordActivity(Chord selectedChord, boolean learntChord);
     void addChordButton(int buttonId);

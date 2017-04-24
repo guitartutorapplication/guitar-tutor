@@ -5,7 +5,7 @@ import android.content.Context;
 /**
  * Interface for SongActivity
  */
-public interface SongView extends IProgressBarView {
+public interface SongView extends ProgressBarView {
     String getAudioFilename();
     void playAudio(String url);
     void showError();

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * View interface for PractiseSetupActivity
  */
-public interface PractiseSetupView extends IProgressBarView {
+public interface PractiseSetupView extends ProgressBarView {
     void setChords(List<Chord> chords);
     void showLoadChordsError();
     void showLessThanTwoChordsSelectedError();

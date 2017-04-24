@@ -5,6 +5,7 @@ import com.example.jlo19.guitartutor.enums.ValidationError;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
+import com.example.jlo19.guitartutor.validation.DataValidator;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +39,7 @@ public class RegisterModel implements IRegisterModel {
     @Override
     public void register(String name, String email, String confirmEmail, String password,
                          String confirmPassword) {
-        final List<ValidationError> validationErrors = DataValidationModel.validate(
+        final List<ValidationError> validationErrors = DataValidator.validate(
                 name, email, confirmEmail, password, confirmPassword);
 
         if (!validationErrors.isEmpty()) {
@@ -56,7 +57,7 @@ public class RegisterModel implements IRegisterModel {
                     }
                     else {
                         try {
-                            List<ValidationError> validationErrors = DataValidationModel.validateResponse(
+                            List<ValidationError> validationErrors = DataValidator.validateResponse(
                                     response.errorBody().string());
 
                             if (validationErrors.isEmpty()) {

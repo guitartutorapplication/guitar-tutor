@@ -1,68 +1,67 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
+import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
+import com.example.jlo19.guitartutor.validation.DataValidator;
 import com.example.jlo19.guitartutor.views.EditAccountView;
 import com.example.jlo19.guitartutor.views.IView;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Presenter that provides the EditAccountActivity with ability to edit details on DB
  */
 public class EditAccountPresenter implements IEditAccountPresenter {
 
+    private final LoggedInUser loggedInUser;
     private EditAccountView view;
-    private IEditAccountModel model;
-    private SharedPreferences sharedPreferences;
+    private final IEditAccountDetailsInteractor editAccountDetailsInteractor;
 
-    @Inject
-    public void setModel(IEditAccountModel model) {
-        this.model = model;
-        this.model.setPresenter(this);
-        this.model.setSharedPreferences(sharedPreferences);
+    public EditAccountPresenter(IEditAccountDetailsInteractor editAccountDetailsInteractor,
+                                LoggedInUser loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        this.editAccountDetailsInteractor = editAccountDetailsInteractor;
+        this.editAccountDetailsInteractor.setListener(this);
     }
 
     @Override
     public void setView(IView view) {
         this.view = (EditAccountView) view;
         this.view.hideAccountButton();
-
-        App.getComponent().inject(this);
-    }
-
-    @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
     }
 
     @Override
     public void viewOnSave(String name, String email, String confirmEmail, String password, String confirmPassword) {
         view.showProgressBar();
         view.resetValidationErrors();
-        model.save(name, email, confirmEmail, password, confirmPassword);
+
+        List<ValidationError> errors = DataValidator.validate(name, email, confirmEmail, password,
+                confirmPassword);
+        if (errors.isEmpty()) {
+            editAccountDetailsInteractor.save(loggedInUser.getApiKey(), loggedInUser.getUserId(),
+                    name, email, password);
+        }
+        else {
+            onValidationFailed(errors);
+        }
     }
 
     @Override
-    public void modelOnSaveSuccess() {
+    public void onSaveSuccess() {
         view.hideProgressBar();
         view.startAccountActivity();
     }
 
     @Override
-    public void modelOnSaveError() {
+    public void onSaveError() {
         view.hideProgressBar();
         view.showSaveError();
     }
 
     @Override
-    public void modelOnValidationFailed(List<ValidationError> errors) {
+    public void onValidationFailed(List<ValidationError> errors) {
         view.hideProgressBar();
 
         for (ValidationError error : errors) {

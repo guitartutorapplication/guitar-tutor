@@ -1,4 +1,4 @@
-package com.example.jlo19.guitartutor.models;
+package com.example.jlo19.guitartutor.validation;
 
 import com.example.jlo19.guitartutor.enums.ValidationError;
 
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * An abstract class which deals with the data validation for an account
  */
-class DataValidationModel {
+public class DataValidator {
     private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
             "[a-zA-Z0-9\\+\\._%\\-\\+]{1,256}" +
                     "@" +
@@ -20,7 +20,7 @@ class DataValidationModel {
                     ")+"
     );
 
-    static List<ValidationError> validate(String name, String email, String confirmEmail, String password,
+    public static List<ValidationError> validate(String name, String email, String confirmEmail, String password,
                                           String confirmPassword) {
         List<ValidationError> errors = new ArrayList<>();
 
@@ -66,7 +66,7 @@ class DataValidationModel {
         return errors;
     }
 
-    static List<ValidationError> validateResponse(String responseMessage) {
+    public static List<ValidationError> validateResponse(String responseMessage) {
         // converting raw response to a list of string errors
         responseMessage = responseMessage.replace("[", "").replace("]", "").replace("\"", "");
         String[] errors = responseMessage.split(",");

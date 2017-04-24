@@ -3,7 +3,7 @@ package com.example.jlo19.guitartutor.views;
 /**
  * Represents common view behaviour for data validation
  */
-interface IDataValidationView extends IProgressBarView{
+interface DataValidationView extends ProgressBarView {
     void showFieldEmptyNameError();
     void showEmailMismatchError();
     void showPasswordMismatchError();
