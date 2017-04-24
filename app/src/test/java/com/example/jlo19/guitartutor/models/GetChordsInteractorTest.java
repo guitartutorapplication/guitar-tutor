@@ -1,15 +1,12 @@
 package com.example.jlo19.guitartutor.models;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.helpers.AwaitConditionCreator;
 import com.example.jlo19.guitartutor.helpers.FakeChordsCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
 import com.example.jlo19.guitartutor.helpers.FakeUserCall;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
+import com.example.jlo19.guitartutor.listeners.GetChordsListener;
+import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
@@ -39,38 +36,21 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 /**
- * Testing LearnAllChordsModel
+ * Testing GetChordsInteractor
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({App.class, Response.class})
-public class LearnAllChordsModelTest {
+@PrepareForTest({Response.class})
+public class GetChordsInteractorTest {
 
-    private ILearnAllChordsModel model;
-    private ILearnAllChordsPresenter presenter;
-    private int userId;
+    private GetChordsListener listener;
     private List<Chord> chords;
     private List<Chord> userChords;
     private List<Integer> userChordIds;
     private User user;
-    private String apiKey;
 
     @Before
     public void setUp() {
-        // stop real injection of API
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        model = new LearnAllChordsModel();
-
-        userId = 1;
-        SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
-        Mockito.when(sharedPreferences.getInt("user_id", 0)).thenReturn(userId);
-        apiKey = "api_key";
-        Mockito.when(sharedPreferences.getString("api_key", "")).thenReturn(apiKey);
-        model.setSharedPreferences(sharedPreferences);
-
-        presenter = PowerMockito.mock(ILearnAllChordsPresenter.class);
-        model.setPresenter(presenter);
+        listener = PowerMockito.mock(ILearnAllChordsPresenter.class);
 
         chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
@@ -78,7 +58,7 @@ public class LearnAllChordsModelTest {
         userChords = Collections.singletonList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
         userChordIds = Collections.singletonList(1);
-        user = new User(userId, "Kate", "katesmith@gmail.com", 2, 2000, "api_key");
+        user = new User(2, "Kate", "katesmith@gmail.com", 2, 2000, "api_key");
     }
 
     @Test
@@ -86,10 +66,13 @@ public class LearnAllChordsModelTest {
         // arrange
         final DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(null),
                 new FakeChordsCall(null), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        String apiKey = "api_key";
+        getChordsInteractor.getChordsAndDetails(apiKey, user.getId());
 
         // assert
         await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getChordsCalledOnApi(api, apiKey));
@@ -102,34 +85,38 @@ public class LearnAllChordsModelTest {
 
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(null), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
 
-        model.getChordsAndDetails();
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // act
         // allows time for thread
-        await().atMost(1000, MILLISECONDS).untilCall(to(model).getAllChords(), is(not(nullValue())));
-        final List<Chord> actualChords = model.getAllChords();
+        await().atMost(1000, MILLISECONDS).untilCall(to(getChordsInteractor).getAllChords(), is(not(nullValue())));
+        final List<Chord> actualChords = getChordsInteractor.getAllChords();
 
         // assert
         Assert.assertEquals(chords, actualChords);
     }
 
     @Test
-    public void getChordsAndDetailsWithSuccessfulGetChordsOnApi_CallsGetUserChordsOnApiWithUserIdFromSharedPref() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsOnApi_CallsGetUserChordsOnApi() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
 
         final DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(null), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        String apiKey = "api_key";
+        getChordsInteractor.getChordsAndDetails(apiKey, user.getId());
 
         // assert
         await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getUserChordsCalledOnApi(
-                api, userId, apiKey));
+                api, user.getId(), apiKey));
     }
 
     @Test
@@ -141,21 +128,23 @@ public class LearnAllChordsModelTest {
 
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
 
-        model.getChordsAndDetails();
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // act
         // allows time for thread
-        await().atMost(1000, MILLISECONDS).untilCall(to(model).getUserChordIds(), is(not(nullValue())));
-        List<Integer> actualUserChords = model.getUserChordIds();
+        await().atMost(1000, MILLISECONDS).untilCall(to(getChordsInteractor).getUserChordIds(),
+                is(not(nullValue())));
+        List<Integer> actualUserChords = getChordsInteractor.getUserChordIds();
 
         // assert
         Assert.assertEquals(userChordIds, actualUserChords);
     }
 
     @Test
-    public void getChordsAndDetailsWithSuccessfulGetChordsAndGetUserChordsOnApi_CallsGetAccountDetailsOnApiWithUserIdAndApiKeyFromSharedPref() {
+    public void getChordsAndDetailsWithSuccessfulGetChordsAndGetUserChordsOnApi_CallsGetAccountDetailsOnApi() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
         Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
@@ -163,18 +152,20 @@ public class LearnAllChordsModelTest {
 
         final DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        String apiKey = "api_key";
+        getChordsInteractor.getChordsAndDetails(apiKey, user.getId());
 
         // assert
         await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.getAccountDetailsCalledOnApi(
-                api, userId, apiKey));
+                api, user.getId(), apiKey));
     }
 
     @Test
-    public void getChordsAndDetailsWithSuccessfulResponseToAllApiCalls_GetUserLevel_ReturnsUsersLevel() {
+    public void getChordsAndDetailsWithSuccessfulResponseToAllApiCalls_CallsChordsRetrievedOnListener() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
         Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
@@ -183,41 +174,19 @@ public class LearnAllChordsModelTest {
 
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(userChordsResponse), new FakeUserCall(userResponse)));
-        ((LearnAllChordsModel) model).setApi(api);
-
-        model.getChordsAndDetails();
-
-        // act
-        // allows time for thread
-        await().atMost(1000, MILLISECONDS).untilCall(to(model).getUserLevel(), is(not(nullValue())));
-        int actualUserLevel = model.getUserLevel();
-
-        // assert
-        Assert.assertEquals(user.getLevel(), actualUserLevel);
-    }
-
-    @Test
-    public void getChordsAndDetailsWithSuccessfulResponseToAllApiCalls_CallsChordsRetrievedOnPresenter() {
-        // arrange
-        Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
-        Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
-                userChords);
-        Response<User> userResponse = FakeResponseCreator.getUserResponse(true, user);
-
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
-                new FakeChordsCall(userChordsResponse), new FakeUserCall(userResponse)));
-        ((LearnAllChordsModel) model).setApi(api);
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
         await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.
-                chordsAndDetailsRetrievedCalledOnPresenter(presenter));
+                chordsAndDetailsRetrievedCalledOnListener(listener, chords, user.getLevel(), userChordIds));
     }
 
     @Test
-    public void getChordsAndDetailsWithUnsuccessfulGetAccountDetailsOnApi_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithUnsuccessfulGetAccountDetailsOnApi_CallsErrorOnListener() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
         Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
@@ -226,17 +195,19 @@ public class LearnAllChordsModelTest {
 
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(userChordsResponse), new FakeUserCall(userResponse)));
-        ((LearnAllChordsModel) model).setApi(api);
+
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnListener(listener));
     }
 
     @Test
-    public void getChordsAndDetailsWithFailureOnGetAccountDetailsOnApi_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithFailureOnGetAccountDetailsOnApi_CallsErrorOnListener() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
         Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(true,
@@ -244,17 +215,19 @@ public class LearnAllChordsModelTest {
         // on failure is triggered when a null response is passed through to fake call
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnListener(listener));
     }
 
     @Test
-    public void getChordsAndDetailsWithUnsuccessfulGetUserChordsOnApi_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithUnsuccessfulGetUserChordsOnApi_CallsErrorOnListener() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
         Response<List<Chord>> userChordsResponse = FakeResponseCreator.getChordsResponse(false,
@@ -262,60 +235,66 @@ public class LearnAllChordsModelTest {
 
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(userChordsResponse), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnListener(listener));
     }
 
     @Test
-    public void getChordsAndDetailsWithFailureOnGetUserChordsOnApi_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithFailureOnGetUserChordsOnApi_CallsErrorOnListener() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(true, chords);
 
         // on failure is triggered when a null response is passed through to fake call
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(null), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnListener(listener));
     }
 
     @Test
-    public void getChordsAndDetailsWithUnsuccessfulGetChordsOnApi_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithUnsuccessfulGetChordsOnApi_CallsErrorOnListener() {
         // arrange
         Response<List<Chord>> chordsResponse = FakeResponseCreator.getChordsResponse(false, null);
 
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(chordsResponse),
                 new FakeChordsCall(null), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnListener(listener));
     }
 
     @Test
-    public void getChordsAndDetailsWithFailureOnGetChordsOnApi_CallsErrorOnPresenter() {
+    public void getChordsAndDetailsWithFailureOnGetChordsOnApi_CallsErrorOnListener() {
         // arrange
         // on failure is triggered when a null response is passed through to fake call
         DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeChordsCall(null),
                 new FakeChordsCall(null), new FakeUserCall(null)));
-        ((LearnAllChordsModel) model).setApi(api);
+
+        IGetChordsInteractor getChordsInteractor = new GetChordsInteractor(api);
+        getChordsInteractor.setListener(listener);
 
         // act
-        model.getChordsAndDetails();
+        getChordsInteractor.getChordsAndDetails("api_key", user.getId());
 
         // assert
-        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnPresenter(presenter));
+        await().atMost(1000, MILLISECONDS).until(AwaitConditionCreator.errorCalledOnListener(listener));
     }
 }

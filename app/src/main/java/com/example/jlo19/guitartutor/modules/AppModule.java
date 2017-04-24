@@ -4,7 +4,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.GetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.EditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
+import com.example.jlo19.guitartutor.models.GetChordsInteractor;
 import com.example.jlo19.guitartutor.models.LearnChordModel;
 import com.example.jlo19.guitartutor.models.LoginModel;
 import com.example.jlo19.guitartutor.models.PractiseModel;
@@ -12,10 +12,10 @@ import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.SongModel;
+import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
@@ -71,7 +71,7 @@ public class AppModule {
     @Provides
     @Singleton
     ILearnAllChordsPresenter provideLearnAllChordsPresenter() {
-        return new LearnAllChordsPresenter();
+        return new LearnAllChordsPresenter(createGetChordsInteractor(), application.getLoggedInUser());
     }
 
     @Provides
@@ -108,9 +108,9 @@ public class AppModule {
     @Singleton
     ILearnChordModel provideLearnChordModel() {return new LearnChordModel();}
 
-    @Provides
-    @Singleton
-    ILearnAllChordsModel provideLearnViewAllChordsModel() {return new LearnAllChordsModel();}
+    private IGetChordsInteractor createGetChordsInteractor() {
+        return new GetChordsInteractor(provideDatabaseApi());
+    }
 
     @Provides
     @Singleton

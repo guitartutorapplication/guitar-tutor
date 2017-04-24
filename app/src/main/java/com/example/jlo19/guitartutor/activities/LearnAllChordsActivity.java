@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -59,7 +58,6 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     @Inject
     public void setPresenter(ILearnAllChordsPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 

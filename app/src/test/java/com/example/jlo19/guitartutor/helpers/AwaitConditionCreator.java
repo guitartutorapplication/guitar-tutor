@@ -1,7 +1,8 @@
 package com.example.jlo19.guitartutor.helpers;
 
 import com.example.jlo19.guitartutor.enums.PractiseActivityState;
-import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
+import com.example.jlo19.guitartutor.listeners.GetChordsListener;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
@@ -9,6 +10,7 @@ import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -60,13 +62,14 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> chordsAndDetailsRetrievedCalledOnPresenter(
-            final ILearnAllChordsPresenter presenter) {
+    public static Callable<Boolean> chordsAndDetailsRetrievedCalledOnListener(
+            final GetChordsListener listener, final List<Chord> allChords, final int userLevel,
+            final List<Integer> userChordIds) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(presenter).modelOnChordsAndDetailsRetrieved();
+                    Mockito.verify(listener).onChordsAndDetailsRetrieved(allChords, userLevel, userChordIds);
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -75,12 +78,12 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> errorCalledOnPresenter(final ILearnAllChordsPresenter presenter) {
+    public static Callable<Boolean> errorCalledOnListener(final GetChordsListener listener) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(presenter).modelOnError();
+                    Mockito.verify(listener).onError();
                     return true;
                 } catch (AssertionError error) {
                     return false;
