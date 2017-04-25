@@ -1,17 +1,11 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import android.content.SharedPreferences;
+import com.example.jlo19.guitartutor.listeners.LoginListener;
 
 /**
  * Interface for LoginPresenter
  */
-public interface ILoginPresenter extends IPresenter {
+public interface ILoginPresenter extends IPresenter, LoginListener {
     void viewOnRegister();
     void viewOnLogin(String email, String password);
-    void modelOnLoginSuccess();
-    void modelOnLoginError();
-    void setSharedPreferences(SharedPreferences sharedPreferences);
-    void modelOnUserAlreadyLoggedIn();
-    void modelOnFieldEmailEmpty();
-    void modelOnFieldPasswordEmpty();
 }

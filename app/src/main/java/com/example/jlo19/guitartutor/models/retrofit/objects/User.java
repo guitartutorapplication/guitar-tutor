@@ -12,13 +12,13 @@ public class User implements Parcelable {
     @SerializedName("USER_ID")
     private int id;
     @SerializedName("NAME")
-    private final String name;
+    private String name;
     @SerializedName("EMAIL")
-    private final String email;
+    private String email;
     @SerializedName("LEVEL")
-    private final int level;
+    private int level;
     @SerializedName("ACHIEVEMENTS")
-    private final int achievements;
+    private int achievements;
     @SerializedName("API_KEY")
     private String apiKey;
 
@@ -43,6 +43,11 @@ public class User implements Parcelable {
         email = in.readString();
         level = in.readInt();
         achievements = in.readInt();
+    }
+
+    public User(int id, String apiKey) {
+        this.id = id;
+        this.apiKey = apiKey;
     }
 
     public String getName() {
