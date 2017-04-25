@@ -1,22 +1,22 @@
 package com.example.jlo19.guitartutor.modules;
 
 import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.models.AddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.GetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.EditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.GetChordsInteractor;
-import com.example.jlo19.guitartutor.models.LearnChordModel;
 import com.example.jlo19.guitartutor.models.LoginModel;
 import com.example.jlo19.guitartutor.models.PractiseModel;
 import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.SongModel;
+import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
@@ -77,12 +77,15 @@ public class AppModule {
     @Provides
     @Singleton
     ILearnChordPresenter provideLearnChordPresenter() {
-        return new LearnChordPresenter();
+        return new LearnChordPresenter(createAddUserChordInteractor(), provideAmazonS3Service(),
+                application.getLoggedInUser());
     }
 
     @Provides
     @Singleton
-    IAmazonS3Service provideAmazonS3Service() { return new AmazonS3Service(); }
+    IAmazonS3Service provideAmazonS3Service() {
+        return new AmazonS3Service(application.getApplicationContext());
+    }
 
     @Provides
     @Singleton
@@ -104,9 +107,9 @@ public class AppModule {
     @Singleton
     DatabaseApi provideDatabaseApi() {return DatabaseService.getApi(application.getApplicationContext());}
 
-    @Provides
-    @Singleton
-    ILearnChordModel provideLearnChordModel() {return new LearnChordModel();}
+    private IAddUserChordInteractor createAddUserChordInteractor() {
+        return new AddUserChordInteractor(provideDatabaseApi());
+    }
 
     private IGetChordsInteractor createGetChordsInteractor() {
         return new GetChordsInteractor(provideDatabaseApi());

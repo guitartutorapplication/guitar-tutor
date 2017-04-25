@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -235,15 +234,6 @@ public class SongActivityTest {
         AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_demo_message_failure),
                 shadowOf(dialog).getMessage());
-    }
-
-    @Test
-    public void getContext_ReturnsContext() {
-        // act
-        Context actualContext = activity.getContext();
-
-        // assert
-        Assert.assertEquals(getApp(), actualContext);
     }
 
     @Test

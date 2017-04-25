@@ -21,7 +21,6 @@ public class SongPresenter implements ISongPresenter {
     void setModel(ISongModel model) {
         this.model = model;
         model.setPresenter(this);
-        model.setContext(view.getContext());
     }
 
     @Override

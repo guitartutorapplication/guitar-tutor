@@ -2,14 +2,12 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -103,12 +101,6 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
     public void showProgressBar_ProgressDialogWillShowWithMessage() {
         // act
         activity.showProgressBar();
@@ -149,16 +141,6 @@ public class LearnChordActivityTest {
 
         // assert
         Assert.assertEquals(learntChord, actualLearntChord);
-    }
-
-
-    @Test
-    public void getContext_ReturnsApplicationContext() {
-        // act
-        Context actualContext = activity.getContext();
-
-        // assert
-        Assert.assertEquals(getApp(), actualContext);
     }
 
     @Test
@@ -321,16 +303,25 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void helpButtonClicked_LearnDiagramHelpActivityIsStarted() {
+    public void startDiagramHelpActivity_LearnDiagramHelpActivityIsStarted() {
         // act
-        Button button = (Button) activity.findViewById(R.id.btnHelp);
-        button.performClick();
+        activity.startDiagramHelpActivity();
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(LearnDiagramHelpActivity.class.getName(),
                 intent.getComponent().getClassName());
+    }
+
+    @Test
+    public void helpButtonClicked_CallsHelpRequestedOnPresenter() {
+        // act
+        Button btnHelp = (Button) activity.findViewById(R.id.btnHelp);
+        btnHelp.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnHelpRequested();
     }
 
     @Test

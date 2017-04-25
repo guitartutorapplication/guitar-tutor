@@ -18,10 +18,21 @@ import com.example.jlo19.guitartutor.tasks.DownloadUrlTask;
  */
 public class AmazonS3Service implements IAmazonS3Service {
 
-    AmazonS3Client client;
+    final AmazonS3Client client;
     private AmazonS3ServiceImageListener imageListener;
-    CognitoCachingCredentialsProvider credentialsProvider;
+    final CognitoCachingCredentialsProvider credentialsProvider;
     private AmazonS3ServiceUrlListener urlListener;
+
+    public AmazonS3Service(Context context) {
+        // setting up S3 client
+        credentialsProvider = new CognitoCachingCredentialsProvider(
+                context,
+                context.getResources().getString(R.string.identity_pool_id),
+                Regions.EU_WEST_1
+        );
+        client = new AmazonS3Client(credentialsProvider);
+        client.setRegion(com.amazonaws.regions.Region.getRegion(Regions.EU_WEST_1));
+    }
 
     public void getImage(String filename) {
         getDownloadImageTask(filename).execute();
@@ -62,17 +73,6 @@ public class AmazonS3Service implements IAmazonS3Service {
     @Override
     public void setUrlListener(AmazonS3ServiceUrlListener listener) {
         this.urlListener = listener;
-    }
-
-    public void setClient(Context context) {
-        // setting up S3 client
-        credentialsProvider = new CognitoCachingCredentialsProvider(
-                context,
-                context.getResources().getString(R.string.identity_pool_id),
-                Regions.EU_WEST_1
-        );
-        client = new AmazonS3Client(credentialsProvider);
-        client.setRegion(com.amazonaws.regions.Region.getRegion(Regions.EU_WEST_1));
     }
 
     DownloadImageTask getDownloadImageTask(String filename) {

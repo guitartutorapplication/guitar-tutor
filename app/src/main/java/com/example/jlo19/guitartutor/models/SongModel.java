@@ -1,7 +1,5 @@
 package com.example.jlo19.guitartutor.models;
 
-import android.content.Context;
-
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.interfaces.ISongModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongPresenter;
@@ -35,11 +33,6 @@ public class SongModel implements ISongModel {
     @Override
     public void getAudio(String filename) {
         service.getUrl(filename);
-    }
-
-    @Override
-    public void setContext(Context context) {
-        service.setClient(context);
     }
 
     @Override

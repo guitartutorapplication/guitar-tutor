@@ -1,78 +1,55 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
+import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.views.LearnChordView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
  * Testing LearnChordPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class LearnChordPresenterTest {
 
     private ILearnChordPresenter presenter;
     private LearnChordView view;
-    private ILearnChordModel model;
-    private Context context;
+    private IAddUserChordInteractor addUserChordInteractor;
     private Chord selectedChord;
-    private SharedPreferences sharedPreferences;
+    private LoggedInUser loggedInUser;
+    private IAmazonS3Service amazonS3Service;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        presenter = new LearnChordPresenter();
+        loggedInUser = Mockito.mock(LoggedInUser.class);
+        amazonS3Service = Mockito.mock(IAmazonS3Service.class);
+        addUserChordInteractor = Mockito.mock(IAddUserChordInteractor.class);
+        presenter = new LearnChordPresenter(addUserChordInteractor, amazonS3Service, loggedInUser);
 
         view = Mockito.mock(LearnChordView.class);
-        context = Mockito.mock(Context.class);
-        Mockito.when(view.getContext()).thenReturn(context);
         selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
         Mockito.when(view.getChord()).thenReturn(selectedChord);
         presenter.setView(view);
-
-        sharedPreferences = Mockito.mock(SharedPreferences.class);
-        presenter.setSharedPreferences(sharedPreferences);
-
-        model = Mockito.mock(ILearnChordModel.class);
-        ((LearnChordPresenter) presenter).setModel(model);
-    }
-
-    @Test
-    public void setModel_SetsSharedPreferencesOnModel() {
-        // assert
-        Mockito.verify(model).setSharedPreferences(sharedPreferences);
     }
 
     @Test
     public void setView_LearnChordFalse_EnablesLearntButtonOnView() {
         // arrange
         Mockito.when(view.getLearntChord()).thenReturn(false);
-        // so doesn't account for calls before
-        Mockito.reset(view);
 
         // act
         presenter.setView(view);
 
         // assert
-        Mockito.verify(view).enableLearntButton(true);
+        Mockito.verify(view, times(2)).enableLearntButton(true);
     }
 
     @Test
@@ -94,30 +71,24 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void setModel_setsPresenterOnModel() {
+    public void setsPresenterAsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).setPresenter(presenter);
+        Mockito.verify(addUserChordInteractor).setListener(presenter);
     }
 
     @Test
-    public void setModel_setsContextFromViewOnModel() {
+    public void getsImageWithChordFromViewOnService() {
         // assert
-        Mockito.verify(model).setContext(context);
+        Mockito.verify(amazonS3Service).getImage(selectedChord.getDiagramFilename());
     }
 
     @Test
-    public void setModel_getsImageWithChordFromViewOnModel() {
-        // assert
-        Mockito.verify(model).getImage(selectedChord.getDiagramFilename());
-    }
-
-    @Test
-    public void viewOnVideoRequested_GetsVideoWithChordFromViewOnModel() {
+    public void viewOnVideoRequested_GetsUrlWithChordFromViewOnService() {
         // act
         presenter.viewOnVideoRequested();
 
         // assert
-        Mockito.verify(model).getVideo(selectedChord.getVideoFilename());
+        Mockito.verify(amazonS3Service).getUrl(selectedChord.getVideoFilename());
     }
 
     @Test
@@ -130,65 +101,65 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void modelOnImageDownloadFailed_CallsShowErrorOnView() {
+    public void onImageDownloadFailed_CallsShowErrorOnView() {
         // act
-        presenter.modelOnImageDownloadFailed();
+        presenter.onImageDownloadFailed();
 
         // assert
         Mockito.verify(view).showImageLoadError();
     }
 
     @Test
-    public void modelOnImageDownloadSuccess_CallsHideProgressBarOnView() {
+    public void onImageDownloadSuccess_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnImageDownloadSuccess(Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888));
+        presenter.onImageDownloadSuccess(Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888));
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnImageDownloadSuccessBitmap_CallsSetImageOnView() {
+    public void onImageDownloadSuccessBitmap_CallsSetImageOnView() {
         // act
         Bitmap expectedImage = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888);
-        presenter.modelOnImageDownloadSuccess(expectedImage);
+        presenter.onImageDownloadSuccess(expectedImage);
 
         // assert
         Mockito.verify(view).setImage(expectedImage);
     }
 
     @Test
-    public void modelOnVideoDownloadSuccess_CallsHideProgressBarOnView() {
+    public void onUrlDownloadSuccess_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnUrlDownloadSuccess("url");
+        presenter.onUrlDownloadSuccess("url");
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnVideoDownloadSuccess_CallsPlayVideoOnView() {
+    public void onUrlDownloadSuccess_CallsPlayVideoOnView() {
         // act
         String expectedUrl = "url";
-        presenter.modelOnUrlDownloadSuccess(expectedUrl);
+        presenter.onUrlDownloadSuccess(expectedUrl);
 
         // assert
         Mockito.verify(view).playVideo(expectedUrl);
     }
 
     @Test
-    public void modelOnVideoDownloadFailed_HidesProgressBarOnView() {
+    public void onUrlDownloadFailed_HidesProgressBarOnView() {
         // act
-        presenter.modelOnUrlDownloadFailed();
+        presenter.onUrlDownloadFailed();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnVideoDownloadFailed_ShowVideoLoadErrorOnView() {
+    public void onUrlDownloadFailed_ShowVideoLoadErrorOnView() {
         // act
-        presenter.modelOnUrlDownloadFailed();
+        presenter.onUrlDownloadFailed();
 
         // assert
         Mockito.verify(view).showVideoLoadError();
@@ -217,66 +188,67 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void viewOnConfirmLearnt_CallsAddLearntChordOnModel() {
+    public void viewOnConfirmLearnt_CallsAddUserChordOnInteractor() {
         // act
         presenter.viewOnConfirmLearnt();
 
         // assert
-        Mockito.verify(model).addLearntChord(selectedChord.getId());
+        Mockito.verify(addUserChordInteractor).addUserChord(loggedInUser.getApiKey(), loggedInUser.getUserId(),
+                selectedChord.getId());
     }
 
     @Test
-    public void modelOnLearntChordAdded_CallsHideProgressBarOnView() {
+    public void onChordAdded_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnLearntChordAdded(0, 0);
+        presenter.onChordAdded(0, 0);
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnLearntChordAddedWithZeroLevelAndAchievements_ShowsAddLearntChordSuccessOnView() {
+    public void onChordAddedWithZeroLevelAndAchievements_ShowsAddLearntChordSuccessOnView() {
         // act
-        presenter.modelOnLearntChordAdded(0, 0);
+        presenter.onChordAdded(0, 0);
 
         // assert
         Mockito.verify(view).showAddLearntChordSuccess();
     }
 
     @Test
-    public void modelOnLearntChordAddedWithNonZeroAchievements_ShowsAddLearntChordSuccessWithAchievementsOnView() {
+    public void modelOnChordAddedWithNonZeroAchievements_ShowsAddLearntChordSuccessWithAchievementsOnView() {
         // act
         int achievements = 100;
-        presenter.modelOnLearntChordAdded(0, achievements);
+        presenter.onChordAdded(0, achievements);
 
         // assert
         Mockito.verify(view).showAddLearntChordSuccess(achievements);
     }
 
     @Test
-    public void modelOnLearntChordAddedWithNonZeroAchievementsAndLevel_ShowsAddLearntChordSuccessWithAchievementsAndLevelOnView() {
+    public void modelOnChordAddedWithNonZeroAchievementsAndLevel_ShowsAddLearntChordSuccessWithAchievementsAndLevelOnView() {
         // act
         int achievements = 1000;
         int level = 2;
-        presenter.modelOnLearntChordAdded(level, achievements);
+        presenter.onChordAdded(level, achievements);
 
         // assert
         Mockito.verify(view).showAddLearntChordSuccess(level, achievements);
     }
 
     @Test
-    public void modelOnAddLearntChordError_CallsHideProgressBarOnView() {
+    public void modelOnAddChordError_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnAddLearntChordError();
+        presenter.onAddChordError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnAddLearntChordError_ShowsAddLearntChordErrorOnView() {
+    public void modelOnAddChordError_ShowsAddLearntChordErrorOnView() {
         // act
-        presenter.modelOnAddLearntChordError();
+        presenter.onAddChordError();
 
         // assert
         Mockito.verify(view).showAddLearntChordError();
@@ -298,5 +270,14 @@ public class LearnChordPresenterTest {
 
         // assert
         Mockito.verify(view).startLearnAllChordsActivity();
+    }
+
+    @Test
+    public void viewOnHelpRequested_CallsStartDiagramHelpActivityOnView() {
+        // act
+        presenter.viewOnHelpRequested();
+
+        // assert
+        Mockito.verify(view).startDiagramHelpActivity();
     }
 }

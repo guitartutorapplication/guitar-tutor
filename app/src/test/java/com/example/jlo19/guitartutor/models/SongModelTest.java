@@ -1,7 +1,5 @@
 package com.example.jlo19.guitartutor.models;
 
-import android.content.Context;
-
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.models.interfaces.ISongModel;
@@ -59,16 +57,6 @@ public class SongModelTest {
 
         // assert
         Mockito.verify(presenter).modelOnUrlDownloadSuccess(expectedUrl);
-    }
-
-    @Test
-    public void setContext_CallsSetClientOnServiceWithContext() {
-        // act
-        Context expectedContext = Mockito.mock(Context.class);
-        model.setContext(expectedContext);
-
-        // assert
-        Mockito.verify(service).setClient(expectedContext);
     }
 
     @Test

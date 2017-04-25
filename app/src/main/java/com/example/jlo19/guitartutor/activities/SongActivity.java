@@ -2,7 +2,6 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -127,11 +126,6 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
                 R.color.colorAccent));
-    }
-
-    @Override
-    public Context getContext() {
-        return getApplicationContext();
     }
 
     @Override

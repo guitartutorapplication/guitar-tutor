@@ -2,12 +2,10 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
@@ -25,10 +23,9 @@ import javax.inject.Inject;
  * Activity that shows the details of a selected chord on screen
  */
 public class LearnChordActivity extends BaseWithToolbarActivity implements LearnChordView {
+
     private ProgressDialog progressDialog;
-    private Chord chord;
     private ILearnChordPresenter presenter;
-    private boolean learntChord;
 
     @Override
     public int getLayout() {
@@ -44,12 +41,6 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // retrieving selected chord
-        chord = getIntent().getParcelableExtra("CHORD");
-
-        // retrieving whether selected chord has been learned or not
-        learntChord = getIntent().getBooleanExtra("LEARNT_CHORD", false);
 
         // allows injection of presenter
         App.getComponent().inject(this);
@@ -74,8 +65,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
         btnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), LearnDiagramHelpActivity.class);
-                startActivity(intent);
+                presenter.viewOnHelpRequested();
             }
         });
     }
@@ -83,7 +73,6 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     @Inject
     public void setPresenter(ILearnChordPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -95,12 +84,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public Chord getChord() {
-        return chord;
-    }
-
-    @Override
-    public Context getContext() {
-        return getApplicationContext();
+        return getIntent().getParcelableExtra("CHORD");
     }
 
     @Override
@@ -154,7 +138,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public boolean getLearntChord() {
-        return learntChord;
+        return getIntent().getBooleanExtra("LEARNT_CHORD", false);
     }
 
     @Override
@@ -264,5 +248,11 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void startDiagramHelpActivity() {
+        Intent intent = new Intent(getBaseContext(), LearnDiagramHelpActivity.class);
+        startActivity(intent);
     }
 }

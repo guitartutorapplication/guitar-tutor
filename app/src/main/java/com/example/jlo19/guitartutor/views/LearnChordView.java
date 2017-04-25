@@ -1,6 +1,5 @@
 package com.example.jlo19.guitartutor.views;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
@@ -10,7 +9,6 @@ import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
  */
 public interface LearnChordView extends ProgressBarView {
     Chord getChord();
-    Context getContext();
     void showImageLoadError();
     void setImage(Bitmap bitmap);
     void playVideo(String url);
@@ -24,4 +22,5 @@ public interface LearnChordView extends ProgressBarView {
     void showAddLearntChordSuccess(int level, int achievements);
     void showAddLearntChordSuccess(int achievements);
     void finishActivity();
+    void startDiagramHelpActivity();
 }
