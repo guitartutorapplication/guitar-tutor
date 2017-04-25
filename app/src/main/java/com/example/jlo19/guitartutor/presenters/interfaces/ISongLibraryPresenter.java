@@ -1,18 +1,11 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
-
-import java.util.List;
+import com.example.jlo19.guitartutor.listeners.GetSongsListener;
 
 /**
  * Interface for SongLibraryPresenter
  */
-public interface ISongLibraryPresenter extends IPresenter {
-    void modelOnSongsRetrieved(List<Song> songs);
-    void modelOnError();
-    void setSharedPreferences(SharedPreferences sharedPreferences);
+public interface ISongLibraryPresenter extends IPresenter, GetSongsListener {
     void viewOnSongFilterChanged(boolean viewAll);
     void viewOnExit();
     void viewOnConfirmError();

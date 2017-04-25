@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,8 +29,8 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
 
     private ProgressDialog progressDialog;
     private ListView listView;
-    private List<Song> songs;
     private ISongLibraryPresenter presenter;
+    private List<Song> songs;
 
     @Override
     public int getLayout() {
@@ -73,7 +72,6 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
     @Inject
     public void setPresenter(ISongLibraryPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 

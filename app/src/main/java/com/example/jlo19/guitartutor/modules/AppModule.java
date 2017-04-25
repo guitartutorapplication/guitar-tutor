@@ -2,6 +2,7 @@ package com.example.jlo19.guitartutor.modules;
 
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.models.AddUserChordInteractor;
+import com.example.jlo19.guitartutor.models.GetSongsInteractor;
 import com.example.jlo19.guitartutor.models.GetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.EditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
@@ -10,7 +11,6 @@ import com.example.jlo19.guitartutor.models.LoginInteractor;
 import com.example.jlo19.guitartutor.models.PractiseModel;
 import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterInteractor;
-import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
@@ -20,7 +20,7 @@ import com.example.jlo19.guitartutor.models.interfaces.ILoginInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
+import com.example.jlo19.guitartutor.models.interfaces.IGetSongsInteractor;
 import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
@@ -115,11 +115,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    ISongLibraryPresenter provideSongLibraryPresenter() {return new SongLibraryPresenter();}
+    ISongLibraryPresenter provideSongLibraryPresenter() {
+        return new SongLibraryPresenter(createGetSongsInteractor(), application.getLoggedInUser());
+    }
 
-    @Provides
-    @Singleton
-    ISongLibraryModel provideSongLibraryModel(){return new SongLibraryModel();}
+    private IGetSongsInteractor createGetSongsInteractor(){
+        return new GetSongsInteractor(provideDatabaseApi(), createGetUserChordsInteractor());
+    }
 
     @Provides
     @Singleton

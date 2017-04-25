@@ -1,10 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.models.interfaces.IGetSongsInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
@@ -12,11 +9,7 @@ import com.example.jlo19.guitartutor.views.SongLibraryView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,49 +19,33 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 /**
  * Testing SongLibraryPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class SongLibraryPresenterTest {
 
     private ISongLibraryPresenter presenter;
     private SongLibraryView view;
-    private ISongLibraryModel model;
-    private SharedPreferences sharedPreferences;
+    private IGetSongsInteractor getSongsInteractor;
+    private LoggedInUser loggedInUser;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        presenter = new SongLibraryPresenter();
-
-        sharedPreferences = Mockito.mock(SharedPreferences.class);
-        presenter.setSharedPreferences(sharedPreferences);
-
-        model = Mockito.mock(ISongLibraryModel.class);
-        ((SongLibraryPresenter) presenter).setModel(model);
+        loggedInUser = Mockito.mock(LoggedInUser.class);
+        getSongsInteractor = Mockito.mock(IGetSongsInteractor.class);
+        presenter = new SongLibraryPresenter(getSongsInteractor, loggedInUser);
 
         view = Mockito.mock(SongLibraryView.class);
         presenter.setView(view);
     }
 
     @Test
-    public void setModel_SetsSharedPreferencesOnModel() {
+    public void setsPresenterAsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).setSharedPreferences(sharedPreferences);
+        Mockito.verify(getSongsInteractor).setListener(presenter);
     }
 
     @Test
-    public void setModel_SetsPresenterOnModel() {
+    public void setView_CallsGetAllSongsOnInteractor() {
         // assert
-        Mockito.verify(model).setPresenter(presenter);
-    }
-
-    @Test
-    public void setModel_CallsGetAllSongsOnModel() {
-        // assert
-        Mockito.verify(model).getAllSongs();
+        Mockito.verify(getSongsInteractor).getAllSongs(loggedInUser.getApiKey());
     }
 
     @Test
@@ -78,16 +55,16 @@ public class SongLibraryPresenterTest {
     }
 
     @Test
-    public void modelOnSongsRetrieved_HidesProgressBarOnView() {
+    public void onSongsRetrieved_HidesProgressBarOnView() {
         // act
-        presenter.modelOnSongsRetrieved(null);
+        presenter.onSongsRetrieved(null);
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnSongsRetrieved_SetsSongsOnView() {
+    public void onSongsRetrieved_SetsSongsOnView() {
         // act
         List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
@@ -97,25 +74,25 @@ public class SongLibraryPresenterTest {
                         "contents", chords),
                 new Song("Dance with Me Tonight", "Olly Murs", "Dance with me Tonight.wav",
                         "contents", chords));
-        presenter.modelOnSongsRetrieved(expectedSongs);
+        presenter.onSongsRetrieved(expectedSongs);
 
         // assert
         Mockito.verify(view).setSongs(expectedSongs);
     }
 
     @Test
-    public void modelOnError_HidesProgressBarOnView() {
+    public void onError_HidesProgressBarOnView() {
         // act
-        presenter.modelOnError();
+        presenter.onError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnError_ShowsErrorOnView() {
+    public void onError_ShowsErrorOnView() {
         // act
-        presenter.modelOnError();
+        presenter.onError();
 
         // assert
         Mockito.verify(view).showError();
@@ -128,7 +105,7 @@ public class SongLibraryPresenterTest {
         presenter.viewOnSongFilterChanged(true);
 
         // assert
-        Mockito.verify(model, times(2)).getAllSongs();
+        Mockito.verify(getSongsInteractor, times(2)).getAllSongs(loggedInUser.getApiKey());
     }
 
     @Test
@@ -137,7 +114,8 @@ public class SongLibraryPresenterTest {
         presenter.viewOnSongFilterChanged(false);
 
         // assert
-        Mockito.verify(model).getSongsUserCanPlay();
+        Mockito.verify(getSongsInteractor).getSongsUserCanPlay(loggedInUser.getApiKey(),
+                loggedInUser.getUserId());
     }
 
     @Test
@@ -146,7 +124,7 @@ public class SongLibraryPresenterTest {
         presenter.viewOnExit();
 
         // assert
-        Mockito.verify(model).resetSongs();
+        Mockito.verify(getSongsInteractor).resetSongs();
     }
 
     @Test
