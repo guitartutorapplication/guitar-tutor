@@ -1,66 +1,51 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
+import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.views.RegisterView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Collections;
 
 /**
  * Testing RegisterPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class RegisterPresenterTest {
 
     private IRegisterPresenter presenter;
-    private IRegisterModel model;
+    private IRegisterInteractor registerInteractor;
     private RegisterView view;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        presenter = new RegisterPresenter();
-
-        model = Mockito.mock(IRegisterModel.class);
-        ((RegisterPresenter) presenter).setModel(model);
+        registerInteractor = Mockito.mock(IRegisterInteractor.class);
+        presenter = new RegisterPresenter(registerInteractor);
 
         view = Mockito.mock(RegisterView.class);
         presenter.setView(view);
     }
 
     @Test
-    public void setModel_SetsPresenterOnModel() {
+    public void setsPresenterAsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).setPresenter(presenter);
+        Mockito.verify(registerInteractor).setListener(presenter);
     }
 
     @Test
-    public void viewOnRegister_CallsRegisterOnModel() {
+    public void viewOnRegisterWithValidDetails_CallsRegisterOnInteractor() {
         // act
         String expectedName = "Kate";
         String expectedEmail = "kate@gmail.com";
-        String expectedPassword = "password";
+        String expectedPassword = "Guitar123";
         presenter.viewOnRegister(expectedName, expectedEmail, expectedEmail, expectedPassword,
                 expectedPassword);
 
         // assert
-        Mockito.verify(model).register(expectedName, expectedEmail, expectedEmail, expectedPassword,
-                expectedPassword);
+        Mockito.verify(registerInteractor).register(expectedName, expectedEmail, expectedPassword);
     }
 
     @Test
@@ -82,134 +67,134 @@ public class RegisterPresenterTest {
     }
 
     @Test
-    public void modelOnFieldEmptyName_ShowsFieldEmptyNameErrorOnView() {
+    public void viewOnRegisterWithEmptyNameField_ShowsFieldEmptyNameErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_NAME));
+        presenter.viewOnRegister("", "kate@gmail.com", "kate@gmail.com", "Guitar123", "Guitar123");
 
         // assert
         Mockito.verify(view).showFieldEmptyNameError();
     }
 
     @Test
-    public void modelOnFieldEmptyEmail_ShowsFieldEmptyEmailErrorOnView() {
+    public void viewOnRegisterWithEmptyEmailField_ShowsFieldEmptyEmailErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_EMAIL));
+        presenter.viewOnRegister("Kate", "", "kate@gmail.com", "Guitar123", "Guitar123");
 
         // assert
         Mockito.verify(view).showFieldEmptyEmailError();
     }
 
     @Test
-    public void modelOnFieldEmptyConfirmEmail_ShowsFieldEmptyConfirmEmailErrorOnView() {
+    public void viewOnRegisterWithEmptyConfirmEmailField_ShowsFieldEmptyConfirmEmailErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_CONFIRM_EMAIL));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "", "Guitar123", "Guitar123");
 
         // assert
         Mockito.verify(view).showFieldEmptyConfirmEmailError();
     }
 
     @Test
-    public void modelOnFieldEmptyPassword_ShowsFieldEmptyPasswordErrorOnView() {
+    public void viewOnRegisterWithEmptyPasswordField_ShowsFieldEmptyPasswordErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_PASSWORD));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "", "Guitar123");
 
         // assert
         Mockito.verify(view).showFieldEmptyPasswordError();
     }
 
     @Test
-    public void modelOnFieldEmptyConfirmPassword_ShowsFieldEmptyConfirmPasswordErrorOnView() {
+    public void viewOnRegisterWithEmptyConfirmPasswordField_ShowsFieldEmptyConfirmPasswordErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_CONFIRM_PASSWORD));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "Guitar123", "");
 
         // assert
         Mockito.verify(view).showFieldEmptyConfirmPasswordError();
     }
 
     @Test
-    public void modelOnValidationFailed_HidesProgressBarOnView() {
+    public void onValidationFailed_HidesProgressBarOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_NAME));
+        presenter.onValidationFailed(Collections.singletonList(ValidationError.FIELD_EMPTY_NAME));
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnEmailMismatch_ShowsEmailMismatchErrorOnView() {
+    public void viewOnRegisterWithEmailMismatch_ShowsEmailMismatchErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.EMAIL_MISMATCH));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmailcom", "Guitar123", "Guitar123");
 
         // assert
         Mockito.verify(view).showEmailMismatchError();
     }
 
     @Test
-    public void modelOnPasswordMismatch_ShowsPasswordMismatchErrorOnView() {
+    public void viewOnRegisterWithPasswordMismatch_ShowsPasswordMismatchErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.PASSWORD_MISMATCH));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "Guitar123", "Guitar12");
 
         // assert
         Mockito.verify(view).showPasswordMismatchError();
     }
 
     @Test
-    public void modelOnInvalidEmail_ShowsInvalidEmailErrorOnView() {
+    public void viewOnRegisterWithInvalidEmail_ShowsInvalidEmailErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.INVALID_EMAIL));
+        presenter.viewOnRegister("Kate", "kate@gmailcom", "kate@gmailcom", "Guitar123", "Guitar123");
 
         // assert
         Mockito.verify(view).showInvalidEmailError();
     }
 
     @Test
-    public void modelOnPasswordTooShort_ShowsPasswordTooShortErrorOnView() {
+    public void viewOnRegisterWithPasswordTooShort_ShowsPasswordTooShortErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.PASSWORD_TOO_SHORT));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "Guitar1", "Guitar1");
 
         // assert
         Mockito.verify(view).showPasswordTooShortError();
     }
 
     @Test
-    public void modelOnPasswordNoUpperCaseLetter_ShowsPasswordNoUpperCaseLetterErrorOnView() {
+    public void viewOnRegisterWithPasswordNoUpperCaseLetter_ShowsPasswordNoUpperCaseLetterErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.PASSWORD_NO_UPPER));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "guitar123", "guitar123");
 
         // assert
         Mockito.verify(view).showPasswordNoUpperCaseLetterError();
     }
     @Test
-    public void modelOnPasswordNoLowerCaseLetter_ShowsPasswordNoLowerCaseLetterErrorOnView() {
+    public void viewOnRegisterWithPasswordNoLowerCaseLetter_ShowsPasswordNoLowerCaseLetterErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.PASSWORD_NO_LOWER));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "GUITAR123", "GUITAR123");
 
         // assert
         Mockito.verify(view).showPasswordNoLowerCaseLetterError();
     }
 
     @Test
-    public void modelOnPasswordNoNumber_ShowsPasswordNoNumberErrorOnView() {
+    public void viewOnRegisterWithPasswordNoNumber_ShowsPasswordNoNumberErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.PASSWORD_NO_NUMBER));
+        presenter.viewOnRegister("Kate", "kate@gmail.com", "kate@gmail.com", "GuitarTutor", "GuitarTutor");
 
         // assert
         Mockito.verify(view).showPasswordNoNumberError();
     }
 
     @Test
-    public void modelOnRegisterError_HidesProgressBarOnView() {
+    public void onRegisterError_HidesProgressBarOnView() {
         // act
-        presenter.modelOnRegisterError();
+        presenter.onRegisterError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnRegisterError_ShowsRegisterErrorOnView() {
+    public void onRegisterError_ShowsRegisterErrorOnView() {
         // act
-        presenter.modelOnRegisterError();
+        presenter.onRegisterError();
 
         // assert
         Mockito.verify(view).showRegisterError();
@@ -218,25 +203,25 @@ public class RegisterPresenterTest {
     @Test
     public void modelOnAlreadyRegistered_ShowsAlreadyRegisterErrorOnView() {
         // act
-        presenter.modelOnValidationFailed(Collections.singletonList(ValidationError.EMAIL_ALREADY_REGISTERED));
+        presenter.onValidationFailed(Collections.singletonList(ValidationError.EMAIL_ALREADY_REGISTERED));
 
         // assert
         Mockito.verify(view).showAlreadyRegisteredError();
     }
 
     @Test
-    public void modelOnRegisterSuccess_HidesProgressBarOnView() {
+    public void onRegisterSuccess_HidesProgressBarOnView() {
         // act
-        presenter.modelOnRegisterSuccess();
+        presenter.onRegisterSuccess();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnRegisterSuccess_CallsFinishRegisterOnView() {
+    public void onRegisterSuccess_CallsFinishRegisterOnView() {
         // act
-        presenter.modelOnRegisterSuccess();
+        presenter.onRegisterSuccess();
 
         // assert
         Mockito.verify(view).finishRegister();

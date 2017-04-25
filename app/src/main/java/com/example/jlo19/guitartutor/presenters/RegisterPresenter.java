@@ -1,15 +1,13 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
+import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
+import com.example.jlo19.guitartutor.validation.DataValidator;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.RegisterView;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Presenter which provides RegisterActivity with the ability to add an account to DB
@@ -17,16 +15,11 @@ import javax.inject.Inject;
 public class RegisterPresenter implements IRegisterPresenter {
 
     private RegisterView view;
-    private IRegisterModel model;
+    private final IRegisterInteractor registerInteractor;
 
-    public RegisterPresenter() {
-        App.getComponent().inject(this);
-    }
-
-    @Inject
-    public void setModel(IRegisterModel model) {
-        this.model = model;
-        model.setPresenter(this);
+    public RegisterPresenter(IRegisterInteractor registerInteractor) {
+        this.registerInteractor = registerInteractor;
+        this.registerInteractor.setListener(this);
     }
 
     @Override
@@ -39,23 +32,31 @@ public class RegisterPresenter implements IRegisterPresenter {
                                String confirmPassword) {
         view.showProgressBar();
         view.resetValidationErrors();
-        model.register(name, email, confirmEmail, password, confirmPassword);
+
+        List<ValidationError> errors = DataValidator.validate(name, email, confirmEmail, password,
+                confirmPassword);
+        if (errors.isEmpty()) {
+            registerInteractor.register(name, email, password);
+        }
+        else {
+            onValidationFailed(errors);
+        }
     }
 
     @Override
-    public void modelOnRegisterError() {
+    public void onRegisterError() {
         view.hideProgressBar();
         view.showRegisterError();
     }
 
     @Override
-    public void modelOnRegisterSuccess() {
+    public void onRegisterSuccess() {
         view.hideProgressBar();
         view.finishRegister();
     }
 
     @Override
-    public void modelOnValidationFailed(List<ValidationError> errors) {
+    public void onValidationFailed(List<ValidationError> errors) {
         view.hideProgressBar();
 
         for (ValidationError error : errors) {

@@ -9,7 +9,7 @@ import com.example.jlo19.guitartutor.models.GetChordsInteractor;
 import com.example.jlo19.guitartutor.models.LoginInteractor;
 import com.example.jlo19.guitartutor.models.PractiseModel;
 import com.example.jlo19.guitartutor.models.PractiseSetupModel;
-import com.example.jlo19.guitartutor.models.RegisterModel;
+import com.example.jlo19.guitartutor.models.RegisterInteractor;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
 import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
@@ -19,7 +19,7 @@ import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInterac
 import com.example.jlo19.guitartutor.models.interfaces.ILoginInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
+import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
 import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
@@ -123,11 +123,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    IRegisterPresenter provideRegisterPresenter() {return new RegisterPresenter();}
+    IRegisterPresenter provideRegisterPresenter() {
+        return new RegisterPresenter(createRegisterInteractor());
+    }
 
-    @Provides
-    @Singleton
-    IRegisterModel provideRegisterModel() {return new RegisterModel(); }
+    private IRegisterInteractor createRegisterInteractor() {
+        return new RegisterInteractor(provideDatabaseApi());
+    }
 
     @Provides
     @Singleton
