@@ -15,13 +15,11 @@ import com.example.jlo19.guitartutor.models.PractiseModel;
 import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
-import com.example.jlo19.guitartutor.models.SongModel;
 import com.example.jlo19.guitartutor.modules.AppModule;
 import com.example.jlo19.guitartutor.presenters.PractisePresenter;
 import com.example.jlo19.guitartutor.presenters.PractiseSetupPresenter;
 import com.example.jlo19.guitartutor.presenters.RegisterPresenter;
 import com.example.jlo19.guitartutor.presenters.SongLibraryPresenter;
-import com.example.jlo19.guitartutor.presenters.SongPresenter;
 
 import javax.inject.Singleton;
 
@@ -56,10 +54,6 @@ public interface AppComponent {
     void inject(LoginActivity activity);
     void inject(AccountActivity activity);
     void inject(EditAccountActivity activity);
-
     void inject(SongActivity activity);
-    void inject(SongPresenter presenter);
-    void inject(SongModel model);
-
     void inject(AccountActivityActivity activity);
 }

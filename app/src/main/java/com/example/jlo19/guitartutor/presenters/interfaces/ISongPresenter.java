@@ -1,12 +1,12 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceUrlListener;
+
 /**
  * Interface for SongPresenter
  */
-public interface ISongPresenter extends IPresenter {
+public interface ISongPresenter extends IPresenter, AmazonS3ServiceUrlListener {
     void viewOnPlay();
-    void modelOnUrlDownloadSuccess(String url);
-    void modelOnUrlDownloadFailed();
     void viewOnAudioLoadFailed();
     void viewOnAudioLoaded();
     void viewOnStop();

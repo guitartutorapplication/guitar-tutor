@@ -11,7 +11,6 @@ import com.example.jlo19.guitartutor.models.PractiseModel;
 import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterModel;
 import com.example.jlo19.guitartutor.models.SongLibraryModel;
-import com.example.jlo19.guitartutor.models.SongModel;
 import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
@@ -22,7 +21,6 @@ import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
 import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
-import com.example.jlo19.guitartutor.models.interfaces.ISongModel;
 import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
@@ -166,11 +164,9 @@ public class AppModule {
 
     @Provides
     @Singleton
-    ISongPresenter provideSongPresenter() {return new SongPresenter();}
-
-    @Provides
-    @Singleton
-    ISongModel provideSongModel() {return new SongModel();}
+    ISongPresenter provideSongPresenter() {
+        return new SongPresenter(provideAmazonS3Service());
+    }
 
     @Provides
     @Singleton
