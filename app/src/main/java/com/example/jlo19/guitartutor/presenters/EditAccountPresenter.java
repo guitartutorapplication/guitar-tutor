@@ -80,6 +80,7 @@ public class EditAccountPresenter implements IEditAccountPresenter {
                     break;
                 case FIELD_EMPTY_CONFIRM_PASSWORD:
                     view.showFieldEmptyConfirmPasswordError();
+                    break;
                 case EMAIL_MISMATCH:
                     view.showEmailMismatchError();
                     break;

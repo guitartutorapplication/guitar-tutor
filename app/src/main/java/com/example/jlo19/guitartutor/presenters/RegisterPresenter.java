@@ -75,6 +75,7 @@ public class RegisterPresenter implements IRegisterPresenter {
                     break;
                 case FIELD_EMPTY_CONFIRM_PASSWORD:
                     view.showFieldEmptyConfirmPasswordError();
+                    break;
                 case EMAIL_MISMATCH:
                     view.showEmailMismatchError();
                     break;
