@@ -12,10 +12,8 @@ import com.example.jlo19.guitartutor.activities.RegisterActivity;
 import com.example.jlo19.guitartutor.activities.SongActivity;
 import com.example.jlo19.guitartutor.activities.SongLibraryActivity;
 import com.example.jlo19.guitartutor.models.PractiseModel;
-import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.modules.AppModule;
 import com.example.jlo19.guitartutor.presenters.PractisePresenter;
-import com.example.jlo19.guitartutor.presenters.PractiseSetupPresenter;
 
 import javax.inject.Singleton;
 
@@ -30,10 +28,7 @@ import dagger.Component;
 public interface AppComponent {
     void inject(LearnAllChordsActivity activity);
     void inject(LearnChordActivity activity);
-
     void inject(PractiseSetupActivity activity);
-    void inject(PractiseSetupPresenter presenter);
-    void inject(PractiseSetupModel model);
 
     void inject(PractisePresenter presenter);
     void inject(PractiseActivity activity);

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -69,12 +68,6 @@ public class PractiseSetupActivityTest {
         activity.setPresenter(presenter);
         soundPool = PowerMockito.mock(SoundPool.class);
         activity.setSoundPool(soundPool);
-    }
-
-    @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
     }
 
     @Test

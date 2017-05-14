@@ -9,7 +9,6 @@ import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.GetChordsInteractor;
 import com.example.jlo19.guitartutor.models.LoginInteractor;
 import com.example.jlo19.guitartutor.models.PractiseModel;
-import com.example.jlo19.guitartutor.models.PractiseSetupModel;
 import com.example.jlo19.guitartutor.models.RegisterInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
@@ -18,7 +17,6 @@ import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsIntera
 import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.ILoginInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
 import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetSongsInteractor;
 import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
@@ -47,6 +45,7 @@ import com.example.jlo19.guitartutor.services.AmazonS3Service;
 import com.example.jlo19.guitartutor.services.DatabaseService;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
+import com.example.jlo19.guitartutor.timers.BeatTimer;
 
 import javax.inject.Singleton;
 
@@ -95,11 +94,10 @@ public class AppModule {
 
     @Provides
     @Singleton
-    IPractiseSetupModel providePractiseSetupModel() {return new PractiseSetupModel(); }
-
-    @Provides
-    @Singleton
-    IPractiseSetupPresenter providePractiseSetupPresenter() {return new PractiseSetupPresenter();}
+    IPractiseSetupPresenter providePractiseSetupPresenter() {
+        return new PractiseSetupPresenter(createGetUserChordsInteractor(), application.getLoggedInUser(),
+                new BeatTimer());
+    }
 
     @Provides
     @Singleton
