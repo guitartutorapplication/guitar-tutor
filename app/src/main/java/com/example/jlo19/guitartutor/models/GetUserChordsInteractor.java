@@ -39,13 +39,13 @@ public class GetUserChordsInteractor implements IGetUserChordsInteractor {
                     listener.onUserChordsRetrieved(response.body());
                 }
                 else {
-                    listener.onError();
+                    listener.onGetUserChordsError();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Chord>> call, Throwable t) {
-                listener.onError();
+                listener.onGetUserChordsError();
             }
         });
     }

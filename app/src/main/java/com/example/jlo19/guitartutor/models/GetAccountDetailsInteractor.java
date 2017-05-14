@@ -38,13 +38,13 @@ public class GetAccountDetailsInteractor implements IGetAccountDetailsInteractor
                     listener.onAccountDetailsRetrieved(response.body());
                 }
                 else {
-                    listener.onError();
+                    listener.onGetAccountDetailsError();
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                listener.onError();
+                listener.onGetAccountDetailsError();
             }
         });
     }

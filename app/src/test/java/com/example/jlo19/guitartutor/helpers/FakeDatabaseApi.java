@@ -15,7 +15,6 @@ import retrofit2.Call;
  */
 public class FakeDatabaseApi implements DatabaseApi{
 
-    private FakeChordsCall fakeUserChordsResponseCall;
     private FakeUserCall fakeUserCall;
     private FakeMessageCall fakeMessageCall;
     private FakeChordsCall fakeChordsCall;
@@ -34,19 +33,6 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     public FakeDatabaseApi(FakeUserCall fakeUserCall) {
-        this.fakeUserCall = fakeUserCall;
-    }
-
-    public FakeDatabaseApi(FakeSongsCall fakeSongsCall, FakeChordsCall
-            fakeUserChordsResponseCall) {
-        this.fakeSongsCall = fakeSongsCall;
-        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
-    }
-
-    public FakeDatabaseApi(FakeChordsCall fakeChordsCall, FakeChordsCall
-            fakeUserChordsResponseCall, FakeUserCall fakeUserCall) {
-        this.fakeChordsCall = fakeChordsCall;
-        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
         this.fakeUserCall = fakeUserCall;
     }
 
@@ -83,12 +69,7 @@ public class FakeDatabaseApi implements DatabaseApi{
 
     @Override
     public Call<List<Chord>> getUserChords(String apiKey, int userId) {
-        if (fakeUserChordsResponseCall == null) {
-            return fakeChordsCall;
-        }
-        else {
-            return fakeUserChordsResponseCall;
-        }
+        return fakeChordsCall;
     }
 
     @Override

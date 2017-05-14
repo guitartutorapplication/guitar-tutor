@@ -110,7 +110,8 @@ public class AppModule {
     }
 
     private IGetChordsInteractor createGetChordsInteractor() {
-        return new GetChordsInteractor(provideDatabaseApi());
+        return new GetChordsInteractor(provideDatabaseApi(), createGetUserChordsInteractor(),
+                createGetAccountDetailsInteractor());
     }
 
     @Provides

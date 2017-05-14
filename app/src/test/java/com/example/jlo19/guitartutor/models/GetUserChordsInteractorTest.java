@@ -86,7 +86,7 @@ public class GetUserChordsInteractorTest {
         getUserChordsInteractor.getUserChords("api_key", 2);
 
         // assert
-        Mockito.verify(listener).onError();
+        Mockito.verify(listener).onGetUserChordsError();
     }
 
     @Test
@@ -101,7 +101,7 @@ public class GetUserChordsInteractorTest {
         getUserChordsInteractor.getUserChords("api_key", 2);
 
         // assert
-        Mockito.verify(listener).onError();
+        Mockito.verify(listener).onGetUserChordsError();
     }
 
 }

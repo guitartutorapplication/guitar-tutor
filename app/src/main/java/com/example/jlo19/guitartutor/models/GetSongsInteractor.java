@@ -110,7 +110,7 @@ public class GetSongsInteractor implements IGetSongsInteractor {
     }
 
     @Override
-    public void onError() {
+    public void onGetUserChordsError() {
         listener.onError();
     }
 }

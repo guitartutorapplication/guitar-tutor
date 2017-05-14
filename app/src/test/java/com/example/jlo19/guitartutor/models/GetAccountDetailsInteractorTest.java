@@ -82,7 +82,7 @@ public class GetAccountDetailsInteractorTest {
         getAccountDetailsInteractor.getAccountDetails("api_key", 2);
 
         // assert
-        Mockito.verify(listener).onError();
+        Mockito.verify(listener).onGetAccountDetailsError();
     }
 
     @Test
@@ -97,6 +97,6 @@ public class GetAccountDetailsInteractorTest {
         getAccountDetailsInteractor.getAccountDetails("api_key", 2);
 
         // assert
-        Mockito.verify(listener).onError();
+        Mockito.verify(listener).onGetAccountDetailsError();
     }
 }

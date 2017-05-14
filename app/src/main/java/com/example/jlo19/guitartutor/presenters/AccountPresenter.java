@@ -41,7 +41,7 @@ public class AccountPresenter implements IAccountPresenter {
     }
 
     @Override
-    public void onError() {
+    public void onGetAccountDetailsError() {
         view.hideProgressBar();
         view.showError();
     }

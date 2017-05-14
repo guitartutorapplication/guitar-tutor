@@ -82,7 +82,7 @@ public class AccountPresenterTest {
     @Test
     public void onError_ShowsErrorOnView() {
         // act
-        presenter.onError();
+        presenter.onGetAccountDetailsError();
 
         // assert
         Mockito.verify(view).showError();
@@ -91,7 +91,7 @@ public class AccountPresenterTest {
     @Test
     public void onError_HidesProgressBarOnView() {
         // act
-        presenter.onError();
+        presenter.onGetAccountDetailsError();
 
         // assert
         Mockito.verify(view).hideProgressBar();

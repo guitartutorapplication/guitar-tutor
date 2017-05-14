@@ -78,7 +78,7 @@ public class AccountActivityPresenterTest {
     @Test
     public void onError_HidesProgressBarOnView() {
         // act
-        presenter.onError();
+        presenter.onGetUserChordsError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
@@ -87,7 +87,7 @@ public class AccountActivityPresenterTest {
     @Test
     public void onError_ShowErrorOnView() {
         // act
-        presenter.onError();
+        presenter.onGetUserChordsError();
 
         // assert
         Mockito.verify(view).showError();

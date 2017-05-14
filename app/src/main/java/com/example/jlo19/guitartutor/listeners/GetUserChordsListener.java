@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GetUserChordsListener {
     void onUserChordsRetrieved(List<Chord> chords);
-    void onError();
+    void onGetUserChordsError();
 }

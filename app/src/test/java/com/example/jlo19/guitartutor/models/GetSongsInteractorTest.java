@@ -1,6 +1,5 @@
 package com.example.jlo19.guitartutor.models;
 
-import com.example.jlo19.guitartutor.helpers.FakeChordsCall;
 import com.example.jlo19.guitartutor.helpers.FakeDatabaseApi;
 import com.example.jlo19.guitartutor.helpers.FakeResponseCreator;
 import com.example.jlo19.guitartutor.helpers.FakeSongsCall;
@@ -167,8 +166,7 @@ public class GetSongsInteractorTest {
     public void getSongsUserCanPlay_CallsGetUserChordsOnGetUserChordsInteractor() {
         // arrange
         Response<List<Song>> response = FakeResponseCreator.getSongsResponse(true, songs);
-        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response),
-                new FakeChordsCall(null)));
+        DatabaseApi api = Mockito.spy(new FakeDatabaseApi(new FakeSongsCall(response)));
 
         IGetSongsInteractor getSongsInteractor = new GetSongsInteractor(api, getUserChordsInteractor);
         getSongsInteractor.setListener(listener);
@@ -207,7 +205,7 @@ public class GetSongsInteractorTest {
         getSongsInteractor.setListener(listener);
 
         // act
-        getSongsInteractor.onError();
+        getSongsInteractor.onGetUserChordsError();
 
         // assert
         Mockito.verify(listener).onError();

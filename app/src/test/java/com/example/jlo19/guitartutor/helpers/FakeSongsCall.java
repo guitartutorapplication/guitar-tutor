@@ -23,12 +23,7 @@ public class FakeSongsCall implements Call<List<Song>> {
 
     @Override
     public Response<List<Song>> execute() throws IOException {
-        if (response != null) {
-            return response;
-        }
-        else {
-            throw new IOException();
-        }
+        return null;
     }
 
     @Override

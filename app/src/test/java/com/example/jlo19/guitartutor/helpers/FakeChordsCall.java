@@ -23,12 +23,7 @@ public class FakeChordsCall implements Call<List<Chord>> {
 
     @Override
     public Response<List<Chord>> execute() throws IOException {
-        if (response != null) {
-            return response;
-        }
-        else {
-            throw new IOException();
-        }
+        return null;
     }
 
     @Override

@@ -1,16 +1,18 @@
 package com.example.jlo19.guitartutor.models;
 
 import com.example.jlo19.guitartutor.listeners.GetChordsListener;
+import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
+import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
 import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.models.retrofit.objects.User;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
@@ -18,13 +20,21 @@ import retrofit2.Response;
  */
 public class GetChordsInteractor implements IGetChordsInteractor {
 
+    private final IGetUserChordsInteractor getUserChordsInteractor;
+    private final IGetAccountDetailsInteractor getAccountDetailsInteractor;
     private GetChordsListener listener;
     private final DatabaseApi api;
     private List<Chord> allChords;
     private List<Chord> userChords;
-    private int userLevel;
+    private String apiKey;
+    private int userId;
 
-    public GetChordsInteractor(DatabaseApi api) {
+    public GetChordsInteractor(DatabaseApi api, IGetUserChordsInteractor getUserChordsInteractor,
+            IGetAccountDetailsInteractor getAccountDetailsInteractor) {
+        this.getUserChordsInteractor = getUserChordsInteractor;
+        this.getUserChordsInteractor.setListener(this);
+        this.getAccountDetailsInteractor = getAccountDetailsInteractor;
+        this.getAccountDetailsInteractor.setListener(this);
         this.api = api;
     }
 
@@ -34,69 +44,29 @@ public class GetChordsInteractor implements IGetChordsInteractor {
 
     @Override
     public void getChordsAndDetails(final String apiKey, final int userId) {
-        Thread thread = new Thread(new Runnable() {
+        this.apiKey = apiKey;
+        this.userId = userId;
+        // retrieving all the chords
+        Call<List<Chord>> call = api.getChords(apiKey);
+
+        call.enqueue(new Callback<List<Chord>>() {
             @Override
-            public void run() {
-                // if all 3 API calls successfully retrieve the data needed
-                if (setAllChords(apiKey) && setUserChords(apiKey, userId) && setLevel(apiKey, userId)) {
-                    listener.onChordsAndDetailsRetrieved(getAllChords(), getUserLevel(), getUserChordIds());
-                } else {
+            public void onResponse(Call<List<Chord>> call, Response<List<Chord>> response) {
+                if (response.isSuccessful()) {
+                    allChords = response.body();
+                    // retrieving chords that user has learnt
+                    getUserChordsInteractor.getUserChords(apiKey, userId);
+                }
+                else {
                     listener.onError();
                 }
             }
+
+            @Override
+            public void onFailure(Call<List<Chord>> call, Throwable t) {
+                listener.onError();
+            }
         });
-        thread.start();
-    }
-
-    private boolean setLevel(String apiKey, int userId) {
-        // retrieving user's level (so know which chords are unlocked)
-        try {
-            Call<User> call = api.getAccountDetails(apiKey, userId);
-            Response<User> response = call.execute();
-
-            if (response.isSuccessful()) {
-                userLevel = response.body().getLevel();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    private boolean setUserChords(String apiKey, int userId) {
-        // retrieving chords that user has learnt
-        try {
-            Call<List<Chord>> call = api.getUserChords(apiKey, userId);
-            Response<List<Chord>> response = call.execute();
-
-            if (response.isSuccessful()) {
-                userChords = response.body();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    private boolean setAllChords(String apiKey) {
-        // retrieving all the chords
-        try {
-            Call<List<Chord>> call = api.getChords(apiKey);
-            Response<List<Chord>> response = call.execute();
-
-            if (response.isSuccessful()) {
-                allChords = response.body();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     @Override
@@ -104,9 +74,6 @@ public class GetChordsInteractor implements IGetChordsInteractor {
         return allChords;
     }
 
-    private int getUserLevel() {
-        return userLevel;
-    }
 
     @Override
     public List<Integer> getUserChordIds() {
@@ -115,5 +82,27 @@ public class GetChordsInteractor implements IGetChordsInteractor {
             userChordIds.add(chord.getId());
         }
         return userChordIds;
+    }
+
+    @Override
+    public void onAccountDetailsRetrieved(User user) {
+        listener.onChordsAndDetailsRetrieved(allChords, user.getLevel(), getUserChordIds());
+    }
+
+    @Override
+    public void onGetAccountDetailsError() {
+        listener.onError();
+    }
+
+    @Override
+    public void onUserChordsRetrieved(List<Chord> chords) {
+        userChords = chords;
+        // retrieving user's level (so know which chords are unlocked)
+        getAccountDetailsInteractor.getAccountDetails(apiKey, userId);
+    }
+
+    @Override
+    public void onGetUserChordsError() {
+        listener.onError();
     }
 }

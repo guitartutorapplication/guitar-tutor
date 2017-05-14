@@ -33,7 +33,7 @@ public class AccountActivityPresenter implements IAccountActivityPresenter {
     }
 
     @Override
-    public void onError() {
+    public void onGetUserChordsError() {
         view.hideProgressBar();
         view.showError();
     }

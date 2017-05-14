@@ -21,12 +21,7 @@ public class FakeMessageCall implements Call<List<String>> {
 
     @Override
     public Response<List<String>> execute() throws IOException {
-        if (response != null) {
-            return response;
-        }
-        else {
-            throw new IOException();
-        }
+        return null;
     }
 
     @Override

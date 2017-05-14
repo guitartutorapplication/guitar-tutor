@@ -22,12 +22,7 @@ public class FakeUserCall implements Call<User> {
 
     @Override
     public Response<User> execute() throws IOException {
-        if (response != null) {
-            return response;
-        }
-        else {
-            throw new IOException();
-        }
+        return null;
     }
 
     @Override
