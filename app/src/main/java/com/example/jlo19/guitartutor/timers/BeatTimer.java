@@ -17,7 +17,6 @@ public class BeatTimer implements IBeatTimer {
     @Override
     public void start(final BeatSpeed beatSpeed) {
         requestStop = false;
-
         numOfBeats = 1;
 
         Runnable timerTask = new Runnable() {
@@ -30,7 +29,7 @@ public class BeatTimer implements IBeatTimer {
                         Thread.sleep(beatSpeed.getValue());
                         numOfBeats++;
                     } catch (InterruptedException e) {
-                        listener.onTimerError();
+                        listener.onBeatTimerError();
                     }
                 }
             }
@@ -42,7 +41,7 @@ public class BeatTimer implements IBeatTimer {
 
     @Override
     public void stop() {
-        // stop if there is currently a beat preview running
+        // stop if there is currently a timer running
         if (timer != null) {
             if (timer.isAlive()) {
                 requestStop = true;

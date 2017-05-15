@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -30,12 +29,9 @@ import javax.inject.Inject;
  */
 public class PractiseActivity extends BaseWithToolbarActivity implements PractiseView{
 
-    private List<Chord> selectedChords;
     private IPractisePresenter presenter;
     private Button btnStop;
     private SoundPool soundPool;
-    private ChordChange chordChange;
-    private BeatSpeed beatSpeed;
     private TextView txtCountdown;
     private TextView txtFirstChordInstruction;
     private TextView txtFirstChord;
@@ -58,13 +54,6 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        // retrieving selected chords
-        selectedChords = getIntent().getExtras().getParcelableArrayList("CHORDS");
-        // retrieving chord change
-        chordChange = (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
-        // retrieving beat speed
-        beatSpeed = (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
 
         setSoundPool(new SoundPool.Builder().setMaxStreams(4).build());
 
@@ -99,7 +88,6 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Inject
     public void setPresenter(IPractisePresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -125,7 +113,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public List<Chord> getSelectedChords() {
-        return selectedChords;
+        return getIntent().getExtras().getParcelableArrayList("CHORDS");
     }
 
     @Override
@@ -188,12 +176,12 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public ChordChange getChordChange() {
-        return chordChange;
+        return (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
     }
 
     @Override
     public BeatSpeed getBeatSpeed() {
-        return beatSpeed;
+        return (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
     }
 
     @Override

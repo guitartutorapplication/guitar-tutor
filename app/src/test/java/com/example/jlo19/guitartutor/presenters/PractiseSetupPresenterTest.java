@@ -208,7 +208,7 @@ public class PractiseSetupPresenterTest {
     @Test
     public void onTimerError_CallsShowPreviewBeatErrorOnView() {
         // act
-        presenter.onTimerError();
+        presenter.onBeatTimerError();
 
         // assert
         Mockito.verify(view).showPreviewBeatError();

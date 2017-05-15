@@ -64,7 +64,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
             view.showSameSelectedChordError();
         }
         else {
-            view.startPractiseActivity(selectedChords, ChordChange.values()[chordChangeIndex],
+            view.startPractiseActivity(chosenChords, ChordChange.values()[chordChangeIndex],
                     BeatSpeed.values()[beatSpeedIndex]);
         }
     }
@@ -128,7 +128,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     }
 
     @Override
-    public void onTimerError() {
+    public void onBeatTimerError() {
         view.showPreviewBeatError();
     }
 }

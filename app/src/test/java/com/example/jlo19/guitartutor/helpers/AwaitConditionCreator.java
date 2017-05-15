@@ -2,8 +2,9 @@ package com.example.jlo19.guitartutor.helpers;
 
 import com.example.jlo19.guitartutor.enums.PractiseActivityState;
 import com.example.jlo19.guitartutor.listeners.BeatTimerListener;
-import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
+import com.example.jlo19.guitartutor.listeners.PractiseActivityTimerListener;
 
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.powermock.api.mockito.PowerMockito;
@@ -45,13 +46,13 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> firstRoundOfChordsCalledOnPresenter(final IPractisePresenter
-                                                                                presenter) {
+    public static Callable<Boolean> firstRoundOfChordsCalledOnListener(final PractiseActivityTimerListener
+                                                                                listener) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(presenter).modelOnFirstRoundOfChords();
+                    Mockito.verify(listener).onFirstRoundOfChords();
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -60,29 +61,17 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> newPractiseStateCalledOnPresenter(
-            final IPractisePresenter presenter, final PractiseActivityState state, final int
-            currentChordIndex, final VerificationMode verificationMode) {
+    public static Callable<Boolean> newPractiseStateCalledOnListener(
+            final PractiseActivityTimerListener listener, final PractiseActivityState state, final
+    VerificationMode verificationMode, final int numChords) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(presenter, verificationMode).modelOnNewPractiseState(state, currentChordIndex);
-                    return true;
-                } catch (AssertionError error) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static Callable<Boolean> countdownFinishedCalledOnPresenter(
-            final IPractisePresenter presenter) {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    Mockito.verify(presenter).modelOnCountdownFinished();
+                    InOrder inOrder = Mockito.inOrder(listener);
+                    for (int i = 0; i < numChords; i++) {
+                        inOrder.verify(listener, verificationMode).onNewPractiseState(state, i);
+                    }
                     return true;
                 } catch (AssertionError error) {
                     return false;

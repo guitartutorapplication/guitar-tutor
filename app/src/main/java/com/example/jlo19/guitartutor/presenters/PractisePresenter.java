@@ -1,66 +1,80 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.PractiseActivityState;
-import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
+import com.example.jlo19.guitartutor.models.interfaces.IUpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
+import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
+import com.example.jlo19.guitartutor.timers.interfaces.IPractiseActivityTimer;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Presenter which provides the PractiseActivity with timer capabilities
  */
 public class PractisePresenter implements IPractisePresenter {
 
+    private final LoggedInUser loggedInUser;
+    private IBeatTimer beatTimer;
+    private IPractiseActivityTimer practiseActivityTimer;
     private PractiseView view;
-    private IPractiseModel model;
-    private SharedPreferences sharedPreferences;
+    private IUpdateUserChordsInteractor updateUserChordsInteractor;
     private int numSoundsLoaded;
     private int numSoundsLoadedSuccess;
+
+    public PractisePresenter(IUpdateUserChordsInteractor updateUserChordsInteractor, LoggedInUser loggedInUser,
+                             IBeatTimer beatTimer, IPractiseActivityTimer practiseActivityTimer) {
+        this.loggedInUser = loggedInUser;
+
+        this.beatTimer = beatTimer;
+        this.beatTimer.setListener(this);
+
+        this.practiseActivityTimer = practiseActivityTimer;
+        this.practiseActivityTimer.setListener(this);
+
+        this.updateUserChordsInteractor = updateUserChordsInteractor;
+        this.updateUserChordsInteractor.setListener(this);
+
+        numSoundsLoaded = 0;
+        numSoundsLoadedSuccess = 0;
+    }
 
     @Override
     public void setView(IView view) {
         this.view = (PractiseView) view;
         this.view.setFirstChordText(this.view.getSelectedChords().get(0).toString());
-
-        App.getComponent().inject(this);
+        this.view.loadSounds(getAudioFilenames());
     }
 
-    @Inject
-    void setModel(IPractiseModel model) {
-        this.model = model;
-        model.setPresenter(this);
-        model.setSelectedChords(view.getSelectedChords());
-        model.setSharedPreferences(sharedPreferences);
-        model.setChordChange(view.getChordChange());
-        model.setBeatSpeed(view.getBeatSpeed());
-        model.createPractiseTimer();
-
-        numSoundsLoaded = 0;
-        numSoundsLoadedSuccess = 0;
-        view.loadSounds(model.getAudioFilenames());
+    private List<String> getAudioFilenames() {
+        List<String> filenames = new ArrayList<>();
+        for (PractiseActivityState state : PractiseActivityState.values()) {
+            if (state == PractiseActivityState.NEW_CHORD) {
+                for (Chord chord : view.getSelectedChords()) {
+                    filenames.add(chord.getAudioFilename());
+                }
+            } else {
+                filenames.add(state.getFilename());
+            }
+        }
+        return filenames;
     }
 
     @Override
     public void viewOnStopPractising() {
-        model.savePractiseSession();
-    }
+        practiseActivityTimer.stop();
 
-    @Override
-    public void modelOnError() {
-        view.showError();
-        model.stopTimer();
-    }
-
-    @Override
-    public void modelOnCountdownFinished() {
-        model.startPractiseTimer();
-        view.hideCountdown();
-        view.hideFirstChordInstruction();
+        ArrayList<Integer> chordIds = new ArrayList<>();
+        for (Chord chord : view.getSelectedChords()){
+            chordIds.add(chord.getId());
+        }
+        updateUserChordsInteractor.updateUserChords(loggedInUser.getApiKey(), loggedInUser.getUserId(),
+                chordIds);
     }
 
     @Override
@@ -71,10 +85,10 @@ public class PractisePresenter implements IPractisePresenter {
             numSoundsLoadedSuccess++;
         }
 
-        if (numSoundsLoaded == model.getAudioFilenames().size()) {
+        if (numSoundsLoaded == getAudioFilenames().size()) {
             // start countdown only if all sounds are successfully loaded
             if (numSoundsLoaded == numSoundsLoadedSuccess) {
-                model.startCountdown();
+                beatTimer.start(BeatSpeed.VERY_SLOW);
             }
             // show error is not all sounds were successfully loaded
             else {
@@ -85,7 +99,8 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void viewOnDestroy() {
-        model.stopTimer();
+        beatTimer.stop();
+        practiseActivityTimer.stop();
     }
 
     @Override
@@ -99,13 +114,7 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
-    }
-
-    @Override
-    public void modelOnPractiseSessionSaved(int level, int achievements) {
-        model.stopTimer();
+    public void onUpdateUserChordsSuccess(int level, int achievements) {
         if (level == 0 && achievements == 0) {
             view.showPractiseSessionSaveSuccess();
         }
@@ -118,33 +127,8 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     @Override
-    public void modelOnFirstRoundOfChords() {
-        // stop button is only enabled once the user has completed one round of chords
-        view.showStopButton();
-    }
-
-    @Override
-    public void modelOnPractiseSessionSaveError() {
-        model.stopTimer();
+    public void onUpdateUserChordsError() {
         view.showPractiseSessionSaveError();
-    }
-
-    @Override
-    public void modelOnNewPractiseState(PractiseActivityState state, int currentChordIndex) {
-        if (state != PractiseActivityState.NEW_CHORD) {
-            view.playSound(state.ordinal());
-            // if in any of the countdown states, set the countdown text with message
-            if (state == PractiseActivityState.COUNTDOWN_STAGE_1 || state ==
-                    PractiseActivityState.COUNTDOWN_STAGE_2 || state == PractiseActivityState.
-                    COUNTDOWN_STAGE_3  || state == PractiseActivityState.COUNTDOWN_STAGE_GO) {
-                view.setCountdownText(state.toString());
-            }
-        }
-        else {
-            view.playSound(state.ordinal() + currentChordIndex);
-            // if in new chord state, set chord text with current chord name
-            view.setChordText(view.getSelectedChords().get(currentChordIndex).toString());
-        }
     }
 
     @Override
@@ -155,5 +139,53 @@ public class PractisePresenter implements IPractisePresenter {
     @Override
     public void viewOnConfirmError() {
         view.returnToPractiseSetup();
+    }
+
+    private void onCountdownFinished() {
+        beatTimer.stop();
+        practiseActivityTimer.start(view.getBeatSpeed(), view.getChordChange(),
+                view.getSelectedChords().size());
+
+        view.hideCountdown();
+        view.hideFirstChordInstruction();
+    }
+
+    @Override
+    public void onNewBeat(int numOfBeats) {
+        if (numOfBeats <= 4) {
+            int index = numOfBeats - 1;
+            view.playSound(index);
+            view.setCountdownText(PractiseActivityState.values()[index].toString());
+        }
+        else {
+            onCountdownFinished();
+        }
+    }
+
+    @Override
+    public void onBeatTimerError() {
+        view.showError();
+    }
+
+    @Override
+    public void onNewPractiseState(PractiseActivityState state, int chordIndex) {
+        if (state == PractiseActivityState.NEW_BEAT) {
+            view.playSound(state.ordinal());
+        }
+        else {
+            view.playSound(state.ordinal() + chordIndex);
+            // if in new chord state, set chord text with current chord name
+            view.setChordText(view.getSelectedChords().get(chordIndex).toString());
+        }
+    }
+
+    @Override
+    public void onPractiseActivityTimerError() {
+        view.showError();
+    }
+
+    @Override
+    public void onFirstRoundOfChords() {
+        view.showStopButton();
     }
 }

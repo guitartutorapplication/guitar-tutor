@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -99,12 +98,6 @@ public class PractiseActivityTest {
     public void setSoundPool_SetsLoadCompleteListener() {
         // assert
         Mockito.verify(soundPool).setOnLoadCompleteListener((SoundPool.OnLoadCompleteListener) Mockito.any());
-    }
-
-    @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
     }
 
     @Test
