@@ -15,8 +15,8 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongPresenter;
 
 import junit.framework.Assert;
@@ -58,7 +58,7 @@ public class SongActivityTest {
         // stops real injection of presenter
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        // giving activity a selected song
+        // sets song in intent that builds activity
         List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
@@ -110,14 +110,14 @@ public class SongActivityTest {
     }
 
     @Test
-    public void setsMainTextToContentsFromSong() {
+    public void setsTextToContentsFromSong() {
         // assert
         TextView textView = (TextView) activity.findViewById(R.id.textView);
         Assert.assertEquals(selectedSong.getContents(), textView.getText().toString());
     }
 
     @Test
-    public void setMaxLinesOfMainTextToNumberOfLinesInContents() {
+    public void setMaxLinesOfTextToNumberOfLinesInContents() {
         // assert
         TextView textView = (TextView) activity.findViewById(R.id.textView);
         Assert.assertEquals((selectedSong.getContents().split("\r\n")).length,

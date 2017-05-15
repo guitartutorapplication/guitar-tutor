@@ -20,7 +20,6 @@ import dagger.Component;
 /**
  * The bridge between the injection of dependencies and the AppModule
  */
-
 @Singleton
 @Component(modules = {AppModule.class})
 public interface AppComponent {

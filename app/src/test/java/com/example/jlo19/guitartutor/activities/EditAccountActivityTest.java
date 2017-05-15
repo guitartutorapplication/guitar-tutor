@@ -14,7 +14,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 
@@ -55,6 +55,7 @@ public class EditAccountActivityTest {
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
         user = new User("Kate", "katesmith@gmail.com", 2, 2000);
+        // sets user in intent that builds activity
         Intent intent = new Intent();
         intent.putExtra("USER", user);
         activity = Robolectric.buildActivity(EditAccountActivity.class, intent)
@@ -158,7 +159,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showFieldEmptyNameError_SetsNameTextInputWithMessage() {
+    public void showFieldEmptyNameError_SetsErrorOnNameTextInput() {
         // act
         activity.showFieldEmptyNameError();
 
@@ -169,7 +170,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showFieldEmptyEmailError_SetsEmailTextInputWithMessage() {
+    public void showFieldEmptyEmailError_SetsErrorOnEmailTextInput() {
         // act
         activity.showFieldEmptyEmailError();
 
@@ -180,7 +181,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showFieldEmptyConfirmEmailError_SetsConfirmEmailTextInputWithMessage() {
+    public void showFieldEmptyConfirmEmailError_SetsErrorOnConfirmEmailTextInput() {
         // act
         activity.showFieldEmptyConfirmEmailError();
 
@@ -191,7 +192,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showFieldEmptyPasswordError_SetsPasswordTextInputWithMessage() {
+    public void showFieldEmptyPasswordError_SetsErrorOnPasswordTextInput() {
         // act
         activity.showFieldEmptyPasswordError();
 
@@ -202,7 +203,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showFieldEmptyConfirmPasswordError_SetsConfirmPasswordTextInputWithMessage() {
+    public void showFieldEmptyConfirmPasswordError_SetsErrorOnConfirmPasswordTextInput() {
         // act
         activity.showFieldEmptyConfirmPasswordError();
 
@@ -213,7 +214,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showEmailMismatchError_SetErrorOnEmailAndConfirmEmailTextInputWithMessage() {
+    public void showEmailMismatchError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showEmailMismatchError();
 
@@ -229,7 +230,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showPasswordMismatchError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordMismatchError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordMismatchError();
 
@@ -245,7 +246,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showInvalidEmailError_SetErrorOnEmailAndConfirmEmailTextInputWithMessage() {
+    public void showInvalidEmailError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showInvalidEmailError();
 
@@ -261,7 +262,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showPasswordTooShortError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordTooShortError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordTooShortError();
 
@@ -277,7 +278,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showPasswordNoUpperCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordNoUpperCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoUpperCaseLetterError();
 
@@ -293,7 +294,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showPasswordNoLowerCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordNoLowerCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoLowerCaseLetterError();
 
@@ -309,7 +310,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showPasswordNoNumberError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordNoNumberError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoNumberError();
 
@@ -325,7 +326,7 @@ public class EditAccountActivityTest {
     }
 
     @Test
-    public void showAlreadyRegisteredError_SetErrorOnEmailAndConfirmEmailTextInputWithMessage() {
+    public void showAlreadyRegisteredError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showAlreadyRegisteredError();
 
@@ -362,6 +363,7 @@ public class EditAccountActivityTest {
         // checks correct activity is started
         junit.framework.Assert.assertEquals(AccountActivity.class.getName(),
                 intent.getComponent().getClassName());
+        // checks for result code
         junit.framework.Assert.assertEquals(RESULT_OK, shadowOf(activity).getResultCode());
         Assert.assertTrue(activity.isFinishing());
     }

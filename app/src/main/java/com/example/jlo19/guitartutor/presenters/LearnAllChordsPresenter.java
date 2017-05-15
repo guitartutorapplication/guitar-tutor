@@ -1,8 +1,8 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
@@ -10,7 +10,7 @@ import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 import java.util.List;
 
 /**
- * Presenter which provides the activities with all chords from the database API
+ * Presenter that provides LearnAllChordsActivity with DB API interaction
  */
 public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
 
@@ -29,6 +29,7 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
         this.view = (LearnAllChordsView) view;
         this.view.showProgressBar();
 
+        // gets chords (and other details) from DB
         this.getChordsInteractor.getChordsAndDetails(loggedInUser.getApiKey(), loggedInUser.getUserId());
     }
 
@@ -40,7 +41,7 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
         for (int i = 0; i < allChords.size(); i++) {
             view.addChordButton(i);
             view.setChordButtonText(i, allChords.get(i).toString());
-            // button is only enabled if chord's level is than or equal to user's level
+            // button is only enabled if chord's level is less than or equal to user's level
             view.enableChordButton(i, allChords.get(i).getLevelRequired() <= userLevel);
             // setting background based on level of chord/whether the user has learnt the chord
             boolean userHasLearntChord = userChords.contains(allChords.get(i).getId());
@@ -84,6 +85,7 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
 
     @Override
     public void viewOnChordRequested(int chordPos) {
+        // retrieve selected chord and start learn chord activity
         Chord chord = getChordsInteractor.getAllChords().get(chordPos);
         view.startLearnChordActivity(chord, getChordsInteractor.getUserChordIds().contains(chord.getId()));
     }

@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 
 import java.io.IOException;
 
@@ -27,6 +27,7 @@ public class FakeUserCall implements Call<User> {
 
     @Override
     public void enqueue(Callback<User> callback) {
+        // no response has been set, on failure result
         if (response != null) {
             callback.onResponse(this, response);
         }

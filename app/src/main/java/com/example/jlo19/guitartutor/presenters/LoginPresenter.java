@@ -1,14 +1,14 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.ILoginInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.interactors.interfaces.ILoginInteractor;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.LoginView;
 
 /**
- * Presenter which provides LoginActivity with the ability to verify login credentials with DB
+ * Presenter that provides LoginActivity with DB API interaction
  */
 public class LoginPresenter implements ILoginPresenter {
 
@@ -27,7 +27,8 @@ public class LoginPresenter implements ILoginPresenter {
         this.view = (LoginView) view;
 
         if (loggedInUser.isLoggedIn()) {
-            ((LoginView) view).startHomeActivity();
+            // if user is already logged in, redirect to home activity
+            this.view.startHomeActivity();
         }
     }
 
@@ -41,10 +42,12 @@ public class LoginPresenter implements ILoginPresenter {
         view.resetFieldEmptyErrors();
 
         if (!email.isEmpty() && !password.isEmpty()) {
+            // if email and password is present, log in to account on DB
             view.showProgressBar();
             loginInteractor.login(email, password);
         }
         else {
+            // if not valid show error
             if (email.isEmpty()) {
                 view.showFieldEmailEmptyError();
             }
@@ -56,6 +59,7 @@ public class LoginPresenter implements ILoginPresenter {
 
     @Override
     public void onLoginSuccess(User user) {
+        // user becomes the logged in user and then is redirected to home
         loggedInUser.login(user.getId(), user.getApiKey());
         view.hideProgressBar();
         view.startHomeActivity();

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * An abstract class which deals with the data validation for an account
+ * Deals with the data validation for user account
  */
 public class DataValidator {
     private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
@@ -39,6 +39,7 @@ public class DataValidator {
         if (password.length() < 8) {
             errors.add(ValidationError.PASSWORD_TOO_SHORT);
         }
+        // checks if valid email
         if (!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
             errors.add(ValidationError.INVALID_EMAIL);
         }
@@ -74,6 +75,7 @@ public class DataValidator {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         for (String error : errors) {
+            // adds appropriate ValidationErrors to error list from API response
             if (error.equals(ValidationError.INVALID_EMAIL.toString())) {
                 validationErrors.add(ValidationError.INVALID_EMAIL);
             }

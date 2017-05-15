@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.views.LearnChordView;
 
@@ -34,7 +34,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public String getToolbarTitle() {
-        // no title on this screen
+        // no title on this screen due to diagram displayed
         return "";
     }
 
@@ -84,11 +84,13 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public Chord getChord() {
+        // returns chord selected in previous activity
         return getIntent().getParcelableExtra("CHORD");
     }
 
     @Override
     public void showImageLoadError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.loading_chord_image_message_failure)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -124,6 +126,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showVideoLoadError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.loading_chord_video_message_failure)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -138,6 +141,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public boolean getLearntChord() {
+        // returns whether chord is learnt or not
         return getIntent().getBooleanExtra("LEARNT_CHORD", false);
     }
 
@@ -149,6 +153,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showLearntConfirmDialog() {
+        // asks user for confirmation that they understand chord
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_learnt_message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -172,12 +177,14 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     public void startLearnAllChordsActivity() {
         Intent intent = new Intent(getBaseContext(), LearnAllChordsActivity.class);
         startActivity(intent);
+        // returns ok result to parent activity
         setResult(RESULT_OK);
         finishActivity();
     }
 
     @Override
     public void showAddLearntChordError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.adding_learnt_chord_error_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -192,6 +199,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showAddLearntChordSuccess() {
+        // displays success message with confirmation button
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.maximum_achievements_message);
 
@@ -210,6 +218,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showAddLearntChordSuccess(int level, int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.gained_100_achievements_message, achievements) + "\n" +
                 getString(R.string.new_level_message, level);
@@ -229,6 +238,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showAddLearntChordSuccess(int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.gained_100_achievements_message, achievements);
 

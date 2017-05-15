@@ -9,7 +9,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Fakes retrofit call with ResponseWithMessage
+ * Fakes retrofit call with list of String
  */
 public class FakeMessageCall implements Call<List<String>> {
 
@@ -26,6 +26,7 @@ public class FakeMessageCall implements Call<List<String>> {
 
     @Override
     public void enqueue(Callback<List<String>> callback) {
+        // no response has been set, on failure result
         if (response != null) {
             callback.onResponse(this, response);
         }

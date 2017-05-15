@@ -3,8 +3,8 @@ package com.example.jlo19.guitartutor.presenters;
 import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 import com.example.jlo19.guitartutor.views.IView;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Presenter which provides PractiseSetupActivity with chords from database API and timer capabilities
+ * Presenter that provides PractiseSetupActivity with DB API interaction and timer capabilities
  */
 public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
@@ -40,6 +40,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
         this.view.showProgressBar();
         this.view.loadSound();
 
+        // gets user chords from DB
         getUserChordsInteractor.getUserChords(loggedInUser.getApiKey(), loggedInUser.getUserId());
     }
 
@@ -78,6 +79,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     @Override
     public void viewOnBeatSpeedChanged() {
         view.enablePreviewButton(true);
+        // stop playing preview
         beatTimer.stop();
     }
 
@@ -117,7 +119,7 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     @Override
     public void onNewBeat(int numOfBeats) {
-        // finish preview
+        // once preview has been playing for long enough, stop timer
         if (numOfBeats > 4) {
             view.enablePreviewButton(true);
             beatTimer.stop();

@@ -75,6 +75,7 @@ public class ChordsButtonAdapter extends BaseAdapter {
     }
 
     public void setButtonBackground(int id, String doneIdentifier, String levelNumberIdentifier) {
+        // set background of button based off identifier
         String backgroundIdentifier = "chord_" + doneIdentifier + "level_" + levelNumberIdentifier
                 + "_button";
 

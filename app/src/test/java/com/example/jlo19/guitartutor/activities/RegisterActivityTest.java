@@ -93,7 +93,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showFieldEmptyNameError_SetsNameTextInputWithMessage() {
+    public void showFieldEmptyNameError_SetErrorOnNameTextInput() {
         // act
         activity.showFieldEmptyNameError();
 
@@ -104,7 +104,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showFieldEmptyEmailError_SetsEmailTextInputWithMessage() {
+    public void showFieldEmptyEmailError_SetErrorOnEmailTextInput() {
         // act
         activity.showFieldEmptyEmailError();
 
@@ -115,7 +115,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showFieldEmptyConfirmEmailError_SetsConfirmEmailTextInputWithMessage() {
+    public void showFieldEmptyConfirmEmailError_SetErrorOnConfirmEmailTextInput() {
         // act
         activity.showFieldEmptyConfirmEmailError();
 
@@ -126,7 +126,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showFieldEmptyPasswordError_SetsPasswordTextInputWithMessage() {
+    public void showFieldEmptyPasswordError_SetErrorOnPasswordTextInput() {
         // act
         activity.showFieldEmptyPasswordError();
 
@@ -137,7 +137,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showFieldEmptyConfirmPasswordError_SetsConfirmPasswordTextInputWithMessage() {
+    public void showFieldEmptyConfirmPasswordError_SetErrorOnConfirmPasswordTextInput() {
         // act
         activity.showFieldEmptyConfirmPasswordError();
 
@@ -148,7 +148,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showEmailMismatchError_SetErrorOnEmailAndConfirmEmailTextInputWithMessage() {
+    public void showEmailMismatchError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showEmailMismatchError();
 
@@ -164,7 +164,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showPasswordMismatchError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordMismatchError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordMismatchError();
 
@@ -180,7 +180,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showInvalidEmailError_SetErrorOnEmailAndConfirmEmailTextInputWithMessage() {
+    public void showInvalidEmailError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showInvalidEmailError();
 
@@ -196,7 +196,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showPasswordTooShortError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordTooShortError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordTooShortError();
 
@@ -212,7 +212,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showPasswordNoUpperCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordNoUpperCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoUpperCaseLetterError();
 
@@ -228,7 +228,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showPasswordNoLowerCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordNoLowerCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoLowerCaseLetterError();
 
@@ -244,7 +244,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showPasswordNoNumberError_SetErrorOnPasswordAndConfirmPasswordTextInputWithMessage() {
+    public void showPasswordNoNumberError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoNumberError();
 
@@ -260,7 +260,7 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showAlreadyRegisteredError_SetErrorOnEmailAndConfirmEmailTextInputWithMessage() {
+    public void showAlreadyRegisteredError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showAlreadyRegisteredError();
 

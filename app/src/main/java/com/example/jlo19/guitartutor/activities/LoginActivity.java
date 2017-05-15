@@ -20,6 +20,9 @@ import com.example.jlo19.guitartutor.views.LoginView;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that allows user to log in to application
+ */
 public class LoginActivity extends AppCompatActivity implements LoginView {
 
     private ILoginPresenter presenter;
@@ -47,6 +50,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // passing details from edittext up to presenter
                 EditText editTxtEmail = (EditText) findViewById(R.id.editTxtEmail);
                 EditText editTxtPassword = (EditText) findViewById(R.id.editTxtPassword);
 
@@ -97,6 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @Override
     public void showLoginError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.login_error_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

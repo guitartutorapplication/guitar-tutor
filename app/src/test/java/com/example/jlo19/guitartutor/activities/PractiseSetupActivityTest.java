@@ -18,7 +18,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 
 import junit.framework.Assert;
@@ -80,7 +80,7 @@ public class PractiseSetupActivityTest {
                 new Chord(4, "D", "MAJOR", "D.png", "D.mp4", "D.wav", 1));
         activity.setChords(chords);
         Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
+        // default option would be at index 0, so index 1 is first chord
         spnChord1.setSelection(1);
 
         RadioGroup rGroupChordChange = (RadioGroup) activity.findViewById(R.id.rGroupChordChange);
@@ -96,6 +96,7 @@ public class PractiseSetupActivityTest {
         // assert
         ArrayList<Chord> expectedSelectedChords = new ArrayList<Chord>(){{
             add(chords.get(0));
+            // null if left at default spinner option
             add(null);
             add(null);
             add(null);

@@ -3,8 +3,8 @@ package com.example.jlo19.guitartutor.presenters;
 import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.PractiseActivityState;
-import com.example.jlo19.guitartutor.models.interfaces.IUpdateUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IUpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 import com.example.jlo19.guitartutor.timers.interfaces.IPractiseActivityTimer;
@@ -15,15 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Presenter which provides the PractiseActivity with timer capabilities
+ * Presenter that provides PractiseActivity with DB API interaction and timer capabilities
  */
 public class PractisePresenter implements IPractisePresenter {
 
     private final LoggedInUser loggedInUser;
-    private IBeatTimer beatTimer;
-    private IPractiseActivityTimer practiseActivityTimer;
+    private final IBeatTimer beatTimer;
+    private final IPractiseActivityTimer practiseActivityTimer;
     private PractiseView view;
-    private IUpdateUserChordsInteractor updateUserChordsInteractor;
+    private final IUpdateUserChordsInteractor updateUserChordsInteractor;
     private int numSoundsLoaded;
     private int numSoundsLoadedSuccess;
 
@@ -52,6 +52,8 @@ public class PractisePresenter implements IPractisePresenter {
     }
 
     private List<String> getAudioFilenames() {
+        // creates list of audio filenames that includes filenames from all states
+        // (beat, countdown sound 1, etc) and filenames for selected chords
         List<String> filenames = new ArrayList<>();
         for (PractiseActivityState state : PractiseActivityState.values()) {
             if (state == PractiseActivityState.NEW_CHORD) {
@@ -69,10 +71,12 @@ public class PractisePresenter implements IPractisePresenter {
     public void viewOnStopPractising() {
         practiseActivityTimer.stop();
 
+        // retrieving list of just chord ids
         ArrayList<Integer> chordIds = new ArrayList<>();
         for (Chord chord : view.getSelectedChords()){
             chordIds.add(chord.getId());
         }
+        // update user chords on DB
         updateUserChordsInteractor.updateUserChords(loggedInUser.getApiKey(), loggedInUser.getUserId(),
                 chordIds);
     }
@@ -115,6 +119,8 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void onUpdateUserChordsSuccess(int level, int achievements) {
+        // calling correct success message depending on whether level and achievements have been
+        // updated or not
         if (level == 0 && achievements == 0) {
             view.showPractiseSessionSaveSuccess();
         }
@@ -143,6 +149,7 @@ public class PractisePresenter implements IPractisePresenter {
 
     private void onCountdownFinished() {
         beatTimer.stop();
+        // when countdown is finished, practise activity is started
         practiseActivityTimer.start(view.getBeatSpeed(), view.getChordChange(),
                 view.getSelectedChords().size());
 
@@ -152,6 +159,7 @@ public class PractisePresenter implements IPractisePresenter {
 
     @Override
     public void onNewBeat(int numOfBeats) {
+        // if countdown is not finished
         if (numOfBeats <= 4) {
             int index = numOfBeats - 1;
             view.playSound(index);
@@ -170,11 +178,12 @@ public class PractisePresenter implements IPractisePresenter {
     @Override
     public void onNewPractiseState(PractiseActivityState state, int chordIndex) {
         if (state == PractiseActivityState.NEW_BEAT) {
+            // if new beat, play metronome sound
             view.playSound(state.ordinal());
         }
         else {
+            // if in new chord state, set chord text with current chord name and play chord sound
             view.playSound(state.ordinal() + chordIndex);
-            // if in new chord state, set chord text with current chord name
             view.setChordText(view.getSelectedChords().get(chordIndex).toString());
         }
     }

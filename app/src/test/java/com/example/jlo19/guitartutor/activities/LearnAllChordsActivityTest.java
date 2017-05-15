@@ -15,7 +15,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 
 import junit.framework.Assert;
@@ -226,7 +226,7 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void enabledChordButton_CallsEnableButtonOnAdapter() {
+    public void enableChordButton_CallsEnableButtonOnAdapter() {
         // arrange
         ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
         activity.setChordsButtonAdapter(adapter);

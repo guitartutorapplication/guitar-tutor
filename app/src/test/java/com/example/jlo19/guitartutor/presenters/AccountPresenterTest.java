@@ -1,8 +1,8 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 

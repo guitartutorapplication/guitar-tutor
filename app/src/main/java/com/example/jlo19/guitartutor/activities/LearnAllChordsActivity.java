@@ -13,7 +13,7 @@ import android.widget.GridView;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
@@ -62,6 +62,7 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     }
 
     public void showError(){
+        // displays error message with confirmation button
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -92,6 +93,7 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // only finishes activity if ok result is returned from child activity
         if (requestCode == REQUEST_LEARNT) {
             if (resultCode == RESULT_OK) {
                 finishActivity();

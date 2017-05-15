@@ -15,12 +15,15 @@ import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongPresenter;
 import com.example.jlo19.guitartutor.views.SongView;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that displays details of selected song
+ */
 public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
     private ISongPresenter presenter;
@@ -40,6 +43,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
     @Override
     public String getToolbarTitle() {
+        // toolbar title display both song title and artist
         Song song = getIntent().getParcelableExtra("SONG");
         return song.getTitle() + " - " + song.getArtist();
     }
@@ -61,6 +65,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
         int numLines = (song.getContents().split("\r\n")).length;
         textView.setMaxLines(numLines);
 
+        // allows injection of presenter
         App.getComponent().inject(this);
 
         btnPlay = (Button) findViewById(R.id.btnPlay);
@@ -99,6 +104,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
         }
         else {
             presenter.viewOnAudioLoaded();
+            // when audio is finished playing
             onCompletionListener = new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
@@ -116,6 +122,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
     @Override
     public void showError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.loading_demo_message_failure)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

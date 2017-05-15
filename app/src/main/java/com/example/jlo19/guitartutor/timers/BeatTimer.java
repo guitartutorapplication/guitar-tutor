@@ -5,7 +5,7 @@ import com.example.jlo19.guitartutor.listeners.BeatTimerListener;
 import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 
 /**
- *
+ * Timer to deal with standard counting of beat
  */
 public class BeatTimer implements IBeatTimer {
 
@@ -24,8 +24,9 @@ public class BeatTimer implements IBeatTimer {
             public void run() {
                 while (!requestStop) {
                     try {
-                        // inform listener every beat
+                        // inform when new beat
                         listener.onNewBeat(numOfBeats);
+                        // thread sleeps for requested beat speed value
                         Thread.sleep(beatSpeed.getValue());
                         numOfBeats++;
                     } catch (InterruptedException e) {

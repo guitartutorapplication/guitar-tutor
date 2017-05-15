@@ -8,7 +8,6 @@ import com.amazonaws.regions.Regions;
 import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceImageListener;
 import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceUrlListener;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
@@ -21,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -45,9 +43,6 @@ public class AmazonS3ServiceTest {
 
     @Before
     public void setUp() {
-        // stops real injection of tasks
-        getApp().setComponent(PowerMockito.mock(AppComponent.class));
-
         service = Mockito.spy(new AmazonS3Service(getApp().getApplicationContext()));
 
         imageListener = Mockito.mock(AmazonS3ServiceImageListener.class);

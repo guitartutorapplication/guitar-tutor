@@ -4,6 +4,9 @@ import com.example.jlo19.guitartutor.enums.ValidationError;
 
 import java.util.List;
 
+/**
+ * Listener for RegisterInteractor
+ */
 public interface RegisterListener {
     void onRegisterSuccess();
     void onRegisterError();

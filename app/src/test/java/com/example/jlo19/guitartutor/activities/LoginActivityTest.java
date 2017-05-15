@@ -118,7 +118,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void showFieldEmailEmptyError_SetsErrorOnEmailTextInputWithMessage() {
+    public void showFieldEmailEmptyError_SetsErrorOnEmailTextInput() {
         // act
         activity.showFieldEmailEmptyError();
 
@@ -129,7 +129,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void showFieldPasswordEmptyError_SetsErrorOnPasswordTextInputWithMessage() {
+    public void showFieldPasswordEmptyError_SetsErrorOnPasswordTextInput() {
         // act
         activity.showFieldPasswordEmptyError();
 

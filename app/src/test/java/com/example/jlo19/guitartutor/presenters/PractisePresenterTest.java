@@ -4,8 +4,8 @@ import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.enums.PractiseActivityState;
-import com.example.jlo19.guitartutor.models.interfaces.IUpdateUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IUpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 import com.example.jlo19.guitartutor.timers.interfaces.IPractiseActivityTimer;
@@ -50,6 +50,9 @@ public class PractisePresenterTest {
         }};
         chordChange = ChordChange.EIGHT_BEATS;
         beatSpeed = BeatSpeed.FAST;
+
+        // audio filenames includes filenames from all states (e.g. new beat, countdown stage 1)
+        // and filenames from chords
         audioFilenames = new ArrayList<>();
         for (PractiseActivityState state : PractiseActivityState.values()) {
             if (state == PractiseActivityState.NEW_CHORD) {
@@ -292,6 +295,7 @@ public class PractisePresenterTest {
         presenter.viewOnStopPractising();
 
         // assert
+        // gets list of only chord ids
         ArrayList<Integer> chordIds = new ArrayList<>();
         for (Chord chord : view.getSelectedChords()){
             chordIds.add(chord.getId());
@@ -362,6 +366,7 @@ public class PractisePresenterTest {
     @Test
     public void viewOnSoundLoadedForEachFilenameWithOneUnsuccessful_CallsErrorOnView() {
         // act
+        // 0 = success and 1 = error
         for (int i = 0; i < audioFilenames.size()-1; i++) {
             presenter.viewOnSoundLoaded(0);
         }

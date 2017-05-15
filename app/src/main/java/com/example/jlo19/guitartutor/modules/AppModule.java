@@ -1,24 +1,24 @@
 package com.example.jlo19.guitartutor.modules;
 
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.AddUserChordInteractor;
-import com.example.jlo19.guitartutor.models.GetSongsInteractor;
-import com.example.jlo19.guitartutor.models.GetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.EditAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.GetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.GetChordsInteractor;
-import com.example.jlo19.guitartutor.models.LoginInteractor;
-import com.example.jlo19.guitartutor.models.UpdateUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.RegisterInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.ILoginInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IUpdateUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
-import com.example.jlo19.guitartutor.models.interfaces.IGetSongsInteractor;
+import com.example.jlo19.guitartutor.interactors.AddUserChordInteractor;
+import com.example.jlo19.guitartutor.interactors.GetSongsInteractor;
+import com.example.jlo19.guitartutor.interactors.GetUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.EditAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.GetAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.GetChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.LoginInteractor;
+import com.example.jlo19.guitartutor.interactors.UpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.RegisterInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IAddUserChordInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IEditAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.ILoginInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IUpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IRegisterInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetSongsInteractor;
 import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
@@ -56,7 +56,6 @@ import dagger.Provides;
 /**
  * Provides dependencies
  */
-
 @Module
 public class AppModule {
 

@@ -3,8 +3,8 @@ package com.example.jlo19.guitartutor.presenters;
 import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
@@ -95,7 +95,7 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void modelOnGetChordsError_HidesProgressBarOnView() {
+    public void onGetChordsError_HidesProgressBarOnView() {
         // act
         presenter.onGetUserChordsError();
 
@@ -104,7 +104,7 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void modelOnGetChordsError_ShowLoadChordsErrorOnView() {
+    public void onGetChordsError_ShowLoadChordsErrorOnView() {
         // act
         presenter.onGetUserChordsError();
 

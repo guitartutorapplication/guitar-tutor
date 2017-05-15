@@ -7,7 +7,7 @@ import com.example.jlo19.guitartutor.listeners.PractiseActivityTimerListener;
 import com.example.jlo19.guitartutor.timers.interfaces.IPractiseActivityTimer;
 
 /**
- *
+ * Timer to deal with counting of beat for a list of chords
  */
 public class PractiseActivityTimer implements IPractiseActivityTimer{
 
@@ -32,16 +32,17 @@ public class PractiseActivityTimer implements IPractiseActivityTimer{
                 while (!requestStop) {
                     try {
                         for (int i = 0; i < numChords; i++) {
-                            // inform listener that on the next chord in sequence
+                            // inform that now the next chord in sequence
                             listener.onNewPractiseState(PractiseActivityState.NEW_CHORD, i);
 
-                            // play sound for number of beats in chord change
+                            // on current chord for number of beats in chord change
                             for (int j = 0; j < chordChange.getValue(); j++) {
                                 if (requestStop) {
                                     return;
                                 }
-                                // inform listener every beat
+                                // inform when new beat
                                 listener.onNewPractiseState(PractiseActivityState.NEW_BEAT, i);
+                                // thread sleeps for requested beat speed value
                                 Thread.sleep(beatSpeed.getValue());
                             }
                         }

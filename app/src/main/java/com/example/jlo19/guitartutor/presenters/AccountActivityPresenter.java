@@ -1,8 +1,8 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IGetUserChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountActivityPresenter;
 import com.example.jlo19.guitartutor.views.AccountActivityView;
 import com.example.jlo19.guitartutor.views.IView;
@@ -10,7 +10,7 @@ import com.example.jlo19.guitartutor.views.IView;
 import java.util.List;
 
 /**
- * Presenter that provides the AccountActivityActivity with account details from DB
+ * Presenter that provides AccountActivityActivity with DB API interaction
  */
 public class AccountActivityPresenter implements IAccountActivityPresenter {
 
@@ -29,6 +29,7 @@ public class AccountActivityPresenter implements IAccountActivityPresenter {
         this.view = (AccountActivityView) view;
         this.view.showProgressBar();
 
+        // get user chords from DB (returns chords and num of times each is practised - activity)
         getUserChordsInteractor.getUserChords(loggedInUser.getApiKey(), loggedInUser.getUserId());
     }
 

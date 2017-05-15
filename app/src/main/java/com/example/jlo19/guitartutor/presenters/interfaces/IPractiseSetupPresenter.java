@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.presenters.interfaces;
 
 import com.example.jlo19.guitartutor.listeners.BeatTimerListener;
 import com.example.jlo19.guitartutor.listeners.GetUserChordsListener;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 import java.util.List;
 

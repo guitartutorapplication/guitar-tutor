@@ -40,8 +40,8 @@ public class DatabaseService {
     private static OkHttpClient getHttpClient(Context context){
         // allows use of self signed certificate when connecting to API via HTTPS
         try {
+            // retrieve self signed certificate
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            // get and generate self signed certificate
             InputStream caInput = context.getResources().openRawResource(R.raw.certificate);
             Certificate ca = certificateFactory.generateCertificate(caInput);
 

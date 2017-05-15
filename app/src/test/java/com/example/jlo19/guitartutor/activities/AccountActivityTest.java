@@ -14,7 +14,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 
@@ -167,7 +167,7 @@ public class AccountActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(EditAccountActivity.class.getName(), intent.getComponent().getClassName());
-        // checks correct chord is passed through
+        // checks correct user is passed through
         Assert.assertEquals(user, intent.getParcelableExtra("USER"));
     }
 

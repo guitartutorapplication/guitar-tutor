@@ -15,7 +15,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 
 import org.junit.Assert;
@@ -56,7 +56,7 @@ public class LearnChordActivityTest {
         // stops real injection of presenter
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        // giving activity a selected chord
+        // sets chord in intent that builds activity
         selectedChord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
         learntChord = true;
         Intent intent = new Intent();
@@ -156,7 +156,7 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void showImageLoadError_ClicksOkButton_CallsConfirmErrorOnPresenter() {
+    public void showImageLoadError_ClickOkButton_CallsConfirmErrorOnPresenter() {
         // arrange
         activity.showImageLoadError();
 
@@ -183,7 +183,7 @@ public class LearnChordActivityTest {
     }
 
     @Test
-    public void showAddLearntChordSuccess_ClicksOkButton_CallsConfirmLearntSuccessOnPresenter() {
+    public void showAddLearntChordSuccess_ClickOkButton_CallsConfirmLearntSuccessOnPresenter() {
         // arrange
         activity.showAddLearntChordSuccess();
 

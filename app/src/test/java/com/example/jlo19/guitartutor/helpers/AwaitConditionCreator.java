@@ -68,6 +68,7 @@ public class AwaitConditionCreator {
             @Override
             public Boolean call() throws Exception {
                 try {
+                    // ensuring calls are received in order
                     InOrder inOrder = Mockito.inOrder(listener);
                     for (int i = 0; i < numChords; i++) {
                         inOrder.verify(listener, verificationMode).onNewPractiseState(state, i);

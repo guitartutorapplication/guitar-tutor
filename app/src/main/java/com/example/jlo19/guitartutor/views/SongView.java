@@ -1,7 +1,7 @@
 package com.example.jlo19.guitartutor.views;
 
 /**
- * Interface for SongActivity
+ * View interface for SongActivity
  */
 public interface SongView extends ProgressBarView {
     String getAudioFilename();

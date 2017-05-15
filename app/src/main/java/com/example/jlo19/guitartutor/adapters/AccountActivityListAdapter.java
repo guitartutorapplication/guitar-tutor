@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 import java.util.List;
 
@@ -39,6 +39,7 @@ public class AccountActivityListAdapter extends ArrayAdapter<Chord> {
         Chord chord = getItem(position);
 
         if (chord != null) {
+            // displaying chord name and num times practised
             TextView txtChord = (TextView) convertView.findViewById(R.id.txtChord);
             txtChord.setText(chord.toString());
 

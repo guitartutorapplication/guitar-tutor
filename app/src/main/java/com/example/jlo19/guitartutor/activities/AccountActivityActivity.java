@@ -10,7 +10,7 @@ import android.widget.ListView;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.AccountActivityListAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountActivityPresenter;
 import com.example.jlo19.guitartutor.views.AccountActivityView;
 
@@ -18,6 +18,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that displays account activity (learnt chords and how many times each has been practised)
+ */
 public class AccountActivityActivity extends BaseWithToolbarActivity implements AccountActivityView {
 
     private ProgressDialog progressDialog;
@@ -61,6 +64,7 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Override
     public void setAccountActivity(List<Chord> chords) {
+        // take account activity (chords with num times practised) and display in list
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(new AccountActivityListAdapter(AccountActivityActivity.this,
                 R.layout.activity_list_item, chords));
@@ -68,6 +72,7 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Override
     public void showError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.loading_account_activity_message_failure)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

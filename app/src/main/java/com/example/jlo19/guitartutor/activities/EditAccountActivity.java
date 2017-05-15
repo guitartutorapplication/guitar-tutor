@@ -13,12 +13,15 @@ import android.widget.EditText;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.views.EditAccountView;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that allows user to edit account details
+ */
 public class EditAccountActivity extends BaseWithToolbarActivity implements EditAccountView {
 
     private IEditAccountPresenter presenter;
@@ -93,6 +96,7 @@ public class EditAccountActivity extends BaseWithToolbarActivity implements Edit
 
     @Override
     public void showSaveError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.saving_changes_error_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -109,6 +113,7 @@ public class EditAccountActivity extends BaseWithToolbarActivity implements Edit
     public void startAccountActivity() {
         Intent intent = new Intent(getBaseContext(), AccountActivity.class);
         startActivity(intent);
+        // returns result ok - details have been changed
         setResult(RESULT_OK);
         finish();
     }

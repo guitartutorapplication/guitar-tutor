@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.views.EditAccountView;
 
@@ -47,7 +47,7 @@ public class EditAccountPresenterTest {
     }
 
     @Test
-    public void viewOnSaveWithValidCredentials_CallsSaveOnModel() {
+    public void viewOnSaveWithValidCredentials_CallsSaveOnInteractor() {
         // act
         String expectedName = "Kate";
         String expectedEmail = "kate@gmail.com";

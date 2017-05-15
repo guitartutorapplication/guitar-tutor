@@ -1,9 +1,9 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IGetSongsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetSongsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.views.SongLibraryView;
 
@@ -99,7 +99,7 @@ public class SongLibraryPresenterTest {
     }
 
     @Test
-    public void viewOnSongFilterChangedWithTrue_CallsGetAllSongsOnModel() {
+    public void viewOnSongFilterChangedWithTrue_CallsGetAllSongsOnInteractor() {
 
         // act
         presenter.viewOnSongFilterChanged(true);
@@ -109,7 +109,7 @@ public class SongLibraryPresenterTest {
     }
 
     @Test
-    public void viewOnSongFilterChangedWithFalse_CallsGetSongsUserCanPlayOnModel() {
+    public void viewOnSongFilterChangedWithFalse_CallsGetSongsUserCanPlayOnInteractor() {
         // act
         presenter.viewOnSongFilterChanged(false);
 
@@ -119,7 +119,7 @@ public class SongLibraryPresenterTest {
     }
 
     @Test
-    public void viewOnExit_CallsResetSongsOnModel() {
+    public void viewOnExit_CallsResetSongsOnInteractor() {
         // act
         presenter.viewOnExit();
 

@@ -1,14 +1,14 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IGetAccountDetailsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 import com.example.jlo19.guitartutor.views.IView;
 
 /**
- * Presenter that provides the AccountActivity with account details from DB
+ * Presenter that provides AccountActivity with DB API interaction
  */
 public class AccountPresenter implements IAccountPresenter {
 
@@ -29,6 +29,7 @@ public class AccountPresenter implements IAccountPresenter {
         this.view.hideAccountButton();
         this.view.showProgressBar();
 
+        // get account details from DB
         getAccountDetailsInteractor.getAccountDetails(loggedInUser.getApiKey(),
                 loggedInUser.getUserId());
     }

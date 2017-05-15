@@ -18,6 +18,9 @@ import com.example.jlo19.guitartutor.views.RegisterView;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that allows user to register for an account
+ */
 public class RegisterActivity extends AppCompatActivity implements RegisterView {
 
     private IRegisterPresenter presenter;
@@ -46,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // passing details from edittext to register with
                 presenter.viewOnRegister(editTxtName.getText().toString(),
                         editTxtEmail.getText().toString(),
                         editTxtConfirmEmail.getText().toString(),
@@ -164,6 +168,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     @Override
     public void showRegisterError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.register_error_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

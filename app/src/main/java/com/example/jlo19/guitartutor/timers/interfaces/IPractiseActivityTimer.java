@@ -5,7 +5,7 @@ import com.example.jlo19.guitartutor.enums.ChordChange;
 import com.example.jlo19.guitartutor.listeners.PractiseActivityTimerListener;
 
 /**
- *
+ * Interface for PractiseActivityTimer
  */
 public interface IPractiseActivityTimer {
     void setListener(PractiseActivityTimerListener listener);

@@ -15,7 +15,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 
 import junit.framework.Assert;
@@ -63,7 +63,7 @@ public class PractiseActivityTest {
         // stops real injection of presenter
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        // giving activity selected chords, chord change and beat speed
+        // sets chords, chord change and beat speed in intent that builds activity
         selectedChords = new ArrayList<Chord>(){
             {
                 add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));

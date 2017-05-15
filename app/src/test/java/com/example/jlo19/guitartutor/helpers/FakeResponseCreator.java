@@ -1,8 +1,8 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
+import com.example.jlo19.guitartutor.models.User;
 
 import org.powermock.api.mockito.PowerMockito;
 
@@ -57,6 +57,7 @@ public class FakeResponseCreator {
         PowerMockito.when(response.isSuccessful()).thenReturn(isSuccess);
 
         if (!isSuccess) {
+            // if not successful, set up error response message
             ResponseBody errorBody = PowerMockito.mock(ResponseBody.class);
             PowerMockito.when(errorBody.string()).thenReturn(responseErrorMessage);
             PowerMockito.when(response.errorBody()).thenReturn(errorBody);

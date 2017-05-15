@@ -1,8 +1,8 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IGetChordsInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
@@ -144,6 +144,7 @@ public class LearnAllChordsPresenterTest {
 
         // assert
         for (int i = 0; i < chords.size(); i++) {
+            // background is based off user level and whether user has learnt chord or not
             boolean userHasLearntChord = userChords.contains(chords.get(i).getId());
 
             String doneIdentifier = "";

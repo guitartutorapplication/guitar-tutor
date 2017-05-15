@@ -8,7 +8,7 @@ import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.SongView;
 
 /**
- * Presenter which provides activity with capability to retrieve song from S3
+ * Presenter that provides SongActivity with S3 interaction
  */
 public class SongPresenter implements ISongPresenter {
     private final IAmazonS3Service amazonS3Service;
@@ -27,6 +27,7 @@ public class SongPresenter implements ISongPresenter {
     @Override
     public void viewOnPlay() {
         view.showProgressBar();
+        // retrieve url for song audio from s3
         amazonS3Service.getUrl(view.getAudioFilename());
     }
 

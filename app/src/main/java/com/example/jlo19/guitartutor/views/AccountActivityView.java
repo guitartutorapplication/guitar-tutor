@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.views;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 import java.util.List;
 

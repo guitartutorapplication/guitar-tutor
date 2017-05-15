@@ -15,7 +15,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
@@ -53,8 +53,10 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // keeps screen on while activity is running
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        // sets soundpool to allow 4 streams playing at once
         setSoundPool(new SoundPool.Builder().setMaxStreams(4).build());
 
         txtCountdown = (TextView) findViewById(R.id.txtCountdown);
@@ -113,6 +115,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public List<Chord> getSelectedChords() {
+        // retrieves selected chords that were chosen in setup
         return getIntent().getExtras().getParcelableArrayList("CHORDS");
     }
 
@@ -146,6 +149,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.practise_error_occurred_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -166,6 +170,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void loadSounds(List<String> filenames) {
+        // loads sounds with specified filenames from raw folder
         soundIds = new ArrayList<>();
         for (String filename : filenames) {
             int resource = getResources().getIdentifier(
@@ -176,11 +181,13 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public ChordChange getChordChange() {
+        // retrieves selected chord change that were chosen in setup
         return (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
     }
 
     @Override
     public BeatSpeed getBeatSpeed() {
+        // retrieves selected beat speed that were chosen in setup
         return (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
     }
 
@@ -222,6 +229,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showPractiseSessionSaveSuccess(int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.gained_15_achievements_message, achievements);
 
@@ -240,6 +248,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showPractiseSessionSaveError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.save_practise_session_error_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -255,6 +264,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showPractiseSessionSaveSuccess(int level, int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.gained_15_achievements_message, achievements) + "\n" +
                 getString(R.string.new_level_message, level);
@@ -274,6 +284,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showPractiseSessionSaveSuccess() {
+        // displays success message with confirmation button
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.maximum_achievements_message);
 

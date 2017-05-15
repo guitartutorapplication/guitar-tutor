@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 
@@ -83,6 +83,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
 
     @Override
     public void setAccountDetails(String name, String email, int level, int achievements) {
+        // displaying account details on relevant text views
         TextView txtName = (TextView) findViewById(R.id.txtName);
         TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
         TextView txtLevel = (TextView) findViewById(R.id.txtLevel);
@@ -96,6 +97,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
 
     @Override
     public void showError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.account_error_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -112,6 +114,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     @Override
     public void startLoginActivity() {
         Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        // stops user from being able to return once logged out
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
@@ -128,6 +131,7 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // only finishes activity if ok result is returned from child activity
         if (requestCode == REQUEST_SAVE) {
             if (resultCode == RESULT_OK) {
                 finish();

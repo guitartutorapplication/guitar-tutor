@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.views;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 
 /**
  * View interface for AccountActivity

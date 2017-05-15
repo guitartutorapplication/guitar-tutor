@@ -1,8 +1,8 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
 import java.util.ArrayList;

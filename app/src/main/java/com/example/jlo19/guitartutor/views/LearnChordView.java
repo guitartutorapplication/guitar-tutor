@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.views;
 
 import android.graphics.Bitmap;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 /**
  * View interface for ChordsActivity

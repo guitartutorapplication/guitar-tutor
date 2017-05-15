@@ -11,9 +11,8 @@ import java.net.URL;
 import java.util.Date;
 
 /**
- * Asynchronous task to retrieve video from Amazon S3
+ * Asynchronous task to retrieve URL from Amazon S3
  */
-
 public class DownloadUrlTask extends AsyncTask<Void, Void, String> {
 
     private final DownloadVideoTaskListener listener;
@@ -36,7 +35,7 @@ public class DownloadUrlTask extends AsyncTask<Void, Void, String> {
             // setting the expiring time for pre-signed url
             Date expiration = new Date();
             long milliSeconds = expiration.getTime();
-            // add one hour
+            // add one hour to current time
             milliSeconds += 1000 * 60 * 60;
             expiration.setTime(milliSeconds);
             request.setExpiration(expiration);

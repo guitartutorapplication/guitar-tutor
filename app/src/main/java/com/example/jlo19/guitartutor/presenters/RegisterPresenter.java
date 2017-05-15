@@ -1,7 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.validation.DataValidator;
 import com.example.jlo19.guitartutor.views.IView;
@@ -10,7 +10,7 @@ import com.example.jlo19.guitartutor.views.RegisterView;
 import java.util.List;
 
 /**
- * Presenter which provides RegisterActivity with the ability to add an account to DB
+ * Presenter that provides RegisterActivity with DB API interaction
  */
 public class RegisterPresenter implements IRegisterPresenter {
 
@@ -33,9 +33,11 @@ public class RegisterPresenter implements IRegisterPresenter {
         view.showProgressBar();
         view.resetValidationErrors();
 
+        // validate data
         List<ValidationError> errors = DataValidator.validate(name, email, confirmEmail, password,
                 confirmPassword);
         if (errors.isEmpty()) {
+            // if data is valid, register for an account on DB
             registerInteractor.register(name, email, password);
         }
         else {
@@ -59,6 +61,7 @@ public class RegisterPresenter implements IRegisterPresenter {
     public void onValidationFailed(List<ValidationError> errors) {
         view.hideProgressBar();
 
+        // shows validation errors on view
         for (ValidationError error : errors) {
             switch (error) {
                 case FIELD_EMPTY_NAME:

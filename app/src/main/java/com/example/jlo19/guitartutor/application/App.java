@@ -9,9 +9,8 @@ import com.example.jlo19.guitartutor.components.DaggerAppComponent;
 import com.example.jlo19.guitartutor.modules.AppModule;
 
 /**
- * Extension of Application class to provide Dagger components
+ * Extension of Application class to provide Dagger components and set up logged in user
  */
-
 public class App extends Application {
 
     private static AppComponent component;

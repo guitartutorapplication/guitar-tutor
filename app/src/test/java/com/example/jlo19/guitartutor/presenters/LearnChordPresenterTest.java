@@ -3,8 +3,8 @@ package com.example.jlo19.guitartutor.presenters;
 import android.graphics.Bitmap;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
-import com.example.jlo19.guitartutor.models.interfaces.IAddUserChordInteractor;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IAddUserChordInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.views.LearnChordView;
@@ -216,7 +216,7 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void modelOnChordAddedWithNonZeroAchievements_ShowsAddLearntChordSuccessWithAchievementsOnView() {
+    public void onChordAddedWithNonZeroAchievements_ShowsAddLearntChordSuccessWithAchievementsOnView() {
         // act
         int achievements = 100;
         presenter.onChordAdded(0, achievements);
@@ -226,7 +226,7 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void modelOnChordAddedWithNonZeroAchievementsAndLevel_ShowsAddLearntChordSuccessWithAchievementsAndLevelOnView() {
+    public void onChordAddedWithNonZeroAchievementsAndLevel_ShowsAddLearntChordSuccessWithAchievementsAndLevelOnView() {
         // act
         int achievements = 1000;
         int level = 2;
@@ -237,7 +237,7 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void modelOnAddChordError_CallsHideProgressBarOnView() {
+    public void onAddChordError_CallsHideProgressBarOnView() {
         // act
         presenter.onAddChordError();
 
@@ -246,7 +246,7 @@ public class LearnChordPresenterTest {
     }
 
     @Test
-    public void modelOnAddChordError_ShowsAddLearntChordErrorOnView() {
+    public void onAddChordError_ShowsAddLearntChordErrorOnView() {
         // act
         presenter.onAddChordError();
 

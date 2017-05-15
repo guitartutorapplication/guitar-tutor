@@ -14,7 +14,7 @@ import android.widget.RadioGroup;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.SongsListAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.views.SongLibraryView;
 
@@ -89,12 +89,14 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
 
     @Override
     public void setSongs(List<Song> songs) {
+        // displays all songs in list
         this.songs = songs;
         listView.setAdapter(new SongsListAdapter(SongLibraryActivity.this, R.layout.song_list_item, songs));
     }
 
     @Override
     public void showError() {
+        // displays error message with confirmation button
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.loading_songs_message_failure)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

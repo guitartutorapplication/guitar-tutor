@@ -2,7 +2,7 @@ package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
 import com.example.jlo19.guitartutor.validation.DataValidator;
 import com.example.jlo19.guitartutor.views.EditAccountView;
@@ -11,7 +11,7 @@ import com.example.jlo19.guitartutor.views.IView;
 import java.util.List;
 
 /**
- * Presenter that provides the EditAccountActivity with ability to edit details on DB
+ * Presenter that provides EditAccountActivity with DB API interaction
  */
 public class EditAccountPresenter implements IEditAccountPresenter {
 
@@ -37,9 +37,11 @@ public class EditAccountPresenter implements IEditAccountPresenter {
         view.showProgressBar();
         view.resetValidationErrors();
 
+        // validates data
         List<ValidationError> errors = DataValidator.validate(name, email, confirmEmail, password,
                 confirmPassword);
         if (errors.isEmpty()) {
+            // if valid data, saves changes on DB
             editAccountDetailsInteractor.save(loggedInUser.getApiKey(), loggedInUser.getUserId(),
                     name, email, password);
         }
@@ -51,6 +53,7 @@ public class EditAccountPresenter implements IEditAccountPresenter {
     @Override
     public void onSaveSuccess() {
         view.hideProgressBar();
+        // returns to account screen once changes saved
         view.startAccountActivity();
     }
 
@@ -64,6 +67,7 @@ public class EditAccountPresenter implements IEditAccountPresenter {
     public void onValidationFailed(List<ValidationError> errors) {
         view.hideProgressBar();
 
+        // shows validation errors on view
         for (ValidationError error : errors) {
             switch (error) {
                 case FIELD_EMPTY_NAME:

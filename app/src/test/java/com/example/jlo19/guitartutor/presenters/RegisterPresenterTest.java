@@ -1,7 +1,7 @@
 package com.example.jlo19.guitartutor.presenters;
 
 import com.example.jlo19.guitartutor.enums.ValidationError;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
 import com.example.jlo19.guitartutor.views.RegisterView;
 
@@ -201,7 +201,7 @@ public class RegisterPresenterTest {
     }
 
     @Test
-    public void modelOnAlreadyRegistered_ShowsAlreadyRegisterErrorOnView() {
+    public void onAlreadyRegistered_ShowsAlreadyRegisterErrorOnView() {
         // act
         presenter.onValidationFailed(Collections.singletonList(ValidationError.EMAIL_ALREADY_REGISTERED));
 
