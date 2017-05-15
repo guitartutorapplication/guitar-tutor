@@ -35,12 +35,23 @@ public class BeatTimerTest {
     }
 
     @Test
-    public void start_CallsListenerOnNewBeat() {
+    public void start_CallsNewBeatOnListenerFourTimes() {
         // act
         beatTimer.start(BeatSpeed.FAST);
 
         // assert
-        await().until(AwaitConditionCreator.newBeatIsCalledOnListener(listener, 1));
+        for (int i = 0; i < 4; i++) {
+            await().until(AwaitConditionCreator.newBeatIsCalledOnListener(listener, i));
+        }
+    }
+
+    @Test
+    public void start_CallsBeatTimerFinished() {
+        // act
+        beatTimer.start(BeatSpeed.FAST);
+
+        // assert
+        await().until(AwaitConditionCreator.beatTimerFinishedIsCalledOnListener(listener));
     }
 
     @Test
@@ -54,17 +65,17 @@ public class BeatTimerTest {
     }
 
     @Test
-    public void start_CallStopAfter1Beat_NewBeatIsNotCalledOnListenerWith2() {
+    public void start_CallStopAfter1Beat_NewBeatIsNotCalledOnListenerWith1() {
         // arrange
         beatTimer.start(BeatSpeed.FAST);
         // waiting for first beat to be called
-        await().until(AwaitConditionCreator.newBeatIsCalledOnListener(listener, 1));
+        await().until(AwaitConditionCreator.newBeatIsCalledOnListener(listener, 0));
 
         // act
         beatTimer.stop();
 
         // assert
-        Mockito.verify(listener, never()).onNewBeat(2);
+        Mockito.verify(listener, never()).onNewBeat(1);
     }
 
     @Test

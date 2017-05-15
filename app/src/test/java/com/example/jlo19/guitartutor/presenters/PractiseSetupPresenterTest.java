@@ -188,18 +188,9 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void onNewBeatWith5thBeat_CallsStopOnTimer() {
+    public void onBeatTimerFinished_EnablesPreviewButtonOnView() {
         // act
-        presenter.onNewBeat(5);
-
-        // assert
-        Mockito.verify(beatTimer).stop();
-    }
-
-    @Test
-    public void onNewBeatWith5thBeat_EnablesPreviewButtonOnView() {
-        // act
-        presenter.onNewBeat(5);
+        presenter.onBeatTimerFinished();
 
         // assert
         Mockito.verify(view).enablePreviewButton(true);
@@ -224,15 +215,6 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void viewOnBeatSpeedChanged_EnablesPreviewButtonOnView() {
-        // act
-        presenter.viewOnBeatSpeedChanged();
-
-        // assert
-        Mockito.verify(view).enablePreviewButton(true);
-    }
-
-    @Test
     public void viewOnDestroy_CallsStopOnBeatTimer() {
         // act
         presenter.viewOnDestroy();
@@ -251,30 +233,12 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void viewOnPause_EnablesPreviewButtonOnView() {
-        // act
-        presenter.viewOnPause();
-
-        // assert
-        Mockito.verify(view).enablePreviewButton(true);
-    }
-
-    @Test
     public void viewOnStop_CallsStopOnBeatTimer() {
         // act
         presenter.viewOnStop();
 
         // assert
         Mockito.verify(beatTimer).stop();
-    }
-
-    @Test
-    public void viewOnStop_EnablesPreviewButtonOnView() {
-        // act
-        presenter.viewOnStop();
-
-        // assert
-        Mockito.verify(view).enablePreviewButton(true);
     }
 
     @Test

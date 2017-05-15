@@ -17,12 +17,27 @@ import java.util.concurrent.Callable;
 public class AwaitConditionCreator {
 
     public static Callable<Boolean> newBeatIsCalledOnListener(
-            final BeatTimerListener listener, final int numOfBeats) {
+            final BeatTimerListener listener, final int index) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(listener).onNewBeat(numOfBeats);
+                    Mockito.verify(listener).onNewBeat(index);
+                    return true;
+                } catch (AssertionError error) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    public static Callable<Boolean> beatTimerFinishedIsCalledOnListener(
+            final BeatTimerListener listener) {
+        return new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                try {
+                    Mockito.verify(listener).onBeatTimerFinished();
                     return true;
                 } catch (AssertionError error) {
                     return false;

@@ -12,27 +12,29 @@ public class BeatTimer implements IBeatTimer {
     private BeatTimerListener listener;
     private boolean requestStop;
     private Thread timer;
-    private int numOfBeats;
 
     @Override
     public void start(final BeatSpeed beatSpeed) {
         requestStop = false;
-        numOfBeats = 1;
 
         Runnable timerTask = new Runnable() {
             @Override
             public void run() {
-                while (!requestStop) {
                     try {
-                        // inform when new beat
-                        listener.onNewBeat(numOfBeats);
-                        // thread sleeps for requested beat speed value
-                        Thread.sleep(beatSpeed.getValue());
-                        numOfBeats++;
+                        // timer only needed for 4 beats
+                        for (int i = 0; i < 4; i++) {
+                            if (requestStop) {
+                                break;
+                            }
+                            // inform when new beat
+                            listener.onNewBeat(i);
+                            // thread sleeps for requested beat speed value
+                            Thread.sleep(beatSpeed.getValue());
+                        }
+                        listener.onBeatTimerFinished();
                     } catch (InterruptedException e) {
                         listener.onBeatTimerError();
                     }
-                }
             }
         };
 

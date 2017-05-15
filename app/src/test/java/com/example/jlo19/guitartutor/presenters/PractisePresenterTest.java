@@ -140,7 +140,7 @@ public class PractisePresenterTest {
     public void onCountdownStage3_CallsSetCountdownText() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_3;
-        presenter.onNewBeat(1);
+        presenter.onNewBeat(0);
 
         // assert
         Mockito.verify(view).setCountdownText(state.toString());
@@ -150,7 +150,7 @@ public class PractisePresenterTest {
     public void onCountdownStage2_CallsSetCountdownText() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_2;
-        presenter.onNewBeat(2);
+        presenter.onNewBeat(1);
 
         // assert
         Mockito.verify(view).setCountdownText(state.toString());
@@ -160,7 +160,7 @@ public class PractisePresenterTest {
     public void onCountdownStage1_CallsSetCountdownText() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_1;
-        presenter.onNewBeat(3);
+        presenter.onNewBeat(2);
 
         // assert
         Mockito.verify(view).setCountdownText(state.toString());
@@ -170,7 +170,7 @@ public class PractisePresenterTest {
     public void onCountdownStageGo_CallsSetCountdownText() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_GO;
-        presenter.onNewBeat(4);
+        presenter.onNewBeat(3);
 
         // assert
         Mockito.verify(view).setCountdownText(state.toString());
@@ -180,7 +180,7 @@ public class PractisePresenterTest {
     public void onCountdownStage3_CallsPlaySoundOnView() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_3;
-        presenter.onNewBeat(1);
+        presenter.onNewBeat(0);
 
         // assert
         Mockito.verify(view).playSound(state.ordinal());
@@ -190,7 +190,7 @@ public class PractisePresenterTest {
     public void onCountdownStage2_CallsPlaySoundOnView() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_2;
-        presenter.onNewBeat(2);
+        presenter.onNewBeat(1);
 
         // assert
         Mockito.verify(view).playSound(state.ordinal());
@@ -200,7 +200,7 @@ public class PractisePresenterTest {
     public void onCountdownStage1_CallsPlaySoundOnView() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_1;
-        presenter.onNewBeat(3);
+        presenter.onNewBeat(2);
 
         // assert
         Mockito.verify(view).playSound(state.ordinal());
@@ -210,25 +210,16 @@ public class PractisePresenterTest {
     public void onCountdownStageGo_CallsPlaySoundOnView() {
         // act
         PractiseActivityState state = PractiseActivityState.COUNTDOWN_STAGE_GO;
-        presenter.onNewBeat(4);
+        presenter.onNewBeat(3);
 
         // assert
         Mockito.verify(view).playSound(state.ordinal());
     }
 
     @Test
-    public void onCountdownFinished_CallsStopOnBeatTimer() {
-        // act
-        presenter.onNewBeat(5);
-
-        // assert
-        Mockito.verify(beatTimer).stop();
-    }
-
-    @Test
     public void onCountdownFinished_CallsStartOnPractiseActivityTimer() {
         // act
-        presenter.onNewBeat(5);
+        presenter.onBeatTimerFinished();
 
         // assert
         Mockito.verify(practiseActivityTimer).start(beatSpeed, chordChange, selectedChords.size());
@@ -237,7 +228,7 @@ public class PractisePresenterTest {
     @Test
     public void onCountdownFinished_CallsHideCountdownOnView() {
         // act
-        presenter.onNewBeat(5);
+        presenter.onBeatTimerFinished();
 
         // assert
         Mockito.verify(view).hideCountdown();
@@ -246,7 +237,7 @@ public class PractisePresenterTest {
     @Test
     public void onCountdownFinished_CallsHideFirstChordInstructionOnView() {
         // act
-        presenter.onNewBeat(5);
+        presenter.onBeatTimerFinished();
 
         // assert
         Mockito.verify(view).hideFirstChordInstruction();

@@ -78,7 +78,6 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     @Override
     public void viewOnBeatSpeedChanged() {
-        view.enablePreviewButton(true);
         // stop playing preview
         beatTimer.stop();
     }
@@ -90,13 +89,11 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
     @Override
     public void viewOnPause() {
-        view.enablePreviewButton(true);
         beatTimer.stop();
     }
 
     @Override
     public void viewOnStop() {
-        view.enablePreviewButton(true);
         beatTimer.stop();
     }
 
@@ -118,19 +115,17 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
     }
 
     @Override
-    public void onNewBeat(int numOfBeats) {
-        // once preview has been playing for long enough, stop timer
-        if (numOfBeats > 4) {
-            view.enablePreviewButton(true);
-            beatTimer.stop();
-        }
-        else {
-            view.playSound();
-        }
+    public void onNewBeat(int index) {
+        view.playSound();
     }
 
     @Override
     public void onBeatTimerError() {
         view.showPreviewBeatError();
+    }
+
+    @Override
+    public void onBeatTimerFinished() {
+        view.enablePreviewButton(true);
     }
 }

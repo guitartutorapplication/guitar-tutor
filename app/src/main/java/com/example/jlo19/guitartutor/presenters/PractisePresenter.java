@@ -147,32 +147,24 @@ public class PractisePresenter implements IPractisePresenter {
         view.returnToPractiseSetup();
     }
 
-    private void onCountdownFinished() {
-        beatTimer.stop();
-        // when countdown is finished, practise activity is started
-        practiseActivityTimer.start(view.getBeatSpeed(), view.getChordChange(),
-                view.getSelectedChords().size());
-
-        view.hideCountdown();
-        view.hideFirstChordInstruction();
-    }
-
     @Override
-    public void onNewBeat(int numOfBeats) {
-        // if countdown is not finished
-        if (numOfBeats <= 4) {
-            int index = numOfBeats - 1;
-            view.playSound(index);
-            view.setCountdownText(PractiseActivityState.values()[index].toString());
-        }
-        else {
-            onCountdownFinished();
-        }
+    public void onNewBeat(int index) {
+        view.playSound(index);
+        view.setCountdownText(PractiseActivityState.values()[index].toString());
     }
 
     @Override
     public void onBeatTimerError() {
         view.showError();
+    }
+
+    @Override
+    public void onBeatTimerFinished() {
+        practiseActivityTimer.start(view.getBeatSpeed(), view.getChordChange(),
+                view.getSelectedChords().size());
+
+        view.hideCountdown();
+        view.hideFirstChordInstruction();
     }
 
     @Override
