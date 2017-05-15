@@ -1,9 +1,10 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -12,7 +13,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountActivityPresenter;
 
 import junit.framework.Assert;
@@ -26,8 +27,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -67,12 +68,6 @@ public class AccountActivityActivityTest {
     }
 
     @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
     public void setsTitleOfToolbar() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
@@ -81,13 +76,37 @@ public class AccountActivityActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_account_activity_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // assert
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -116,7 +135,7 @@ public class AccountActivityActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndFinishesAccountActivityActivity() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -125,6 +144,10 @@ public class AccountActivityActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test

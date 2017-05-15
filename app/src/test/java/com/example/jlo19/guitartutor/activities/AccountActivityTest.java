@@ -1,9 +1,11 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,7 +14,7 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 
@@ -27,8 +29,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -65,12 +67,6 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
     public void setsTitleOfToolbar() {
         // assert
         TextView view = (TextView) activity.findViewById(R.id.toolbarTitle);
@@ -96,8 +92,8 @@ public class AccountActivityTest {
         String expectedEmail = "katesmith@gmail.com";
         int expectedLevel = 2;
         int expectedAchievements = 2000;
-        activity.setAccountDetails(new User(expectedName, expectedEmail, expectedLevel,
-                expectedAchievements));
+        activity.setAccountDetails(expectedName, expectedEmail, expectedLevel,
+                expectedAchievements);
 
         // assert
         TextView txtName = (TextView) activity.findViewById(R.id.txtName);
@@ -112,13 +108,28 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.account_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
     }
 
     @Test
@@ -148,19 +159,15 @@ public class AccountActivityTest {
 
     @Test
     public void startEditAccountActivity_EditAccountActivityIsStartedWithAccountDetails() {
-        // arrange
-        User user = new User("Kate", "katesmith@gmail.com", 2,
-                2000);
-        activity.setAccountDetails(user);
-
         // act
-        activity.startEditAccountActivity();
+        User user = new User("Kate", "katesmith@gmail.com", 2, 2000);
+        activity.startEditAccountActivity(user);
 
         // assert
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(EditAccountActivity.class.getName(), intent.getComponent().getClassName());
-        // checks correct chord is passed through
+        // checks correct user is passed through
         Assert.assertEquals(user, intent.getParcelableExtra("USER"));
     }
 
@@ -185,7 +192,7 @@ public class AccountActivityTest {
     }
 
     @Test
-    public void startLoginActivity_LoginActivityIsStartedWithFlagsSet() {
+    public void startLoginActivity_LoginActivityIsStartedWithFlagsSetAndAccountActivityIsFinished() {
         // act
         activity.startLoginActivity();
 
@@ -196,10 +203,11 @@ public class AccountActivityTest {
         // check flags
         Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
                 intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndAccountActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -208,6 +216,10 @@ public class AccountActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -230,5 +242,24 @@ public class AccountActivityTest {
         // checks correct activity is started
         Assert.assertEquals(AccountActivityActivity.class.getName(), intent.getComponent()
                 .getClassName());
+    }
+
+    @Test
+    public void onActivityResultWithRequestSaveAndResultOk_FinishesActivity() {
+        // act
+        int REQUEST_SAVE = 1;
+        activity.onActivityResult(REQUEST_SAVE, Activity.RESULT_OK, null);
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 }

@@ -1,76 +1,51 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.interactors.interfaces.ILoginInteractor;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILoginPresenter;
 import com.example.jlo19.guitartutor.views.LoginView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Testing LoginPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class LoginPresenterTest {
 
     private ILoginPresenter presenter;
     private LoginView view;
-    private ILoginModel model;
-    private SharedPreferences sharedPreferences;
+    private ILoginInteractor loginInteractor;
+    private LoggedInUser loggedInUser;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        presenter = new LoginPresenter();
-
-        sharedPreferences = Mockito.mock(SharedPreferences.class);
-        presenter.setSharedPreferences(sharedPreferences);
-
-        model = Mockito.mock(ILoginModel.class);
-        ((LoginPresenter) presenter).setModel(model);
+        loggedInUser = Mockito.mock(LoggedInUser.class);
+        loginInteractor = Mockito.mock(ILoginInteractor.class);
+        presenter = new LoginPresenter(loginInteractor, loggedInUser);
 
         view = Mockito.mock(LoginView.class);
         presenter.setView(view);
     }
 
     @Test
-    public void setModel_SetsSharedPreferencesOnModel() {
-        // assert
-        Mockito.verify(model).setSharedPreferences(sharedPreferences);
-    }
+    public void userIsLoggedIn_SetView_StartHomeActivityOnView() {
+        // arrange
+        Mockito.when(loggedInUser.isLoggedIn()).thenReturn(true);
 
-    @Test
-    public void modelOnUserAlreadyLoggedIn_StartHomeActivityOnView() {
         // act
-        presenter.modelOnUserAlreadyLoggedIn();
+        presenter.setView(view);
 
         // assert
         Mockito.verify(view).startHomeActivity();
     }
 
     @Test
-    public void setModel_CallsCheckForPreexistingUserOnModel() {
+    public void setsPresenterAsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).checkForPreexistingLogIn();
-    }
-
-    @Test
-    public void setModel_SetsPresenterOnModel() {
-        // assert
-        Mockito.verify(model).setPresenter(presenter);
+        Mockito.verify(loginInteractor).setListener(presenter);
     }
 
     @Test
@@ -83,7 +58,7 @@ public class LoginPresenterTest {
     }
 
     @Test
-    public void viewOnLogin_ShowsProgressBarOnView() {
+    public void viewOnLoginWithValidCredentials_ShowsProgressBarOnView() {
         // act
         presenter.viewOnLogin("kate@gmail.com", "password");
 
@@ -92,85 +67,86 @@ public class LoginPresenterTest {
     }
 
     @Test
-    public void viewOnLogin_CallsLoginOnModel() {
+    public void viewOnLogin_ResetErrorOnView() {
+        // act
+        presenter.viewOnLogin("kate@gmail.com", "password");
+
+        // assert
+        Mockito.verify(view).resetFieldEmptyErrors();
+    }
+
+    @Test
+    public void viewOnLoginWithValidCredentials_CallsLoginOnInteractor() {
         // act
         String expectedEmail = "kate@gmail.com";
         String expectedPassword = "password";
         presenter.viewOnLogin(expectedEmail, expectedPassword);
 
         // assert
-        Mockito.verify(model).login(expectedEmail, expectedPassword);
+        Mockito.verify(loginInteractor).login(expectedEmail, expectedPassword);
     }
 
     @Test
-    public void modelOnFieldEmpty_ShowsFieldEmptyErrorOnView() {
+    public void loginWithFieldEmptyEmail_ShowsFieldEmptyErrorOnView() {
         // act
-        presenter.modelOnFieldEmpty();
+        presenter.viewOnLogin("", "password");
 
         // assert
-        Mockito.verify(view).showFieldEmptyError();
+        Mockito.verify(view).showFieldEmailEmptyError();
     }
 
     @Test
-    public void modelOnFieldEmpty_HidesProgressBarOnView() {
+    public void loginWithFieldEmptyPassword_ShowsFieldEmptyErrorOnView() {
         // act
-        presenter.modelOnFieldEmpty();
+        presenter.viewOnLogin("katesmith@gmail.com", "");
+
+        // assert
+        Mockito.verify(view).showFieldPasswordEmptyError();
+    }
+
+    @Test
+    public void onLoginError_HidesProgressBarOnView() {
+        // act
+        presenter.onLoginError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnLoginError_HidesProgressBarOnView() {
+    public void onLoginError_ShowsLoginErrorOnView() {
         // act
-        presenter.modelOnLoginError();
-
-        // assert
-        Mockito.verify(view).hideProgressBar();
-    }
-
-    @Test
-    public void modelOnLoginError_ShowsLoginErrorOnView() {
-        // act
-        presenter.modelOnLoginError();
+        presenter.onLoginError();
 
         // assert
         Mockito.verify(view).showLoginError();
     }
 
     @Test
-    public void modelOnLoginSuccess_HidesProgressBarOnView() {
+    public void onLoginSuccess_HidesProgressBarOnView() {
         // act
-        presenter.modelOnLoginSuccess();
+        presenter.onLoginSuccess(new User(1, "api_key"));
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnLoginSuccess_CallsStartHomeActivityOnView() {
+    public void onLoginSuccess_CallsStartHomeActivityOnView() {
         // act
-        presenter.modelOnLoginSuccess();
+        presenter.onLoginSuccess(new User(1, "api_key"));
 
         // assert
         Mockito.verify(view).startHomeActivity();
     }
 
     @Test
-    public void modelOnIncorrectCredentials_HidesProgressBarOnView() {
+    public void onLoginSuccess_CallsLoginOnLoggedInUser() {
         // act
-        presenter.modelOnIncorrectCredentials();
+        User user = new User(1, "api_key");
+        presenter.onLoginSuccess(user);
 
         // assert
-        Mockito.verify(view).hideProgressBar();
-    }
-
-    @Test
-    public void modelOnIncorrectCredentials_CallsShowIncorrectCredentialsErrorOnView() {
-        // act
-        presenter.modelOnIncorrectCredentials();
-
-        // assert
-        Mockito.verify(view).showIncorrectCredentialsError();
+        Mockito.verify(loggedInUser).login(user.getId(), user.getApiKey());
     }
 }

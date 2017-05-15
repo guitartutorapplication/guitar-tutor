@@ -1,27 +1,24 @@
 package com.example.jlo19.guitartutor.modules;
 
-import com.example.jlo19.guitartutor.models.AccountActivityModel;
-import com.example.jlo19.guitartutor.models.AccountModel;
-import com.example.jlo19.guitartutor.models.EditAccountModel;
-import com.example.jlo19.guitartutor.models.LearnAllChordsModel;
-import com.example.jlo19.guitartutor.models.LearnChordModel;
-import com.example.jlo19.guitartutor.models.LoginModel;
-import com.example.jlo19.guitartutor.models.PractiseModel;
-import com.example.jlo19.guitartutor.models.PractiseSetupModel;
-import com.example.jlo19.guitartutor.models.RegisterModel;
-import com.example.jlo19.guitartutor.models.SongLibraryModel;
-import com.example.jlo19.guitartutor.models.SongModel;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountActivityModel;
-import com.example.jlo19.guitartutor.models.interfaces.IAccountModel;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
-import com.example.jlo19.guitartutor.models.interfaces.ILoginModel;
-import com.example.jlo19.guitartutor.models.interfaces.IPractiseModel;
-import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
-import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
-import com.example.jlo19.guitartutor.models.interfaces.ISongModel;
+import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.interactors.AddUserChordInteractor;
+import com.example.jlo19.guitartutor.interactors.GetSongsInteractor;
+import com.example.jlo19.guitartutor.interactors.GetUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.EditAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.GetAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.GetChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.LoginInteractor;
+import com.example.jlo19.guitartutor.interactors.UpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.RegisterInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IAddUserChordInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IEditAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetAccountDetailsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.ILoginInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IUpdateUserChordsInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IRegisterInteractor;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetSongsInteractor;
 import com.example.jlo19.guitartutor.presenters.AccountActivityPresenter;
 import com.example.jlo19.guitartutor.presenters.AccountPresenter;
 import com.example.jlo19.guitartutor.presenters.EditAccountPresenter;
@@ -48,6 +45,8 @@ import com.example.jlo19.guitartutor.services.AmazonS3Service;
 import com.example.jlo19.guitartutor.services.DatabaseService;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
+import com.example.jlo19.guitartutor.timers.BeatTimer;
+import com.example.jlo19.guitartutor.timers.PractiseActivityTimer;
 
 import javax.inject.Singleton;
 
@@ -57,106 +56,130 @@ import dagger.Provides;
 /**
  * Provides dependencies
  */
-
 @Module
 public class AppModule {
+
+    private final App application;
+
+    public AppModule(App application) {
+        this.application = application;
+    }
+
+    // Presenters
     @Provides
     @Singleton
     ILearnAllChordsPresenter provideLearnAllChordsPresenter() {
-        return new LearnAllChordsPresenter();
+        return new LearnAllChordsPresenter(createGetChordsInteractor(), application.getLoggedInUser());
     }
 
     @Provides
     @Singleton
     ILearnChordPresenter provideLearnChordPresenter() {
-        return new LearnChordPresenter();
+        return new LearnChordPresenter(createAddUserChordInteractor(), createAmazonS3Service(),
+                application.getLoggedInUser());
+    }
+
+    @Provides
+    IPractisePresenter providePractisePresenter() {
+        return new PractisePresenter(createUpdateUserChordsInteractor(), application.getLoggedInUser(),
+                new BeatTimer(), new PractiseActivityTimer());
     }
 
     @Provides
     @Singleton
-    IAmazonS3Service provideAmazonS3Service() { return new AmazonS3Service(); }
+    IPractiseSetupPresenter providePractiseSetupPresenter() {
+        return new PractiseSetupPresenter(createGetUserChordsInteractor(), application.getLoggedInUser(),
+                new BeatTimer());
+    }
 
     @Provides
     @Singleton
-    IPractiseModel providePractiseModel() { return new PractiseModel(); }
+    ISongLibraryPresenter provideSongLibraryPresenter() {
+        return new SongLibraryPresenter(createGetSongsInteractor(), application.getLoggedInUser());
+    }
 
     @Provides
     @Singleton
-    IPractisePresenter providePractisePresenter() {return new PractisePresenter();}
+    IRegisterPresenter provideRegisterPresenter() {
+        return new RegisterPresenter(createRegisterInteractor());
+    }
 
     @Provides
     @Singleton
-    IPractiseSetupModel providePractiseSetupModel() {return new PractiseSetupModel(); }
+    ILoginPresenter provideLoginPresenter() {
+        return new LoginPresenter(createLoginInteractor(),
+                application.getLoggedInUser());
+    }
 
     @Provides
     @Singleton
-    IPractiseSetupPresenter providePractiseSetupPresenter() {return new PractiseSetupPresenter();}
+    IAccountPresenter provideAccountPresenter() {
+        return new AccountPresenter(createGetAccountDetailsInteractor(),
+                application.getLoggedInUser());
+    }
 
     @Provides
     @Singleton
-    DatabaseApi provideDatabaseApi() {return DatabaseService.getApi();}
+    IEditAccountPresenter provideEditAccountPresenter() {
+        return new EditAccountPresenter(createEditAccountDetailsInteractor(),
+                application.getLoggedInUser());
+    }
 
     @Provides
     @Singleton
-    ILearnChordModel provideLearnChordModel() {return new LearnChordModel();}
+    ISongPresenter provideSongPresenter() {
+        return new SongPresenter(createAmazonS3Service());
+    }
 
     @Provides
     @Singleton
-    ILearnAllChordsModel provideLearnViewAllChordsModel() {return new LearnAllChordsModel();}
+    IAccountActivityPresenter provideAccountActivityPresenter() {
+        return new AccountActivityPresenter(createGetUserChordsInteractor(),
+                application.getLoggedInUser());
+    }
 
-    @Provides
-    @Singleton
-    ISongLibraryPresenter provideSongLibraryPresenter() {return new SongLibraryPresenter();}
+    // Interactors
+    private IGetSongsInteractor createGetSongsInteractor(){
+        return new GetSongsInteractor(createDatabaseApi(), createGetUserChordsInteractor());
+    }
 
-    @Provides
-    @Singleton
-    ISongLibraryModel provideSongLibraryModel(){return new SongLibraryModel();}
+    private IRegisterInteractor createRegisterInteractor() {
+        return new RegisterInteractor(createDatabaseApi());
+    }
 
-    @Provides
-    @Singleton
-    IRegisterPresenter provideRegisterPresenter() {return new RegisterPresenter();}
+    private ILoginInteractor createLoginInteractor() {
+        return new LoginInteractor(createDatabaseApi());
+    }
+    private IGetAccountDetailsInteractor createGetAccountDetailsInteractor() {
+        return new GetAccountDetailsInteractor(createDatabaseApi());
+    }
 
-    @Provides
-    @Singleton
-    IRegisterModel provideRegisterModel() {return new RegisterModel(); }
+    private IEditAccountDetailsInteractor createEditAccountDetailsInteractor() {
+        return new EditAccountDetailsInteractor(createDatabaseApi());
+    }
 
-    @Provides
-    @Singleton
-    ILoginPresenter provideLoginPresenter() {return new LoginPresenter();}
+    private IGetUserChordsInteractor createGetUserChordsInteractor() {
+        return new GetUserChordsInteractor(createDatabaseApi());
+    }
+    private IUpdateUserChordsInteractor createUpdateUserChordsInteractor() {
+        return new UpdateUserChordsInteractor(createDatabaseApi());
+    }
 
-    @Provides
-    @Singleton
-    ILoginModel provideLoginModel() {return new LoginModel();}
+    private IAddUserChordInteractor createAddUserChordInteractor() {
+        return new AddUserChordInteractor(createDatabaseApi());
+    }
 
-    @Provides
-    @Singleton
-    IAccountPresenter provideAccountPresenter() {return new AccountPresenter();}
+    private IGetChordsInteractor createGetChordsInteractor() {
+        return new GetChordsInteractor(createDatabaseApi(), createGetUserChordsInteractor(),
+                createGetAccountDetailsInteractor());
+    }
 
-    @Provides
-    @Singleton
-    IAccountModel provideAccountModel() {return new AccountModel();}
+    // Services
+    private IAmazonS3Service createAmazonS3Service() {
+        return new AmazonS3Service(application.getApplicationContext());
+    }
 
-    @Provides
-    @Singleton
-    IEditAccountPresenter provideEditAccountPresenter() {return new EditAccountPresenter();}
-
-    @Provides
-    @Singleton
-    IEditAccountModel provideEditAccountModel() {return new EditAccountModel();}
-
-    @Provides
-    @Singleton
-    ISongPresenter provideSongPresenter() {return new SongPresenter();}
-
-    @Provides
-    @Singleton
-    ISongModel provideSongModel() {return new SongModel();}
-
-    @Provides
-    @Singleton
-    IAccountActivityPresenter provideAccountActivityPresenter() {return new AccountActivityPresenter();}
-
-    @Provides
-    @Singleton
-    IAccountActivityModel provideAccountActivityModel() {return new AccountActivityModel();}
+    private DatabaseApi createDatabaseApi() {
+        return DatabaseService.getApi(application.getApplicationContext());
+    }
 }

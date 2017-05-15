@@ -1,92 +1,96 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnChordModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.interactors.interfaces.IAddUserChordInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
+import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.LearnChordView;
 
-import javax.inject.Inject;
-
 /**
- * Presenter which provides the LearnChordActivity with data from the amazon s3 API
- */
+ * Presenter that provides LearnChordActivity with DB API and S3 interaction
+ **/
 public class LearnChordPresenter implements ILearnChordPresenter {
 
+    private final IAmazonS3Service amazonS3Service;
     private LearnChordView view;
-    private ILearnChordModel model;
-    private SharedPreferences sharedPreferences;
+    private final IAddUserChordInteractor addUserChordInteractor;
+    private final LoggedInUser loggedInUser;
+
+    public LearnChordPresenter(IAddUserChordInteractor addUserChordInteractor, IAmazonS3Service
+            amazonS3Service, LoggedInUser loggedInUser) {
+        this.loggedInUser = loggedInUser;
+
+        this.addUserChordInteractor = addUserChordInteractor;
+        this.addUserChordInteractor.setListener(this);
+
+        this.amazonS3Service = amazonS3Service;
+        this.amazonS3Service.setImageListener(this);
+        this.amazonS3Service.setUrlListener(this);
+    }
 
     @Override
     public void setView(IView view) {
         this.view = (LearnChordView) view;
         this.view.showProgressBar();
+        // learnt button is enabled if the user hasn't learnt chord
         this.view.enableLearntButton(!this.view.getLearntChord());
 
-        App.getComponent().inject(this);
-    }
-
-    @Inject
-    void setModel(ILearnChordModel model) {
-        this.model = model;
-        model.setPresenter(this);
-        model.setContext(view.getContext());
-        model.getImage(view.getChord().getDiagramFilename());
-        model.setSharedPreferences(sharedPreferences);
+        // retrieve image from S3 for selected chord
+        amazonS3Service.getImage(this.view.getChord().getDiagramFilename());
     }
 
     @Override
     public void viewOnVideoRequested() {
         view.showProgressBar();
-        model.getVideo(view.getChord().getVideoFilename());
+        // retrieve video url from S3 for selected chord
+        amazonS3Service.getUrl(view.getChord().getVideoFilename());
     }
 
     @Override
-    public void modelOnImageDownloadFailed() {
+    public void onImageDownloadFailed() {
         view.hideProgressBar();
         view.showImageLoadError();
     }
 
     @Override
-    public void modelOnImageDownloadSuccess(Bitmap bitmap) {
+    public void onImageDownloadSuccess(Bitmap bitmap) {
         view.hideProgressBar();
         view.setImage(bitmap);
     }
 
     @Override
-    public void modelOnUrlDownloadSuccess(String url) {
+    public void onUrlDownloadSuccess(String url) {
         view.hideProgressBar();
         view.playVideo(url);
     }
 
     @Override
-    public void modelOnUrlDownloadFailed() {
+    public void onUrlDownloadFailed() {
         view.hideProgressBar();
         view.showVideoLoadError();
     }
 
     @Override
     public void viewOnLearnt() {
-        view.showConfirmDialog();
+        view.showLearntConfirmDialog();
     }
 
     @Override
     public void viewOnConfirmLearnt() {
         view.showProgressBar();
-        model.addLearntChord(view.getChord().getId());
+        // when user confirms that they have learnt chord, add to their user chords in DB
+        addUserChordInteractor.addUserChord(loggedInUser.getApiKey(), loggedInUser.getUserId(),
+                view.getChord().getId());
     }
 
     @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
-    }
-
-    @Override
-    public void modelOnLearntChordAdded(int level, int achievements) {
+    public void onChordAdded(int level, int achievements) {
         view.hideProgressBar();
+        // calling correct success message depending on whether level and achievements have been
+        // updated or not
         if (level == 0 && achievements == 0) {
             view.showAddLearntChordSuccess();
         }
@@ -96,12 +100,26 @@ public class LearnChordPresenter implements ILearnChordPresenter {
         else {
             view.showAddLearntChordSuccess(achievements);
         }
+    }
+
+    @Override
+    public void onAddChordError() {
+        view.hideProgressBar();
+        view.showAddLearntChordError();
+    }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
+
+    @Override
+    public void viewOnConfirmLearntSuccess() {
         view.startLearnAllChordsActivity();
     }
 
     @Override
-    public void modelOnAddLearntChordError() {
-        view.hideProgressBar();
-        view.showAddLearntChordError();
+    public void viewOnHelpRequested() {
+        view.startDiagramHelpActivity();
     }
 }

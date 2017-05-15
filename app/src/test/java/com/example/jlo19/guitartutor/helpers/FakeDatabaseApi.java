@@ -1,9 +1,8 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
-import com.example.jlo19.guitartutor.models.retrofit.responses.ResponseWithMessage;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
 
 import java.util.ArrayList;
@@ -16,9 +15,8 @@ import retrofit2.Call;
  */
 public class FakeDatabaseApi implements DatabaseApi{
 
-    private FakeChordsCall fakeUserChordsResponseCall;
     private FakeUserCall fakeUserCall;
-    private FakeResponseWithMessageCall fakeResponseWithMessageCall;
+    private FakeMessageCall fakeMessageCall;
     private FakeChordsCall fakeChordsCall;
     private FakeSongsCall fakeSongsCall;
 
@@ -30,50 +28,38 @@ public class FakeDatabaseApi implements DatabaseApi{
         this.fakeSongsCall = fakeSongsCall;
     }
 
-    public FakeDatabaseApi(FakeResponseWithMessageCall fakeResponseWithMessageCall) {
-        this.fakeResponseWithMessageCall = fakeResponseWithMessageCall;
+    public FakeDatabaseApi(FakeMessageCall fakeMessageCall) {
+        this.fakeMessageCall = fakeMessageCall;
     }
 
     public FakeDatabaseApi(FakeUserCall fakeUserCall) {
         this.fakeUserCall = fakeUserCall;
     }
 
-    public FakeDatabaseApi(FakeSongsCall fakeSongsCall, FakeChordsCall
-            fakeUserChordsResponseCall) {
-        this.fakeSongsCall = fakeSongsCall;
-        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
-    }
-
-    public FakeDatabaseApi(FakeChordsCall fakeChordsCall, FakeChordsCall
-            fakeUserChordsResponseCall, FakeUserCall fakeUserCall) {
-        this.fakeChordsCall = fakeChordsCall;
-        this.fakeUserChordsResponseCall = fakeUserChordsResponseCall;
-        this.fakeUserCall = fakeUserCall;
-    }
-
     @Override
-    public Call<List<Chord>> getChords() {
+    public Call<List<Chord>> getChords(String apiKey) {
         return fakeChordsCall;
     }
 
     @Override
-    public Call<List<Song>> getSongs() {
+    public Call<List<Song>> getSongs(String apiKey) {
         return fakeSongsCall;
     }
 
     @Override
-    public Call<ResponseWithMessage> registerUser(String name, String email, String password) {
-        return fakeResponseWithMessageCall;
+    public Call<List<String>> registerUser(String name, String email, String password) {
+        return fakeMessageCall;
     }
 
     @Override
-    public Call<User> getAccountDetails(int userId) {
+    public Call<User> getAccountDetails(String apiKey, int userId) {
         return fakeUserCall;
     }
 
     @Override
-    public Call<ResponseWithMessage> editAccountDetails(int userId, String name, String email, String password) {
-        return fakeResponseWithMessageCall;
+    public Call<List<String>> editAccountDetails(
+            String apiKey, int userId, String name, String email, String password) {
+        return fakeMessageCall;
     }
 
     @Override
@@ -82,22 +68,17 @@ public class FakeDatabaseApi implements DatabaseApi{
     }
 
     @Override
-    public Call<List<Chord>> getUserChords(int userId) {
-        if (fakeUserChordsResponseCall == null) {
-            return fakeChordsCall;
-        }
-        else {
-            return fakeUserChordsResponseCall;
-        }
+    public Call<List<Chord>> getUserChords(String apiKey, int userId) {
+        return fakeChordsCall;
     }
 
     @Override
-    public Call<User> addUserChord(int userId, int chordId) {
+    public Call<User> addUserChord(String apiKey, int userId, int chordId) {
         return fakeUserCall;
     }
 
     @Override
-    public Call<User> updateUserChords(int userId, ArrayList<Integer> chordIds) {
+    public Call<User> updateUserChords(String apiKey, int userId, ArrayList<Integer> chordIds) {
         return fakeUserCall;
     }
 }

@@ -1,13 +1,10 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import android.content.SharedPreferences;
+import com.example.jlo19.guitartutor.listeners.EditAccountDetailsListener;
 
 /**
  * Interface for EditAccountPresenter
  */
-public interface IEditAccountPresenter extends IDataValidationPresenter {
-    void setSharedPreferences(SharedPreferences sharedPreferences);
+public interface IEditAccountPresenter extends IPresenter, EditAccountDetailsListener {
     void viewOnSave(String name, String email, String confirmEmail, String password, String confirmPassword);
-    void modelOnSaveSuccess();
-    void modelOnSaveError();
 }

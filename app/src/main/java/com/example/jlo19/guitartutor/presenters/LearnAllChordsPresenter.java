@@ -1,55 +1,47 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.interfaces.ILearnAllChordsModel;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
- * Presenter which provides the activities with all chords from the database API
+ * Presenter that provides LearnAllChordsActivity with DB API interaction
  */
 public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
 
     private LearnAllChordsView view;
-    private SharedPreferences sharedPreferences;
-    private ILearnAllChordsModel model;
+    private final IGetChordsInteractor getChordsInteractor;
+    private final LoggedInUser loggedInUser;
+
+    public LearnAllChordsPresenter(IGetChordsInteractor getChordsInteractor, LoggedInUser loggedInUser) {
+        this.getChordsInteractor = getChordsInteractor;
+        this.loggedInUser = loggedInUser;
+        this.getChordsInteractor.setListener(this);
+    }
 
     @Override
     public void setView(IView view) {
         this.view = (LearnAllChordsView) view;
         this.view.showProgressBar();
 
-        App.getComponent().inject(this);
-    }
-
-    @Inject
-    void setModel(ILearnAllChordsModel model) {
-        this.model = model;
-        model.setPresenter(this);
-        model.setSharedPreferences(sharedPreferences);
-        model.getChordsAndDetails();
+        // gets chords (and other details) from DB
+        this.getChordsInteractor.getChordsAndDetails(loggedInUser.getApiKey(), loggedInUser.getUserId());
     }
 
     @Override
-    public void modelOnChordsAndDetailsRetrieved() {
+    public void onChordsAndDetailsRetrieved(
+            List<Chord> allChords, int userLevel, List<Integer> userChords) {
         view.hideProgressBar();
-
-        List<Chord> allChords = model.getAllChords();
-        int userLevel = model.getUserLevel();
-        List<Integer> userChords = model.getUserChordIds();
 
         for (int i = 0; i < allChords.size(); i++) {
             view.addChordButton(i);
             view.setChordButtonText(i, allChords.get(i).toString());
-            // button is only enabled if chord's level is than or equal to user's level
+            // button is only enabled if chord's level is less than or equal to user's level
             view.enableChordButton(i, allChords.get(i).getLevelRequired() <= userLevel);
             // setting background based on level of chord/whether the user has learnt the chord
             boolean userHasLearntChord = userChords.contains(allChords.get(i).getId());
@@ -86,19 +78,20 @@ public class LearnAllChordsPresenter implements ILearnAllChordsPresenter {
     }
 
     @Override
-    public void modelOnError() {
+    public void onError() {
         view.hideProgressBar();
         view.showError();
     }
 
     @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public void viewOnChordRequested(int chordPos) {
+        // retrieve selected chord and start learn chord activity
+        Chord chord = getChordsInteractor.getAllChords().get(chordPos);
+        view.startLearnChordActivity(chord, getChordsInteractor.getUserChordIds().contains(chord.getId()));
     }
 
     @Override
-    public void viewOnChordRequested(int chordPos) {
-        Chord chord = model.getAllChords().get(chordPos);
-        view.startLearnChordActivity(chord, model.getUserChordIds().contains(chord.getId()));
+    public void viewOnConfirmError() {
+        view.finishActivity();
     }
 }

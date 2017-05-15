@@ -3,7 +3,6 @@ package com.example.jlo19.guitartutor.enums;
 /**
  * Enum demonstrating all different types of chord change speeds
  */
-
 public enum ChordChange {
     // value = number of beats between chord changes
     ONE_BEAT(1),

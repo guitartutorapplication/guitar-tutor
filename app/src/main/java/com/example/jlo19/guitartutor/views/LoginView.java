@@ -3,10 +3,11 @@ package com.example.jlo19.guitartutor.views;
 /**
  * View interface for LoginActivity
  */
-public interface LoginView extends IProgressBarView {
+public interface LoginView extends ProgressBarView {
     void startRegisterActivity();
-    void showFieldEmptyError();
+    void showFieldEmailEmptyError();
     void startHomeActivity();
-    void showIncorrectCredentialsError();
     void showLoginError();
+    void showFieldPasswordEmptyError();
+    void resetFieldEmptyErrors();
 }

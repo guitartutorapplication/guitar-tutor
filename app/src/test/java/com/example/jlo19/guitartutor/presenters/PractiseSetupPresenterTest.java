@@ -1,23 +1,17 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
+import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,28 +20,23 @@ import java.util.List;
 /**
  * Testing PractiseSetupPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class PractiseSetupPresenterTest {
 
     private IPractiseSetupPresenter presenter;
-    private IPractiseSetupModel model;
     private PractiseSetupView view;
-    private SharedPreferences sharedPreferences;
+    private LoggedInUser loggedInUser;
+    private IGetUserChordsInteractor getUserChordsInteractor;
+    private IBeatTimer beatTimer;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
+        loggedInUser = Mockito.mock(LoggedInUser.class);
+        Mockito.when(loggedInUser.getUserId()).thenReturn(2);
+        Mockito.when(loggedInUser.getApiKey()).thenReturn("api_key");
+        getUserChordsInteractor = Mockito.mock(IGetUserChordsInteractor.class);
+        beatTimer = Mockito.mock(IBeatTimer.class);
 
-        presenter = new PractiseSetupPresenter();
-
-        sharedPreferences = Mockito.mock(SharedPreferences.class);
-        presenter.setSharedPreferences(sharedPreferences);
-
-        model = Mockito.mock(IPractiseSetupModel.class);
-        ((PractiseSetupPresenter) presenter).setModel(model);
+        presenter = new PractiseSetupPresenter(getUserChordsInteractor, loggedInUser, beatTimer);
 
         view = Mockito.mock(PractiseSetupView.class);
         presenter.setView(view);
@@ -66,64 +55,65 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void setModel_CallsGetChordsOnModel() {
+    public void callsGetChordsOnInteractor() {
         // assert
-        Mockito.verify(model).getChords();
+        Mockito.verify(getUserChordsInteractor).getUserChords(loggedInUser.getApiKey(),
+                loggedInUser.getUserId());
     }
 
     @Test
-    public void setModel_SetsSharedPreferencesOnModel() {
+    public void setsListenerOnInteractor() {
         // assert
-        Mockito.verify(model).setSharedPreferences(sharedPreferences);
+        Mockito.verify(getUserChordsInteractor).setListener(presenter);
     }
 
     @Test
-    public void setModel_SetsPresenterOnModel() {
+    public void setsListenerOnBeatTimer() {
         // assert
-        Mockito.verify(model).setPresenter(presenter);
+        Mockito.verify(beatTimer).setListener(presenter);
     }
 
     @Test
-    public void modelOnChordsRetrieved_HidesProgressBarOnView() {
+    public void onChordsRetrieved_HidesProgressBarOnView() {
         // act
-        presenter.modelOnChordsRetrieved(null);
+        presenter.onUserChordsRetrieved(null);
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnChordsRetrieved_SetsChordsOnView() {
+    public void onChordsRetrieved_SetsChordsOnView() {
         // act
         List<Chord> expectedChords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
-        presenter.modelOnChordsRetrieved(expectedChords);
+        presenter.onUserChordsRetrieved(expectedChords);
 
         // assert
         Mockito.verify(view).setChords(expectedChords);
     }
 
     @Test
-    public void modelOnLoadChordsError_HidesProgressBarOnView() {
+    public void onGetChordsError_HidesProgressBarOnView() {
         // act
-        presenter.modelOnLoadChordsError();
+        presenter.onGetUserChordsError();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnLoadChordsError_ShowLoadChordsErrorOnView() {
+    public void onGetChordsError_ShowLoadChordsErrorOnView() {
         // act
-        presenter.modelOnLoadChordsError();
+        presenter.onGetUserChordsError();
 
         // assert
         Mockito.verify(view).showLoadChordsError();
     }
 
     @Test
-    public void viewOnPractise_CallsChordsSelectedOnModel() {
+    public void viewOnPractiseWithValidChordsSelected_CallsStartPractiseActivityOnView() {
         // act
         ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
             add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
@@ -135,49 +125,48 @@ public class PractiseSetupPresenterTest {
         presenter.viewOnPractise(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
 
         // assert
-        Mockito.verify(model).chordsSelected(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
+        Mockito.verify(view).startPractiseActivity(selectedChords, ChordChange.values()[selectedChordChangeIndex],
+                BeatSpeed.values()[selectedBeatSpeedIndex]);
     }
 
     @Test
-    public void modelOnLessThanTwoChordsSelected_CallsLessThanTwoChordsSelectedErrorOnView() {
+    public void viewOnPractiseWithLessThanTwoChordsSelected_CallsLessThanTwoChordsSelectedErrorOnView() {
         // act
-        presenter.modelOnLessThanTwoChordsSelected();
+        ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
+            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
+        }};
+        int selectedChordChangeIndex = 1;
+        int selectedBeatSpeedIndex = 1;
+        presenter.viewOnPractise(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
 
         // assert
         Mockito.verify(view).showLessThanTwoChordsSelectedError();
     }
 
     @Test
-    public void modelOnSameSelectedChord_CallsShowSameSelectedChordErrorOnView() {
+    public void viewOnPractiseWithSameSelectedChord_CallsShowSameSelectedChordErrorOnView() {
         // act
-        presenter.modelOnSameSelectedChord();
+        final Chord chord = new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1);
+        ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
+            add(chord);
+            add(chord);
+        }};
+        int selectedChordChangeIndex = 1;
+        int selectedBeatSpeedIndex = 1;
+        presenter.viewOnPractise(selectedChords, selectedChordChangeIndex, selectedBeatSpeedIndex);
 
         // assert
         Mockito.verify(view).showSameSelectedChordError();
     }
 
     @Test
-    public void modelOnCorrectSelectedChords_CallsStartPractiseActivityOnView() {
-        // act
-        ArrayList<Chord> selectedChords = new ArrayList<Chord>() {{
-            add(new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1));
-            add(new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
-            add(new Chord(3, "C", "MAJOR", "C.png", "C.mp4", "C.wav", 1));
-        }};
-        presenter.modelOnCorrectSelectedChords(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
-
-        // assert
-        Mockito.verify(view).startPractiseActivity(selectedChords, ChordChange.ONE_BEAT, BeatSpeed.VERY_SLOW);
-    }
-
-    @Test
-    public void viewOnBeatPreview_CallsStartBeatPreviewTimerOnModel() {
+    public void viewOnBeatPreview_CallsStartOnBeatTimer() {
         // act
         int selectedBeatSpeedIndex = 3;
         presenter.viewOnBeatPreview(selectedBeatSpeedIndex);
 
         // assert
-        Mockito.verify(model).startBeatPreview(selectedBeatSpeedIndex);
+        Mockito.verify(beatTimer).start(BeatSpeed.values()[selectedBeatSpeedIndex]);
     }
 
     @Test
@@ -190,65 +179,74 @@ public class PractiseSetupPresenterTest {
     }
 
     @Test
-    public void modelOnNewBeat_CallsPlaySoundOnView() {
+    public void onNewBeat_CallsPlaySoundOnView() {
         // act
-        presenter.modelOnNewBeat();
+        presenter.onNewBeat(1);
 
         // assert
         Mockito.verify(view).playSound();
     }
 
     @Test
-    public void modelOnPreviewBeatError_CallsShowPreviewBeatErrorOnView() {
+    public void onBeatTimerFinished_EnablesPreviewButtonOnView() {
         // act
-        presenter.modelOnPreviewBeatError();
-
-        // assert
-        Mockito.verify(view).showPreviewBeatError();
-    }
-
-    @Test
-    public void modelOnBeatPreviewFinished_CallsEnablePreviewButtonWithTrueOnView() {
-        // act
-        presenter.modelOnBeatPreviewFinished();
+        presenter.onBeatTimerFinished();
 
         // assert
         Mockito.verify(view).enablePreviewButton(true);
     }
 
     @Test
-    public void viewOnBeatSpeedChanged_CallsStopBeatPreviewOnModel() {
+    public void onTimerError_CallsShowPreviewBeatErrorOnView() {
+        // act
+        presenter.onBeatTimerError();
+
+        // assert
+        Mockito.verify(view).showPreviewBeatError();
+    }
+
+    @Test
+    public void viewOnBeatSpeedChanged_CallsStopOnBeatTimer() {
         // act
         presenter.viewOnBeatSpeedChanged();
 
         // assert
-        Mockito.verify(model).stopBeatPreview();
+        Mockito.verify(beatTimer).stop();
     }
 
     @Test
-    public void viewOnDestroy_StopsBeatPreviewOnModel() {
+    public void viewOnDestroy_CallsStopOnBeatTimer() {
         // act
         presenter.viewOnDestroy();
 
         // assert
-        Mockito.verify(model).stopBeatPreview();
+        Mockito.verify(beatTimer).stop();
     }
 
     @Test
-    public void viewOnPause_StopsBeatPreviewOnModel() {
+    public void viewOnPause_CallsStopOnBeatTimer() {
         // act
         presenter.viewOnPause();
 
         // assert
-        Mockito.verify(model).stopBeatPreview();
+        Mockito.verify(beatTimer).stop();
     }
 
     @Test
-    public void viewOnStop_StopsBeatPreviewOnModel() {
+    public void viewOnStop_CallsStopOnBeatTimer() {
         // act
         presenter.viewOnStop();
 
         // assert
-        Mockito.verify(model).stopBeatPreview();
+        Mockito.verify(beatTimer).stop();
+    }
+
+    @Test
+    public void viewOnConfirmError_CallFinishActivityOnView() {
+        // act
+        presenter.viewOnConfirmError();
+
+        // assert
+        Mockito.verify(view).finishActivity();
     }
 }

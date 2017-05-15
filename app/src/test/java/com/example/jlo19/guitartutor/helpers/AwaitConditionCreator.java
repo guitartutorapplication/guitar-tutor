@@ -1,13 +1,13 @@
 package com.example.jlo19.guitartutor.helpers;
 
 import com.example.jlo19.guitartutor.enums.PractiseActivityState;
-import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
-import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
-import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
-import com.example.jlo19.guitartutor.services.interfaces.DatabaseApi;
+import com.example.jlo19.guitartutor.listeners.BeatTimerListener;
+import com.example.jlo19.guitartutor.listeners.PractiseActivityTimerListener;
 
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
+import org.powermock.api.mockito.PowerMockito;
 
 import java.util.concurrent.Callable;
 
@@ -16,12 +16,13 @@ import java.util.concurrent.Callable;
  */
 public class AwaitConditionCreator {
 
-    public static Callable<Boolean> getChordsCalledOnApi(final DatabaseApi api) {
+    public static Callable<Boolean> newBeatIsCalledOnListener(
+            final BeatTimerListener listener, final int index) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(api).getChords();
+                    Mockito.verify(listener).onNewBeat(index);
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -30,12 +31,13 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> getUserChordsCalledOnApi(final DatabaseApi api, final int userId) {
+    public static Callable<Boolean> beatTimerFinishedIsCalledOnListener(
+            final BeatTimerListener listener) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(api).getUserChords(userId);
+                    Mockito.verify(listener).onBeatTimerFinished();
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -44,12 +46,13 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> getAccountDetailsCalledOnApi(final DatabaseApi api, final int userId) {
+    public static Callable<Boolean> sleepIsCalledOnThread(final int beatSpeedValue) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(api).getAccountDetails(userId);
+                    PowerMockito.verifyStatic();
+                    Thread.sleep(beatSpeedValue);
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -58,13 +61,13 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> chordsAndDetailsRetrievedCalledOnPresenter(
-            final ILearnAllChordsPresenter presenter) {
+    public static Callable<Boolean> firstRoundOfChordsCalledOnListener(final PractiseActivityTimerListener
+                                                                                listener) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(presenter).modelOnChordsAndDetailsRetrieved();
+                    Mockito.verify(listener).onFirstRoundOfChords();
                     return true;
                 } catch (AssertionError error) {
                     return false;
@@ -73,88 +76,18 @@ public class AwaitConditionCreator {
         };
     }
 
-    public static Callable<Boolean> errorCalledOnPresenter(final ILearnAllChordsPresenter presenter) {
+    public static Callable<Boolean> newPractiseStateCalledOnListener(
+            final PractiseActivityTimerListener listener, final PractiseActivityState state, final
+    VerificationMode verificationMode, final int numChords) {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    Mockito.verify(presenter).modelOnError();
-                    return true;
-                } catch (AssertionError error) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static Callable<Boolean> firstRoundOfChordsCalledOnPresenter(final IPractisePresenter
-                                                                                presenter) {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    Mockito.verify(presenter).modelOnFirstRoundOfChords();
-                    return true;
-                } catch (AssertionError error) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static Callable<Boolean> newPractiseStateCalledOnPresenter(
-            final IPractisePresenter presenter, final PractiseActivityState state, final int
-            currentChordIndex, final VerificationMode verificationMode) {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    Mockito.verify(presenter, verificationMode).modelOnNewPractiseState(state, currentChordIndex);
-                    return true;
-                } catch (AssertionError error) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static Callable<Boolean> newPreviewBeatCalledOnPresenter(
-            final IPractiseSetupPresenter presenter, final VerificationMode verificationMode) {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    Mockito.verify(presenter, verificationMode).modelOnNewBeat();
-                    return true;
-                } catch (AssertionError error) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static Callable<Boolean> beatPreviewFinishedCalledOnPresenter(
-            final IPractiseSetupPresenter presenter) {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    Mockito.verify(presenter).modelOnBeatPreviewFinished();
-                    return true;
-                } catch (AssertionError error) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static Callable<Boolean> countdownFinishedCalledOnPresenter(
-            final IPractisePresenter presenter) {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    Mockito.verify(presenter).modelOnCountdownFinished();
+                    // ensuring calls are received in order
+                    InOrder inOrder = Mockito.inOrder(listener);
+                    for (int i = 0; i < numChords; i++) {
+                        inOrder.verify(listener, verificationMode).onNewPractiseState(state, i);
+                    }
                     return true;
                 } catch (AssertionError error) {
                     return false;

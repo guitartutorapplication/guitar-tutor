@@ -1,20 +1,18 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
+import com.example.jlo19.guitartutor.listeners.AddUserChordListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceImageListener;
+import com.example.jlo19.guitartutor.listeners.AmazonS3ServiceUrlListener;
 
 /**
  * Interface for LearnChordPresenter
  */
-public interface ILearnChordPresenter extends IPresenter {
+public interface ILearnChordPresenter extends IPresenter, AmazonS3ServiceUrlListener,
+        AmazonS3ServiceImageListener, AddUserChordListener {
     void viewOnVideoRequested();
-    void modelOnImageDownloadFailed();
-    void modelOnImageDownloadSuccess(Bitmap bitmap);
-    void modelOnUrlDownloadSuccess(String url);
-    void modelOnUrlDownloadFailed();
     void viewOnLearnt();
     void viewOnConfirmLearnt();
-    void setSharedPreferences(SharedPreferences sharedPreferences);
-    void modelOnLearntChordAdded(int level, int achievements);
-    void modelOnAddLearntChordError();
+    void viewOnConfirmError();
+    void viewOnConfirmLearntSuccess();
+    void viewOnHelpRequested();
 }

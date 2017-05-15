@@ -1,72 +1,69 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.interfaces.ISongLibraryModel;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetSongsInteractor;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.SongLibraryView;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
- * Presenter which provides the activities with all songs from the database API
+ * Presenter that provides SongLibraryActivity with DB API interaction
  */
 public class SongLibraryPresenter implements ISongLibraryPresenter {
 
     private SongLibraryView view;
-    private ISongLibraryModel model;
-    private SharedPreferences sharedPreferences;
+    private final IGetSongsInteractor getSongsInteractor;
+    private final LoggedInUser loggedInUser;
+
+    public SongLibraryPresenter(IGetSongsInteractor getSongsInteractor, LoggedInUser loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        this.getSongsInteractor = getSongsInteractor;
+        this.getSongsInteractor.setListener(this);
+    }
 
     @Override
     public void setView(IView view) {
         this.view = (SongLibraryView) view;
         this.view.showProgressBar();
 
-        App.getComponent().inject(this);
-    }
-
-    @Inject
-    void setModel(ISongLibraryModel model) {
-        this.model = model;
-        model.setPresenter(this);
-        model.setSharedPreferences(sharedPreferences);
-        model.getAllSongs();
+        // get all songs from DB
+        this.getSongsInteractor.getAllSongs(loggedInUser.getApiKey());
     }
 
     @Override
-    public void modelOnSongsRetrieved(List<Song> songs) {
+    public void onSongsRetrieved(List<Song> songs) {
         view.hideProgressBar();
         view.setSongs(songs);
     }
 
     @Override
-    public void modelOnError() {
+    public void onError() {
         view.hideProgressBar();
         view.showError();
     }
 
     @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
-    }
-
-    @Override
     public void viewOnSongFilterChanged(boolean viewAll) {
         if (viewAll) {
-            model.getAllSongs();
-        }
-        else {
-            model.getSongsUserCanPlay();
+            // if filter is change to view all songs, retrieve all from DB
+            getSongsInteractor.getAllSongs(loggedInUser.getApiKey());
+        } else {
+            // retrieve songs user can play from DB
+            getSongsInteractor.getSongsUserCanPlay(loggedInUser.getApiKey(), loggedInUser.getUserId());
         }
     }
 
     @Override
     public void viewOnExit() {
-        model.resetSongs();
+        getSongsInteractor.resetSongs();
     }
+
+    @Override
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
+
 }

@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +59,7 @@ public class ChordsListAdapter extends BaseAdapter {
     public View getDropDownView(int position, View convertView,
                                 ViewGroup parent) {
         if(convertView == null) {
+            // instantiates layout xml
             convertView = layoutInflater.inflate(R.layout.drop_down_item, null);
         }
 
@@ -71,6 +72,7 @@ public class ChordsListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
+            // instantiates layout xml
             convertView = layoutInflater.inflate(android.R.layout.simple_spinner_item, null);
         }
 

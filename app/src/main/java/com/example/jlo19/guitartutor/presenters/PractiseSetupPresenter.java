@@ -1,28 +1,38 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.interfaces.IPractiseSetupModel;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.interactors.interfaces.IGetUserChordsInteractor;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
+import com.example.jlo19.guitartutor.timers.interfaces.IBeatTimer;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import javax.inject.Inject;
+import java.util.Set;
 
 /**
- * Presenter which provides PractiseSetupActivity with chords from database API and timer capabilities
+ * Presenter that provides PractiseSetupActivity with DB API interaction and timer capabilities
  */
 public class PractiseSetupPresenter implements IPractiseSetupPresenter {
 
+    private final IGetUserChordsInteractor getUserChordsInteractor;
+    private final LoggedInUser loggedInUser;
+    private final IBeatTimer beatTimer;
     private PractiseSetupView view;
-    private IPractiseSetupModel model;
-    private SharedPreferences sharedPreferences;
+
+    public PractiseSetupPresenter(IGetUserChordsInteractor getUserChordsInteractor, LoggedInUser loggedInUser,
+                                  IBeatTimer beatTimer) {
+        this.loggedInUser = loggedInUser;
+        this.beatTimer = beatTimer;
+        this.beatTimer.setListener(this);
+        this.getUserChordsInteractor = getUserChordsInteractor;
+        this.getUserChordsInteractor.setListener(this);
+    }
 
     @Override
     public void setView(IView view) {
@@ -30,92 +40,92 @@ public class PractiseSetupPresenter implements IPractiseSetupPresenter {
         this.view.showProgressBar();
         this.view.loadSound();
 
-        App.getComponent().inject(this);
-    }
-
-    @Inject
-    void setModel(IPractiseSetupModel model) {
-        this.model = model;
-        model.setPresenter(this);
-        model.setSharedPreferences(sharedPreferences);
-        model.getChords();
-    }
-
-    @Override
-    public void modelOnChordsRetrieved(List<Chord> chords) {
-        view.hideProgressBar();
-        view.setChords(chords);
-    }
-
-    @Override
-    public void modelOnLoadChordsError() {
-        view.hideProgressBar();
-        view.showLoadChordsError();
+        // gets user chords from DB
+        getUserChordsInteractor.getUserChords(loggedInUser.getApiKey(), loggedInUser.getUserId());
     }
 
     @Override
     public void viewOnPractise(List<Chord> selectedChords, int chordChangeIndex, int beatSpeedIndex) {
-        model.chordsSelected(selectedChords, chordChangeIndex, beatSpeedIndex);
-    }
+        // removing any null values (left on default option)
+        List<Chord> chosenChords = new ArrayList<>();
+        for (Chord chord : selectedChords) {
+            if (chord != null) {
+                chosenChords.add(chord);
+            }
+        }
 
-    @Override
-    public void modelOnLessThanTwoChordsSelected() {
-        view.showLessThanTwoChordsSelectedError();
-    }
+        Set<Chord> uniqueChords = new HashSet<>(chosenChords);
 
-    @Override
-    public void modelOnSameSelectedChord() {
-        view.showSameSelectedChordError();
-    }
-
-    @Override
-    public void modelOnCorrectSelectedChords(List<Chord> selectedChords, ChordChange chordChange, BeatSpeed beatSpeed) {
-        view.startPractiseActivity(selectedChords, chordChange, beatSpeed);
+        // if the user has selected less than two chords
+        if (chosenChords.size() < 2) {
+            view.showLessThanTwoChordsSelectedError();
+        }
+        // if the user has selected the same chord more than once
+        else if (uniqueChords.size() < chosenChords.size()) {
+            view.showSameSelectedChordError();
+        }
+        else {
+            view.startPractiseActivity(chosenChords, ChordChange.values()[chordChangeIndex],
+                    BeatSpeed.values()[beatSpeedIndex]);
+        }
     }
 
     @Override
     public void viewOnBeatPreview(int beatSpeedIndex) {
         view.enablePreviewButton(false);
-        model.startBeatPreview(beatSpeedIndex);
-    }
-
-    @Override
-    public void modelOnNewBeat() {
-        view.playSound();
-    }
-
-    @Override
-    public void modelOnPreviewBeatError() {
-        view.showPreviewBeatError();
-    }
-
-    @Override
-    public void modelOnBeatPreviewFinished() {
-        view.enablePreviewButton(true);
+        beatTimer.start(BeatSpeed.values()[beatSpeedIndex]);
     }
 
     @Override
     public void viewOnBeatSpeedChanged() {
-        model.stopBeatPreview();
+        // stop playing preview
+        beatTimer.stop();
     }
 
     @Override
     public void viewOnDestroy() {
-        model.stopBeatPreview();
+        beatTimer.stop();
     }
 
     @Override
     public void viewOnPause() {
-        model.stopBeatPreview();
+        beatTimer.stop();
     }
 
     @Override
     public void viewOnStop() {
-        model.stopBeatPreview();
+        beatTimer.stop();
     }
 
     @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public void viewOnConfirmError() {
+        view.finishActivity();
+    }
+
+    @Override
+    public void onUserChordsRetrieved(List<Chord> chords) {
+        view.hideProgressBar();
+        view.setChords(chords);
+    }
+
+    @Override
+    public void onGetUserChordsError() {
+        view.hideProgressBar();
+        view.showLoadChordsError();
+    }
+
+    @Override
+    public void onNewBeat(int index) {
+        view.playSound();
+    }
+
+    @Override
+    public void onBeatTimerError() {
+        view.showPreviewBeatError();
+    }
+
+    @Override
+    public void onBeatTimerFinished() {
+        view.enablePreviewButton(true);
     }
 }

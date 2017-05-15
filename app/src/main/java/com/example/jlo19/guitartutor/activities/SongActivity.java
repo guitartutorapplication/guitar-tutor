@@ -1,25 +1,29 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongPresenter;
 import com.example.jlo19.guitartutor.views.SongView;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that displays details of selected song
+ */
 public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
     private ISongPresenter presenter;
@@ -39,6 +43,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
     @Override
     public String getToolbarTitle() {
+        // toolbar title display both song title and artist
         Song song = getIntent().getParcelableExtra("SONG");
         return song.getTitle() + " - " + song.getArtist();
     }
@@ -60,6 +65,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
         int numLines = (song.getContents().split("\r\n")).length;
         textView.setMaxLines(numLines);
 
+        // allows injection of presenter
         App.getComponent().inject(this);
 
         btnPlay = (Button) findViewById(R.id.btnPlay);
@@ -98,6 +104,7 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
         }
         else {
             presenter.viewOnAudioLoaded();
+            // when audio is finished playing
             onCompletionListener = new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
@@ -115,13 +122,17 @@ public class SongActivity extends BaseWithToolbarActivity implements SongView {
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_demo_message_failure, Toast.LENGTH_SHORT).show();
-    }
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_demo_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
 
-    @Override
-    public Context getContext() {
-        return getApplicationContext();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override

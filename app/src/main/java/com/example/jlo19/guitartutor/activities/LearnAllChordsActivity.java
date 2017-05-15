@@ -1,18 +1,19 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 import com.example.jlo19.guitartutor.views.LearnAllChordsView;
 
@@ -27,6 +28,7 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     private ProgressDialog progressDialog;
     private ILearnAllChordsPresenter presenter;
     private ChordsButtonAdapter chordsButtonAdapter;
+    private final int REQUEST_LEARNT = 1;
 
     @Override
     public int getLayout() {
@@ -56,16 +58,25 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
     @Inject
     public void setPresenter(ILearnAllChordsPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
     public void showError(){
+        // displays error message with confirmation button
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(),
-                        R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+                AlertDialog dialog = new AlertDialog.Builder(LearnAllChordsActivity.this)
+                        .setMessage(R.string.loading_chords_message_failure)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                presenter.viewOnConfirmError();
+                            }
+                        }).create();
+                dialog.show();
+
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(
+                        LearnAllChordsActivity.this, R.color.colorAccent));
             }
         });
     }
@@ -76,7 +87,18 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
         Intent intent = new Intent(getBaseContext(), LearnChordActivity.class);
         intent.putExtra("CHORD", selectedChord);
         intent.putExtra("LEARNT_CHORD", learntChord);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_LEARNT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // only finishes activity if ok result is returned from child activity
+        if (requestCode == REQUEST_LEARNT) {
+            if (resultCode == RESULT_OK) {
+                finishActivity();
+            }
+        }
     }
 
     @Override
@@ -129,6 +151,11 @@ public class LearnAllChordsActivity extends BaseWithToolbarActivity implements L
                 gridView.setAdapter(chordsButtonAdapter);
             }
         });
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     public void showProgressBar() {

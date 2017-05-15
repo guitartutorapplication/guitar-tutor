@@ -3,7 +3,6 @@ package com.example.jlo19.guitartutor.enums;
 /**
  * Enum demonstrating all different types of beat speeds
  */
-
 public enum BeatSpeed {
     // value = milliseconds between beats
     VERY_SLOW(1500),

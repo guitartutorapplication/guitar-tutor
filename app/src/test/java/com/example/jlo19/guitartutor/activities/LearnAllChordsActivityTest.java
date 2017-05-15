@@ -1,9 +1,11 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -13,7 +15,7 @@ import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsButtonAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnAllChordsPresenter;
 
 import junit.framework.Assert;
@@ -27,8 +29,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -67,19 +69,28 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.loading_chords_message_failure),
-                ShadowToast.getTextOfLatestToast());
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Assert.assertEquals(activity.getResources().getString(R.string.loading_chords_message_failure),
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void showError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
     }
 
     @Test
@@ -103,7 +114,7 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndLearnAllChordsActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -112,6 +123,10 @@ public class LearnAllChordsActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -172,6 +187,16 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
+    public void onActivityResultWithRequestLearntAndResultOk_FinishesActivity() {
+        // act
+        int REQUEST_LEARNT = 1;
+        activity.onActivityResult(REQUEST_LEARNT, Activity.RESULT_OK, null);
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
+    }
+
+    @Test
     public void addChordButton_CallsAddButtonOnAdapter() {
         // arrange
         ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
@@ -201,7 +226,7 @@ public class LearnAllChordsActivityTest {
     }
 
     @Test
-    public void enabledChordButton_CallsEnableButtonOnAdapter() {
+    public void enableChordButton_CallsEnableButtonOnAdapter() {
         // arrange
         ChordsButtonAdapter adapter = Mockito.mock(ChordsButtonAdapter.class);
         activity.setChordsButtonAdapter(adapter);
@@ -229,5 +254,14 @@ public class LearnAllChordsActivityTest {
 
         // assert
         Mockito.verify(adapter).setButtonBackground(id, doneIdentifier, numberIdentifier);
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 }

@@ -1,7 +1,7 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,8 +15,8 @@ import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongPresenter;
 
 import junit.framework.Assert;
@@ -30,8 +30,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +58,7 @@ public class SongActivityTest {
         // stops real injection of presenter
         getApp().setComponent(PowerMockito.mock(AppComponent.class));
 
-        // giving activity a selected song
+        // sets song in intent that builds activity
         List<Chord> chords = Arrays.asList(
                 new Chord(1, "A", "MAJOR", "A.png", "A.mp4", "A.wav", 1),
                 new Chord(2, "B", "MAJOR", "B.png", "B.mp4", "B.wav", 1));
@@ -110,14 +110,14 @@ public class SongActivityTest {
     }
 
     @Test
-    public void setsMainTextToContentsFromSong() {
+    public void setsTextToContentsFromSong() {
         // assert
         TextView textView = (TextView) activity.findViewById(R.id.textView);
         Assert.assertEquals(selectedSong.getContents(), textView.getText().toString());
     }
 
     @Test
-    public void setMaxLinesOfMainTextToNumberOfLinesInContents() {
+    public void setMaxLinesOfTextToNumberOfLinesInContents() {
         // assert
         TextView textView = (TextView) activity.findViewById(R.id.textView);
         Assert.assertEquals((selectedSong.getContents().split("\r\n")).length,
@@ -125,7 +125,7 @@ public class SongActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndSongActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -134,6 +134,10 @@ public class SongActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -222,22 +226,14 @@ public class SongActivityTest {
     }
 
     @Test
-    public void showError_MakesToastWithErrorMessage() {
+    public void showError_ShowsAlertDialogWithErrorMessage() {
         // act
         activity.showError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_demo_message_failure),
-                ShadowToast.getTextOfLatestToast());
-    }
-
-    @Test
-    public void getContext_ReturnsContext() {
-        // act
-        Context actualContext = activity.getContext();
-
-        // assert
-        Assert.assertEquals(getApp(), actualContext);
+                shadowOf(dialog).getMessage());
     }
 
     @Test

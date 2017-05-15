@@ -1,6 +1,6 @@
 package com.example.jlo19.guitartutor.helpers;
 
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,7 +11,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Fakes retrofit call with ChordsResponse
+ * Fakes retrofit call with list of Chord
  */
 public class FakeChordsCall implements Call<List<Chord>> {
 
@@ -23,16 +23,12 @@ public class FakeChordsCall implements Call<List<Chord>> {
 
     @Override
     public Response<List<Chord>> execute() throws IOException {
-        if (response != null) {
-            return response;
-        }
-        else {
-            throw new IOException();
-        }
+        return null;
     }
 
     @Override
     public void enqueue(Callback<List<Chord>> callback) {
+        // no response has been set, on failure result
         if (response != null) {
             callback.onResponse(this, response);
         }

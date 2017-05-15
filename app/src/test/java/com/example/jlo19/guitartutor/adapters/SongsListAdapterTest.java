@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Chord;
+import com.example.jlo19.guitartutor.models.Song;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +64,7 @@ public class SongsListAdapterTest {
         adapter.getView(position, view, null);
 
         // assert
+        // concatenates chords into strong
         List<Chord> expectedChords = songs.get(position).getChords();
         String expectedChordsList = "";
         for (int i = 0; i < expectedChords.size(); i++) {

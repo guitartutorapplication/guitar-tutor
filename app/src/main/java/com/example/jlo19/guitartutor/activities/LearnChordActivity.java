@@ -2,21 +2,18 @@ package com.example.jlo19.guitartutor.activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.ILearnChordPresenter;
 import com.example.jlo19.guitartutor.views.LearnChordView;
 
@@ -26,10 +23,9 @@ import javax.inject.Inject;
  * Activity that shows the details of a selected chord on screen
  */
 public class LearnChordActivity extends BaseWithToolbarActivity implements LearnChordView {
+
     private ProgressDialog progressDialog;
-    private Chord chord;
     private ILearnChordPresenter presenter;
-    private boolean learntChord;
 
     @Override
     public int getLayout() {
@@ -38,19 +34,13 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public String getToolbarTitle() {
-        // no title on this screen
+        // no title on this screen due to diagram displayed
         return "";
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // retrieving selected chord
-        chord = getIntent().getParcelableExtra("CHORD");
-
-        // retrieving whether selected chord has been learned or not
-        learntChord = getIntent().getBooleanExtra("LEARNT_CHORD", false);
 
         // allows injection of presenter
         App.getComponent().inject(this);
@@ -75,8 +65,7 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
         btnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), LearnDiagramHelpActivity.class);
-                startActivity(intent);
+                presenter.viewOnHelpRequested();
             }
         });
     }
@@ -84,7 +73,6 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     @Inject
     public void setPresenter(ILearnChordPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -96,18 +84,24 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public Chord getChord() {
-        return chord;
-    }
-
-    @Override
-    public Context getContext() {
-        return getApplicationContext();
+        // returns chord selected in previous activity
+        return getIntent().getParcelableExtra("CHORD");
     }
 
     @Override
     public void showImageLoadError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chord_image_message_failure, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_chord_image_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -132,13 +126,23 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
 
     @Override
     public void showVideoLoadError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chord_video_message_failure, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_chord_video_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public boolean getLearntChord() {
-        return learntChord;
+        // returns whether chord is learnt or not
+        return getIntent().getBooleanExtra("LEARNT_CHORD", false);
     }
 
     @Override
@@ -148,7 +152,8 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     }
 
     @Override
-    public void showConfirmDialog() {
+    public void showLearntConfirmDialog() {
+        // asks user for confirmation that they understand chord
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_learnt_message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -172,39 +177,92 @@ public class LearnChordActivity extends BaseWithToolbarActivity implements Learn
     public void startLearnAllChordsActivity() {
         Intent intent = new Intent(getBaseContext(), LearnAllChordsActivity.class);
         startActivity(intent);
+        // returns ok result to parent activity
+        setResult(RESULT_OK);
+        finishActivity();
     }
 
     @Override
     public void showAddLearntChordError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.adding_learnt_chord_error_message, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.adding_learnt_chord_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showAddLearntChordSuccess() {
+        // displays success message with confirmation button
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.maximum_achievements_message);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearntSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showAddLearntChordSuccess(int level, int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.gained_100_achievements_message, achievements) + "\n" +
                 getString(R.string.new_level_message, level);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearntSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showAddLearntChordSuccess(int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.add_learnt_chord_success_message) + "\n" +
                 getString(R.string.gained_100_achievements_message, achievements);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmLearntSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
+    }
+
+    @Override
+    public void startDiagramHelpActivity() {
+        Intent intent = new Intent(getBaseContext(), LearnDiagramHelpActivity.class);
+        startActivity(intent);
     }
 }

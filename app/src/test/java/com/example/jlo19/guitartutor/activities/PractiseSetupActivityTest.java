@@ -1,10 +1,11 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -17,7 +18,7 @@ import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.components.AppComponent;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 
 import junit.framework.Assert;
@@ -31,8 +32,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,12 +71,6 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void setPresenter_SetsSharedPreferencesOnPresenter() {
-        // assert
-        Mockito.verify(presenter).setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-    }
-
-    @Test
     public void setSelectedChordChordChangeSpeedAndBeatSpeed_PractiseButtonClicked_CallsPractiseOnPresenter() {
         // arrange
         final List<Chord> chords = Arrays.asList(
@@ -85,7 +80,7 @@ public class PractiseSetupActivityTest {
                 new Chord(4, "D", "MAJOR", "D.png", "D.mp4", "D.wav", 1));
         activity.setChords(chords);
         Spinner spnChord1 = (Spinner) activity.findViewById(R.id.spnChord1);
-        // index 1 as default option will be at index 0
+        // default option would be at index 0, so index 1 is first chord
         spnChord1.setSelection(1);
 
         RadioGroup rGroupChordChange = (RadioGroup) activity.findViewById(R.id.rGroupChordChange);
@@ -101,6 +96,7 @@ public class PractiseSetupActivityTest {
         // assert
         ArrayList<Chord> expectedSelectedChords = new ArrayList<Chord>(){{
             add(chords.get(0));
+            // null if left at default spinner option
             add(null);
             add(null);
             add(null);
@@ -214,43 +210,61 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void showLoadChordError_MakesToastWithLoadChordsFailureMessage() {
+    public void showLoadChordError_ShowsAlertDialogWithLoadChordsFailureMessage() {
         // act
         activity.showLoadChordsError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.loading_chords_message_failure),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showPreviewBeatError_MakesToastWithPreviewBeatFailureMessage() {
+    public void showLoadChordError_ClickOkButton_CallsConfirmErrorOnPresenter() {
+        // arrange
+        activity.showLoadChordsError();
+
+        // act
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Button btnOk = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        btnOk.performClick();
+
+        // assert
+        Mockito.verify(presenter).viewOnConfirmError();
+    }
+
+    @Test
+    public void showPreviewBeatError_ShowsAlertDialogWithPreviewBeatFailureMessage() {
         // act
         activity.showPreviewBeatError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.practise_beat_preview_error_message),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showLessThanTwoChordsSelectedError_MakesToastWithLessThanTwoChordsSelectedMessage() {
+    public void showLessThanTwoChordsSelectedError_ShowsAlertDialogWithLessThanTwoChordsSelectedMessage() {
         // act
         activity.showLessThanTwoChordsSelectedError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.less_than_two_selected_chords_error),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
-    public void showSameSelectedChordError_MakesToastWithSameChordSelectedMessage() {
+    public void showSameSelectedChordError_ShowsAlertDialogWithSameChordSelectedMessage() {
         // act
         activity.showSameSelectedChordError();
 
         // assert
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         Assert.assertEquals(getApp().getResources().getString(R.string.same_chord_selected_error),
-                ShadowToast.getTextOfLatestToast());
+                shadowOf(dialog).getMessage());
     }
 
     @Test
@@ -356,7 +370,7 @@ public class PractiseSetupActivityTest {
     }
 
     @Test
-    public void homeButtonClicked_StartsHomeActivity() {
+    public void homeButtonClicked_StartsHomeActivityWithFlagsSetAndPractiseSetupActivityIsFinished() {
         // act
         Button btnHome = (Button) activity.findViewById(R.id.btnHome);
         btnHome.performClick();
@@ -365,5 +379,18 @@ public class PractiseSetupActivityTest {
         Intent intent = shadowOf(activity).getNextStartedActivity();
         // checks correct activity is started
         Assert.assertEquals(HomeActivity.class.getName(), intent.getComponent().getClassName());
+        // check flags
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+                intent.getFlags());
+        Assert.assertTrue(activity.isFinishing());
+    }
+
+    @Test
+    public void finishActivity_FinishesActivity() {
+        // act
+        activity.finishActivity();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 }

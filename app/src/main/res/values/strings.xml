@@ -67,7 +67,6 @@
     <string name="confirm_email_name">Confirm email address</string>
     <string name="password_name">Password</string>
     <string name="confirm_password_name">Confirm password</string>
-    <string name="incorrect_login_credentials_error_message">Incorrect email or password</string>
     <string name="login_error_message">An error has occurred while trying to log in</string>
     <string name="register_here_message">Register here</string>
     <string name="no_account_question_message">Don\'t have an account?</string>

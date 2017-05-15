@@ -29,7 +29,7 @@ public class LearnChordVideoActivity extends AppCompatActivity {
 
         showProgressBar();
 
-        // setting video
+        // retrieving URL passed through from previous activity
         String url = getIntent().getExtras().getString("URL");
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
@@ -37,6 +37,7 @@ public class LearnChordVideoActivity extends AppCompatActivity {
         onInfoListener = new MediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                // hide progress bar once video is loaded
                 if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END){
                     hideProgressBar();
                 }
@@ -45,6 +46,7 @@ public class LearnChordVideoActivity extends AppCompatActivity {
         };
         videoView.setOnInfoListener(onInfoListener);
 
+        // set up media player and video
         MediaController mediaCtrl = new MediaController(this);
         mediaCtrl.setMediaPlayer(videoView);
         videoView.setMediaController(mediaCtrl);

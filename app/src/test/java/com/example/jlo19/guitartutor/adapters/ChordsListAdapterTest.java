@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.example.jlo19.guitartutor.BuildConfig;
 import com.example.jlo19.guitartutor.R;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 
 import junit.framework.Assert;
 

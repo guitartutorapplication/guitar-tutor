@@ -1,17 +1,18 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.User;
+import com.example.jlo19.guitartutor.models.User;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountPresenter;
 import com.example.jlo19.guitartutor.views.AccountView;
 
@@ -23,8 +24,8 @@ import javax.inject.Inject;
 public class AccountActivity extends BaseWithToolbarActivity implements AccountView {
 
     private ProgressDialog progressDialog;
-    private User user;
     private IAccountPresenter presenter;
+    private final int REQUEST_SAVE = 1;
 
     @Override
     public int getLayout() {
@@ -71,7 +72,6 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     @Inject
     public void setPresenter(IAccountPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -82,44 +82,72 @@ public class AccountActivity extends BaseWithToolbarActivity implements AccountV
     }
 
     @Override
-    public void setAccountDetails(User user) {
-        this.user = user;
+    public void setAccountDetails(String name, String email, int level, int achievements) {
+        // displaying account details on relevant text views
         TextView txtName = (TextView) findViewById(R.id.txtName);
         TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
         TextView txtLevel = (TextView) findViewById(R.id.txtLevel);
         TextView txtAchievements = (TextView) findViewById(R.id.txtAchievements);
 
-        txtName.setText(user.getName());
-        txtEmail.setText(user.getEmail());
-        txtLevel.setText(String.valueOf(user.getLevel()));
-        txtAchievements.setText(String.valueOf(user.getAchievements()));
+        txtName.setText(name);
+        txtEmail.setText(email);
+        txtLevel.setText(String.valueOf(level));
+        txtAchievements.setText(String.valueOf(achievements));
     }
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(), R.string.account_error_message,
-                Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.account_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void startLoginActivity() {
         Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        // stops user from being able to return once logged out
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
     @Override
-    public void startEditAccountActivity() {
+    public void startEditAccountActivity(User user) {
         // passing account details to next activity
         Intent intent = new Intent(getBaseContext(), EditAccountActivity.class);
         intent.putExtra("USER", user);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_SAVE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // only finishes activity if ok result is returned from child activity
+        if (requestCode == REQUEST_SAVE) {
+            if (resultCode == RESULT_OK) {
+                finish();
+            }
+        }
     }
 
     @Override
     public void startAccountActivityActivity() {
         Intent intent = new Intent(getBaseContext(), AccountActivityActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     @Override

@@ -1,23 +1,24 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.ChordsListAdapter;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractiseSetupPresenter;
 import com.example.jlo19.guitartutor.views.PractiseSetupView;
 
@@ -53,8 +54,10 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // set up soundpool with a maximum of one sound playing at once
         setSoundPool(new SoundPool.Builder().setMaxStreams(1).build());
 
+        // adds all spinners to list for easy access
         Spinner spnChord1 = (Spinner) findViewById(R.id.spnChord1);
         Spinner spnChord2 = (Spinner) findViewById(R.id.spnChord2);
         Spinner spnChord3 = (Spinner) findViewById(R.id.spnChord3);
@@ -88,7 +91,7 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
         btnPractise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // retrieving selected chords
+                // retrieving selected chords from spinners
                 List<Chord> selectedChords = new ArrayList<>();
                 for(int i = 0; i < spnChords.size(); i++) {
                     Chord selectedChord = (Chord) spnChords.get(i).getSelectedItem();
@@ -110,7 +113,6 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
     @Inject
     public void setPresenter(IPractiseSetupPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -153,6 +155,7 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
 
     @Override
     public void setChords(List<Chord> chords) {
+        // set list of chords in adapter for each spinner
         ChordsListAdapter adapter = new ChordsListAdapter(this, chords);
 
         for(int i = 0; i < spnChords.size(); i++) {
@@ -162,26 +165,54 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
 
     @Override
     public void showLoadChordsError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_chords_message_failure, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_chords_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showLessThanTwoChordsSelectedError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.less_than_two_selected_chords_error, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.less_than_two_selected_chords_error)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showSameSelectedChordError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.same_chord_selected_error, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.same_chord_selected_error)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void startPractiseActivity(List<Chord> selectedChords, ChordChange chordChange,
                                       BeatSpeed beatSpeed) {
-        // passing through selected chords and chord change to new activity
+        // passing through selected chords, chord change and beat speed choices to new activity
         Intent intent = new Intent(getBaseContext(), PractiseActivity.class);
         intent.putParcelableArrayListExtra("CHORDS", (ArrayList<Chord>) selectedChords);
         intent.putExtra("CHORD_CHANGE", chordChange);
@@ -201,8 +232,17 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
 
     @Override
     public void showPreviewBeatError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.practise_beat_preview_error_message, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.practise_beat_preview_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -213,5 +253,10 @@ public class PractiseSetupActivity extends BaseWithToolbarActivity implements Pr
                 btnPreview.setEnabled(isEnabled);
             }
         });
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 }

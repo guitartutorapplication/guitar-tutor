@@ -1,13 +1,11 @@
 package com.example.jlo19.guitartutor.presenters.interfaces;
 
-import android.content.SharedPreferences;
+import com.example.jlo19.guitartutor.listeners.GetChordsListener;
 
 /**
  * Interface for LearnAllChordsPresenter
  */
-public interface ILearnAllChordsPresenter extends IPresenter {
-    void modelOnChordsAndDetailsRetrieved();
-    void modelOnError();
-    void setSharedPreferences(SharedPreferences sharedPreferences);
+public interface ILearnAllChordsPresenter extends IPresenter, GetChordsListener {
     void viewOnChordRequested(int chordPos);
+    void viewOnConfirmError();
 }

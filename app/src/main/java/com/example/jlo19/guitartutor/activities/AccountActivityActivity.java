@@ -1,15 +1,16 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.AccountActivityListAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IAccountActivityPresenter;
 import com.example.jlo19.guitartutor.views.AccountActivityView;
 
@@ -17,9 +18,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * Activity that displays account activity (learnt chords and how many times each has been practised)
+ */
 public class AccountActivityActivity extends BaseWithToolbarActivity implements AccountActivityView {
 
     private ProgressDialog progressDialog;
+    private IAccountActivityPresenter presenter;
 
     @Override
     protected int getLayout() {
@@ -41,7 +46,7 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Inject
     public void setPresenter(IAccountActivityPresenter presenter) {
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
+        this.presenter = presenter;
         presenter.setView(this);
     }
 
@@ -59,6 +64,7 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Override
     public void setAccountActivity(List<Chord> chords) {
+        // take account activity (chords with num times practised) and display in list
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(new AccountActivityListAdapter(AccountActivityActivity.this,
                 R.layout.activity_list_item, chords));
@@ -66,7 +72,22 @@ public class AccountActivityActivity extends BaseWithToolbarActivity implements 
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_account_activity_message_failure, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_account_activity_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 }

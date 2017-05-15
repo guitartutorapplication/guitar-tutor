@@ -8,6 +8,9 @@ import android.widget.Button;
 
 import com.example.jlo19.guitartutor.R;
 
+/**
+ * Activity that displays home page
+ */
 public class HomeActivity extends AppCompatActivity {
 
     @Override
@@ -15,6 +18,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // setting up on click listeners to start correct activity
         Button btnLearn = (Button) findViewById(R.id.btnLearn);
         btnLearn.setOnClickListener(new View.OnClickListener() {
             @Override

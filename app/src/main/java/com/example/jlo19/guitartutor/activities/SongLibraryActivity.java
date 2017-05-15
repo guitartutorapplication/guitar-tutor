@@ -1,19 +1,20 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.adapters.SongsListAdapter;
 import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Song;
+import com.example.jlo19.guitartutor.models.Song;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongLibraryPresenter;
 import com.example.jlo19.guitartutor.views.SongLibraryView;
 
@@ -28,8 +29,8 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
 
     private ProgressDialog progressDialog;
     private ListView listView;
-    private List<Song> songs;
     private ISongLibraryPresenter presenter;
+    private List<Song> songs;
 
     @Override
     public int getLayout() {
@@ -71,7 +72,6 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
     @Inject
     public void setPresenter(ISongLibraryPresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -89,14 +89,30 @@ public class SongLibraryActivity extends BaseWithToolbarActivity implements Song
 
     @Override
     public void setSongs(List<Song> songs) {
+        // displays all songs in list
         this.songs = songs;
         listView.setAdapter(new SongsListAdapter(SongLibraryActivity.this, R.layout.song_list_item, songs));
     }
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.loading_songs_message_failure, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.loading_songs_message_failure)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     @Override

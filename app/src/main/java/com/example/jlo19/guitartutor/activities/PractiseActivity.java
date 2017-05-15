@@ -1,20 +1,21 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jlo19.guitartutor.R;
 import com.example.jlo19.guitartutor.application.App;
 import com.example.jlo19.guitartutor.enums.BeatSpeed;
 import com.example.jlo19.guitartutor.enums.ChordChange;
-import com.example.jlo19.guitartutor.models.retrofit.objects.Chord;
+import com.example.jlo19.guitartutor.models.Chord;
 import com.example.jlo19.guitartutor.presenters.interfaces.IPractisePresenter;
 import com.example.jlo19.guitartutor.views.PractiseView;
 
@@ -28,12 +29,9 @@ import javax.inject.Inject;
  */
 public class PractiseActivity extends BaseWithToolbarActivity implements PractiseView{
 
-    private List<Chord> selectedChords;
     private IPractisePresenter presenter;
     private Button btnStop;
     private SoundPool soundPool;
-    private ChordChange chordChange;
-    private BeatSpeed beatSpeed;
     private TextView txtCountdown;
     private TextView txtFirstChordInstruction;
     private TextView txtFirstChord;
@@ -55,15 +53,10 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // keeps screen on while activity is running
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        // retrieving selected chords
-        selectedChords = getIntent().getExtras().getParcelableArrayList("CHORDS");
-        // retrieving chord change
-        chordChange = (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
-        // retrieving beat speed
-        beatSpeed = (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
-
+        // sets soundpool to allow 4 streams playing at once
         setSoundPool(new SoundPool.Builder().setMaxStreams(4).build());
 
         txtCountdown = (TextView) findViewById(R.id.txtCountdown);
@@ -97,7 +90,6 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
     @Inject
     public void setPresenter(IPractisePresenter presenter) {
         this.presenter = presenter;
-        presenter.setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         presenter.setView(this);
     }
 
@@ -123,7 +115,8 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public List<Chord> getSelectedChords() {
-        return selectedChords;
+        // retrieves selected chords that were chosen in setup
+        return getIntent().getExtras().getParcelableArrayList("CHORDS");
     }
 
     @Override
@@ -156,8 +149,18 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showError() {
-        Toast.makeText(getApplicationContext(),
-                R.string.practise_error_occurred_message, Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.practise_error_occurred_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
@@ -167,6 +170,7 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void loadSounds(List<String> filenames) {
+        // loads sounds with specified filenames from raw folder
         soundIds = new ArrayList<>();
         for (String filename : filenames) {
             int resource = getResources().getIdentifier(
@@ -177,12 +181,14 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public ChordChange getChordChange() {
-        return chordChange;
+        // retrieves selected chord change that were chosen in setup
+        return (ChordChange) getIntent().getSerializableExtra("CHORD_CHANGE");
     }
 
     @Override
     public BeatSpeed getBeatSpeed() {
-        return beatSpeed;
+        // retrieves selected beat speed that were chosen in setup
+        return (BeatSpeed) getIntent().getSerializableExtra("BEAT_SPEED");
     }
 
     @Override
@@ -223,35 +229,75 @@ public class PractiseActivity extends BaseWithToolbarActivity implements Practis
 
     @Override
     public void showPractiseSessionSaveSuccess(int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.gained_15_achievements_message, achievements);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showPractiseSessionSaveError() {
-        Toast.makeText(getApplicationContext(), getResources().getString(
-                R.string.save_practise_session_error_message), Toast.LENGTH_SHORT).show();
+        // displays error message with confirmation button
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.save_practise_session_error_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmError();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showPractiseSessionSaveSuccess(int level, int achievements) {
+        // displays success message with confirmation button
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.gained_15_achievements_message, achievements) + "\n" +
                 getString(R.string.new_level_message, level);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 
     @Override
     public void showPractiseSessionSaveSuccess() {
+        // displays success message with confirmation button
         String text = getString(R.string.save_practise_session_success_message) + "\n" +
                 getString(R.string.maximum_achievements_message);
 
-        Toast.makeText(getApplicationContext(),
-                text, Toast.LENGTH_SHORT).show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.viewOnConfirmSuccess();
+                    }
+                }).create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this,
+                R.color.colorAccent));
     }
 }

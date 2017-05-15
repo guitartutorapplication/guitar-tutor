@@ -2,62 +2,48 @@ package com.example.jlo19.guitartutor.presenters;
 
 import android.view.View;
 
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.components.AppComponent;
-import com.example.jlo19.guitartutor.models.interfaces.ISongModel;
 import com.example.jlo19.guitartutor.presenters.interfaces.ISongPresenter;
+import com.example.jlo19.guitartutor.services.interfaces.IAmazonS3Service;
 import com.example.jlo19.guitartutor.views.SongView;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Testing SongPresenter
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(App.class)
 public class SongPresenterTest {
 
     private ISongPresenter presenter;
     private SongView view;
-    private ISongModel model;
     private String audioFilename;
+    private IAmazonS3Service amazonS3Service;
 
     @Before
     public void setUp() {
-        // stop real injection of model
-        PowerMockito.mockStatic(App.class);
-        PowerMockito.when(App.getComponent()).thenReturn(PowerMockito.mock(AppComponent.class));
-
-        presenter = new SongPresenter();
+        amazonS3Service = Mockito.mock(IAmazonS3Service.class);
+        presenter = new SongPresenter(amazonS3Service);
 
         view = Mockito.mock(SongView.class);
         audioFilename = "Adventure of a Lifetime.wav";
         Mockito.when(view.getAudioFilename()).thenReturn(audioFilename);
         presenter.setView(view);
-
-        model = Mockito.mock(ISongModel.class);
-        ((SongPresenter) presenter).setModel(model);
     }
 
     @Test
-    public void setModel_setsPresenterOnModel() {
+    public void setsPresenterAsListenerOnService() {
         // assert
-        Mockito.verify(model).setPresenter(presenter);
+        Mockito.verify(amazonS3Service).setUrlListener(presenter);
     }
 
     @Test
-    public void viewOnPlay_CallsGetAudioOnModel() {
+    public void viewOnPlay_CallsGetUrlOnService() {
         // act
         presenter.viewOnPlay();
 
         // assert
-        Mockito.verify(model).getAudio(audioFilename);
+        Mockito.verify(amazonS3Service).getUrl(audioFilename);
     }
 
     @Test
@@ -70,28 +56,28 @@ public class SongPresenterTest {
     }
 
     @Test
-    public void modelOnUrlDownloadSuccess_CallsPlayAudioOnView() {
+    public void onUrlDownloadSuccess_CallsPlayAudioOnView() {
         // act
         String url = "url";
-        presenter.modelOnUrlDownloadSuccess(url);
+        presenter.onUrlDownloadSuccess(url);
 
         // assert
         Mockito.verify(view).playAudio(url);
     }
 
     @Test
-    public void modelOnUrlDownloadFailed_CallsHideProgressBarOnView() {
+    public void onUrlDownloadFailed_CallsHideProgressBarOnView() {
         // act
-        presenter.modelOnUrlDownloadFailed();
+        presenter.onUrlDownloadFailed();
 
         // assert
         Mockito.verify(view).hideProgressBar();
     }
 
     @Test
-    public void modelOnUrlDownloadFailed_CallsShowErrorOnView() {
+    public void onUrlDownloadFailed_CallsShowErrorOnView() {
         // act
-        presenter.modelOnUrlDownloadFailed();
+        presenter.onUrlDownloadFailed();
 
         // assert
         Mockito.verify(view).showError();

@@ -1,8 +1,9 @@
 package com.example.jlo19.guitartutor.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Build;
+import android.support.design.widget.TextInputLayout;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -23,8 +24,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowProgressDialog;
-import org.robolectric.shadows.ShadowToast;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -92,114 +93,206 @@ public class RegisterActivityTest {
     }
 
     @Test
-    public void showFieldEmptyError_MakesToastWithFieldEmptyErrorMessage() {
+    public void showFieldEmptyNameError_SetErrorOnNameTextInput() {
         // act
-        activity.showFieldEmptyError();
+        activity.showFieldEmptyNameError();
 
         // assert
+        TextInputLayout txtInputName = (TextInputLayout) activity.findViewById(R.id.txtInputName);
         Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
-                ShadowToast.getTextOfLatestToast());
+                txtInputName.getError());
     }
 
     @Test
-    public void showEmailMismatchError_MakesToastWithEmailMismatchErrorMessage() {
+    public void showFieldEmptyEmailError_SetErrorOnEmailTextInput() {
+        // act
+        activity.showFieldEmptyEmailError();
+
+        // assert
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
+        Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
+                txtInputEmail.getError());
+    }
+
+    @Test
+    public void showFieldEmptyConfirmEmailError_SetErrorOnConfirmEmailTextInput() {
+        // act
+        activity.showFieldEmptyConfirmEmailError();
+
+        // assert
+        TextInputLayout txtInputConfirmEmail = (TextInputLayout) activity.findViewById(R.id.txtInputConfirmEmail);
+        Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
+                txtInputConfirmEmail.getError());
+    }
+
+    @Test
+    public void showFieldEmptyPasswordError_SetErrorOnPasswordTextInput() {
+        // act
+        activity.showFieldEmptyPasswordError();
+
+        // assert
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
+                txtInputPassword.getError());
+    }
+
+    @Test
+    public void showFieldEmptyConfirmPasswordError_SetErrorOnConfirmPasswordTextInput() {
+        // act
+        activity.showFieldEmptyConfirmPasswordError();
+
+        // assert
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(R.id.txtInputConfirmPassword);
+        Assert.assertEquals(getApp().getResources().getString(R.string.field_empty_error_message),
+                txtInputConfirmPassword.getError());
+    }
+
+    @Test
+    public void showEmailMismatchError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showEmailMismatchError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.field_email_mismatch_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
+        TextInputLayout txtInputConfirmEmail = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmEmail);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.field_email_mismatch_error_message),
+                txtInputEmail.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.field_email_mismatch_error_message),
+                txtInputConfirmEmail.getError());
     }
 
     @Test
-    public void showPasswordMismatchError_MakesToastWithPasswordMismatchErrorMessage() {
+    public void showPasswordMismatchError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordMismatchError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.field_password_mismatch_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmPassword);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.field_password_mismatch_error_message),
+                txtInputPassword.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.field_password_mismatch_error_message),
+                txtInputConfirmPassword.getError());
     }
 
     @Test
-    public void showInvalidEmailError_MakesToastWithInvalidEmailErrorMessage() {
+    public void showInvalidEmailError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showInvalidEmailError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.invalid_email_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
+        TextInputLayout txtInputConfirmEmail = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmEmail);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.invalid_email_error_message),
+                txtInputEmail.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.invalid_email_error_message),
+                txtInputConfirmEmail.getError());
     }
 
     @Test
-    public void showPasswordTooShortError_MakesToastWithPasswordTooShortErrorMessage() {
+    public void showPasswordTooShortError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordTooShortError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.password_too_short_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmPassword);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_too_short_error_message),
+                txtInputPassword.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_too_short_error_message),
+                txtInputConfirmPassword.getError());
     }
 
     @Test
-    public void showPasswordNoUpperCaseLetterError_MakesToastWithPasswordNoUpperCaseLetterErrorMessage() {
+    public void showPasswordNoUpperCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoUpperCaseLetterError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.password_no_upper_case_letter_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmPassword);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_no_upper_case_letter_error_message),
+                txtInputPassword.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_no_upper_case_letter_error_message),
+                txtInputConfirmPassword.getError());
     }
 
     @Test
-    public void showPasswordNoLowerCaseLetterError_MakesToastWithPasswordNoLowerCaseLetterErrorMessage() {
+    public void showPasswordNoLowerCaseLetterError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoLowerCaseLetterError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.password_no_lower_case_letter_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmPassword);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_no_lower_case_letter_error_message),
+                txtInputPassword.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_no_lower_case_letter_error_message),
+                txtInputConfirmPassword.getError());
     }
 
     @Test
-    public void showPasswordNoNumberError_MakesToastWithPasswordNoNumberErrorMessage() {
+    public void showPasswordNoNumberError_SetErrorOnPasswordAndConfirmPasswordTextInput() {
         // act
         activity.showPasswordNoNumberError();
 
         // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.password_no_number_error_message),
-                ShadowToast.getTextOfLatestToast());
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmPassword);
+
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_no_number_error_message),
+                txtInputPassword.getError());
+        org.junit.Assert.assertEquals(getApp().getResources().getString(R.string.password_no_number_error_message),
+                txtInputConfirmPassword.getError());
     }
 
     @Test
-    public void showRegisterError_MakesToastWithRegisterErrorMessage() {
-        // act
-        activity.showRegisterError();
-
-        // assert
-        Assert.assertEquals(getApp().getResources().getString(R.string.register_error_message),
-                ShadowToast.getTextOfLatestToast());
-    }
-
-    @Test
-    public void showAlreadyRegisteredError_MakesToastWithAlreadyRegisteredErrorMessage() {
+    public void showAlreadyRegisteredError_SetErrorOnEmailAndConfirmEmailTextInput() {
         // act
         activity.showAlreadyRegisteredError();
 
         // assert
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
+        TextInputLayout txtInputConfirmEmail = (TextInputLayout) activity.findViewById(
+                R.id.txtInputConfirmEmail);
+
         Assert.assertEquals(getApp().getResources().getString(R.string.already_registered_error_message),
-                ShadowToast.getTextOfLatestToast());
+                txtInputEmail.getError());
+        Assert.assertEquals(getApp().getResources().getString(R.string.already_registered_error_message),
+                txtInputConfirmEmail.getError());
     }
 
     @Test
-    public void startLoginActivity_LoginActivityIsStarted() {
+    public void showRegisterError_ShowsAlertDialogWithRegisterErrorMessage() {
         // act
-        activity.startLoginActivity();
+        activity.showRegisterError();
 
         // assert
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        // checks correct activity is started
-        Assert.assertEquals(LoginActivity.class.getName(), intent.getComponent().getClassName());
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        Assert.assertEquals(getApp().getResources().getString(R.string.register_error_message),
+                shadowOf(dialog).getMessage());
+    }
+
+    @Test
+    public void finishRegister_ActivityIsFinished() {
+        // act
+        activity.finishRegister();
+
+        // assert
+        Assert.assertTrue(activity.isFinishing());
     }
 
     @Test
@@ -225,5 +318,24 @@ public class RegisterActivityTest {
         // assert
         ProgressDialog dialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
         Assert.assertFalse(dialog.isShowing());
+    }
+
+    @Test
+    public void resetValidationErrors_SetsErrorToNullOnAllTextInputs() {
+        // act
+        activity.resetValidationErrors();
+
+        // assert
+        TextInputLayout txtInputName = (TextInputLayout) activity.findViewById(R.id.txtInputName);
+        TextInputLayout txtInputEmail = (TextInputLayout) activity.findViewById(R.id.txtInputEmail);
+        TextInputLayout txtInputConfirmEmail = (TextInputLayout) activity.findViewById(R.id.txtInputConfirmEmail);
+        TextInputLayout txtInputPassword = (TextInputLayout) activity.findViewById(R.id.txtInputPassword);
+        TextInputLayout txtInputConfirmPassword = (TextInputLayout) activity.findViewById(R.id.txtInputConfirmPassword);
+
+        org.junit.Assert.assertNull(txtInputName.getError());
+        org.junit.Assert.assertNull(txtInputEmail.getError());
+        org.junit.Assert.assertNull(txtInputConfirmEmail.getError());
+        org.junit.Assert.assertNull(txtInputPassword.getError());
+        org.junit.Assert.assertNull(txtInputConfirmPassword.getError());
     }
 }

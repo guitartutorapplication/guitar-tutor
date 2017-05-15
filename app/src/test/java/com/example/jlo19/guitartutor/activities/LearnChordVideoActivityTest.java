@@ -38,7 +38,7 @@ public class LearnChordVideoActivityTest {
 
     @Before
     public void setUp() {
-        // giving activity a URL
+        // sets URL in intent that builds activity
         videoUrl = "video url";
         Intent intent = new Intent();
         intent.putExtra("URL", videoUrl);

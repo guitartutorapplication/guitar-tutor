@@ -1,92 +1,115 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import android.content.SharedPreferences;
-
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ValidationResult;
-import com.example.jlo19.guitartutor.models.interfaces.IEditAccountModel;
+import com.example.jlo19.guitartutor.application.LoggedInUser;
+import com.example.jlo19.guitartutor.enums.ValidationError;
+import com.example.jlo19.guitartutor.interactors.interfaces.IEditAccountDetailsInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IEditAccountPresenter;
+import com.example.jlo19.guitartutor.validation.DataValidator;
 import com.example.jlo19.guitartutor.views.EditAccountView;
 import com.example.jlo19.guitartutor.views.IView;
 
-import javax.inject.Inject;
+import java.util.List;
 
 /**
- * Presenter that provides the EditAccountActivity with ability to edit details on DB
+ * Presenter that provides EditAccountActivity with DB API interaction
  */
 public class EditAccountPresenter implements IEditAccountPresenter {
 
+    private final LoggedInUser loggedInUser;
     private EditAccountView view;
-    private IEditAccountModel model;
-    private SharedPreferences sharedPreferences;
+    private final IEditAccountDetailsInteractor editAccountDetailsInteractor;
 
-    @Inject
-    public void setModel(IEditAccountModel model) {
-        this.model = model;
-        this.model.setPresenter(this);
-        this.model.setSharedPreferences(sharedPreferences);
+    public EditAccountPresenter(IEditAccountDetailsInteractor editAccountDetailsInteractor,
+                                LoggedInUser loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        this.editAccountDetailsInteractor = editAccountDetailsInteractor;
+        this.editAccountDetailsInteractor.setListener(this);
     }
 
     @Override
     public void setView(IView view) {
         this.view = (EditAccountView) view;
         this.view.hideAccountButton();
-
-        App.getComponent().inject(this);
-    }
-
-    @Override
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
     }
 
     @Override
     public void viewOnSave(String name, String email, String confirmEmail, String password, String confirmPassword) {
         view.showProgressBar();
-        model.save(name, email, confirmEmail, password, confirmPassword);
+        view.resetValidationErrors();
+
+        // validates data
+        List<ValidationError> errors = DataValidator.validate(name, email, confirmEmail, password,
+                confirmPassword);
+        if (errors.isEmpty()) {
+            // if valid data, saves changes on DB
+            editAccountDetailsInteractor.save(loggedInUser.getApiKey(), loggedInUser.getUserId(),
+                    name, email, password);
+        }
+        else {
+            onValidationFailed(errors);
+        }
     }
 
     @Override
-    public void modelOnSaveSuccess() {
+    public void onSaveSuccess() {
         view.hideProgressBar();
+        // returns to account screen once changes saved
         view.startAccountActivity();
     }
 
     @Override
-    public void modelOnSaveError() {
+    public void onSaveError() {
         view.hideProgressBar();
         view.showSaveError();
     }
 
     @Override
-    public void modelOnValidationFailed(ValidationResult result) {
+    public void onValidationFailed(List<ValidationError> errors) {
         view.hideProgressBar();
 
-        switch (result) {
-            case FIELD_EMPTY:
-                view.showFieldEmptyError();
-                break;
-            case EMAIL_MISMATCH:
-                view.showEmailMismatchError();
-                break;
-            case PASSWORD_MISMATCH:
-                view.showPasswordMismatchError();
-                break;
-            case INVALID_EMAIL:
-                view.showInvalidEmailError();
-                break;
-            case PASSWORD_TOO_SHORT:
-                view.showPasswordTooShortError();
-                break;
-            case PASSWORD_NO_UPPER:
-                view.showPasswordNoUpperCaseLetterError();
-                break;
-            case PASSWORD_NO_LOWER:
-                view.showPasswordNoLowerCaseLetterError();
-                break;
-            case PASSWORD_NO_NUMBER:
-                view.showPasswordNoNumberError();
-                break;
+        // shows validation errors on view
+        for (ValidationError error : errors) {
+            switch (error) {
+                case FIELD_EMPTY_NAME:
+                    view.showFieldEmptyNameError();
+                    break;
+                case FIELD_EMPTY_EMAIL:
+                    view.showFieldEmptyEmailError();
+                    break;
+                case FIELD_EMPTY_CONFIRM_EMAIL:
+                    view.showFieldEmptyConfirmEmailError();
+                    break;
+                case FIELD_EMPTY_PASSWORD:
+                    view.showFieldEmptyPasswordError();
+                    break;
+                case FIELD_EMPTY_CONFIRM_PASSWORD:
+                    view.showFieldEmptyConfirmPasswordError();
+                    break;
+                case EMAIL_MISMATCH:
+                    view.showEmailMismatchError();
+                    break;
+                case PASSWORD_MISMATCH:
+                    view.showPasswordMismatchError();
+                    break;
+                case INVALID_EMAIL:
+                    view.showInvalidEmailError();
+                    break;
+                case PASSWORD_TOO_SHORT:
+                    view.showPasswordTooShortError();
+                    break;
+                case PASSWORD_NO_UPPER:
+                    view.showPasswordNoUpperCaseLetterError();
+                    break;
+                case PASSWORD_NO_LOWER:
+                    view.showPasswordNoLowerCaseLetterError();
+                    break;
+                case PASSWORD_NO_NUMBER:
+                    view.showPasswordNoNumberError();
+                    break;
+                case EMAIL_ALREADY_REGISTERED:
+                    view.showAlreadyRegisteredError();
+                    break;
+            }
         }
     }
 }

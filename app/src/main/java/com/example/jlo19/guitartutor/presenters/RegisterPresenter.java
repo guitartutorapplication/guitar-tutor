@@ -1,30 +1,25 @@
 package com.example.jlo19.guitartutor.presenters;
 
-import com.example.jlo19.guitartutor.application.App;
-import com.example.jlo19.guitartutor.enums.ValidationResult;
-import com.example.jlo19.guitartutor.models.interfaces.IRegisterModel;
+import com.example.jlo19.guitartutor.enums.ValidationError;
+import com.example.jlo19.guitartutor.interactors.interfaces.IRegisterInteractor;
 import com.example.jlo19.guitartutor.presenters.interfaces.IRegisterPresenter;
+import com.example.jlo19.guitartutor.validation.DataValidator;
 import com.example.jlo19.guitartutor.views.IView;
 import com.example.jlo19.guitartutor.views.RegisterView;
 
-import javax.inject.Inject;
+import java.util.List;
 
 /**
- * Presenter which provides RegisterActivity with the ability to add an account to DB
+ * Presenter that provides RegisterActivity with DB API interaction
  */
 public class RegisterPresenter implements IRegisterPresenter {
 
     private RegisterView view;
-    private IRegisterModel model;
+    private final IRegisterInteractor registerInteractor;
 
-    public RegisterPresenter() {
-        App.getComponent().inject(this);
-    }
-
-    @Inject
-    public void setModel(IRegisterModel model) {
-        this.model = model;
-        model.setPresenter(this);
+    public RegisterPresenter(IRegisterInteractor registerInteractor) {
+        this.registerInteractor = registerInteractor;
+        this.registerInteractor.setListener(this);
     }
 
     @Override
@@ -36,56 +31,79 @@ public class RegisterPresenter implements IRegisterPresenter {
     public void viewOnRegister(String name, String email, String confirmEmail, String password,
                                String confirmPassword) {
         view.showProgressBar();
-        model.register(name, email, confirmEmail, password, confirmPassword);
+        view.resetValidationErrors();
+
+        // validate data
+        List<ValidationError> errors = DataValidator.validate(name, email, confirmEmail, password,
+                confirmPassword);
+        if (errors.isEmpty()) {
+            // if data is valid, register for an account on DB
+            registerInteractor.register(name, email, password);
+        }
+        else {
+            onValidationFailed(errors);
+        }
     }
 
     @Override
-    public void modelOnRegisterError() {
+    public void onRegisterError() {
         view.hideProgressBar();
         view.showRegisterError();
     }
 
     @Override
-    public void modelOnAlreadyRegistered() {
+    public void onRegisterSuccess() {
         view.hideProgressBar();
-        view.showAlreadyRegisteredError();
+        view.finishRegister();
     }
 
     @Override
-    public void modelOnRegisterSuccess() {
-        view.hideProgressBar();
-        view.startLoginActivity();
-    }
-
-    @Override
-    public void modelOnValidationFailed(ValidationResult result) {
+    public void onValidationFailed(List<ValidationError> errors) {
         view.hideProgressBar();
 
-        switch (result) {
-            case FIELD_EMPTY:
-                view.showFieldEmptyError();
-                break;
-            case EMAIL_MISMATCH:
-                view.showEmailMismatchError();
-                break;
-            case PASSWORD_MISMATCH:
-                view.showPasswordMismatchError();
-                break;
-            case INVALID_EMAIL:
-                view.showInvalidEmailError();
-                break;
-            case PASSWORD_TOO_SHORT:
-                view.showPasswordTooShortError();
-                break;
-            case PASSWORD_NO_UPPER:
-                view.showPasswordNoUpperCaseLetterError();
-                break;
-            case PASSWORD_NO_LOWER:
-                view.showPasswordNoLowerCaseLetterError();
-                break;
-            case PASSWORD_NO_NUMBER:
-                view.showPasswordNoNumberError();
-                break;
+        // shows validation errors on view
+        for (ValidationError error : errors) {
+            switch (error) {
+                case FIELD_EMPTY_NAME:
+                    view.showFieldEmptyNameError();
+                    break;
+                case FIELD_EMPTY_EMAIL:
+                    view.showFieldEmptyEmailError();
+                    break;
+                case FIELD_EMPTY_CONFIRM_EMAIL:
+                    view.showFieldEmptyConfirmEmailError();
+                    break;
+                case FIELD_EMPTY_PASSWORD:
+                    view.showFieldEmptyPasswordError();
+                    break;
+                case FIELD_EMPTY_CONFIRM_PASSWORD:
+                    view.showFieldEmptyConfirmPasswordError();
+                    break;
+                case EMAIL_MISMATCH:
+                    view.showEmailMismatchError();
+                    break;
+                case PASSWORD_MISMATCH:
+                    view.showPasswordMismatchError();
+                    break;
+                case INVALID_EMAIL:
+                    view.showInvalidEmailError();
+                    break;
+                case PASSWORD_TOO_SHORT:
+                    view.showPasswordTooShortError();
+                    break;
+                case PASSWORD_NO_UPPER:
+                    view.showPasswordNoUpperCaseLetterError();
+                    break;
+                case PASSWORD_NO_LOWER:
+                    view.showPasswordNoLowerCaseLetterError();
+                    break;
+                case PASSWORD_NO_NUMBER:
+                    view.showPasswordNoNumberError();
+                    break;
+                case EMAIL_ALREADY_REGISTERED:
+                    view.showAlreadyRegisteredError();
+                    break;
+            }
         }
     }
 }
